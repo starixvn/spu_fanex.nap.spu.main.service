@@ -1,0 +1,16 @@
+﻿namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Models
+{
+    public class Trigger
+    {
+        public string TriggerType { get; set; }
+
+        public string TriggerName { get; set; }        
+
+        public bool RepeatForever { get; set; }
+
+        public string CronExpression { get; set; }
+
+        public UpdateStatus UpdateStatus { get; set; }
+
+    }
+}

@@ -1,0 +1,16 @@
+﻿namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
+{
+    using Fanex.NAP.SPU.Main.Features.JobSchedulers.Models;
+    using Refit;
+    using System;
+    using System.Threading.Tasks;
+
+    public interface IJobServiceApi
+    {
+        [Get("/Scheduler")]
+        Task<Schedulers> GetScheduler();
+
+        [Post("/job/execute")]
+        Task<bool> Execute(string jobName);
+    }    
+}

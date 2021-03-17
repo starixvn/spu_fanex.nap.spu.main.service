@@ -1,0 +1,46 @@
+﻿{
+  "Schedulers": {
+    "GroupJobs": [
+      {
+        "GroupName": "Customer Classification",
+        "Jobs": [
+          {
+            "JobName": "CTS_Auto_Tag_Customer_Clasification_Job",
+            "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
+            "APIUrl": "http://localhost:62391/api",
+            "HealthCheckUrl": "http://localhost:62391/healthz",
+            "Active": "true",
+            "Triggers": [
+              {
+                "TriggerType": "Cron",
+                "TriggerName": "AutoTag_Normal",
+                "RepeatForever": "true",
+                "CronExpression": "0/45 * * * * ?"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "GroupName": "Customer Evidence",
+        "Jobs": [
+          {
+            "JobName": "CTS_Customer_Evidence",
+            "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
+            "APIUrl": "https://localhost:44325/api",
+            "HealthCheckUrl": "http://localhost:44325/healthz",
+            "Active": "true",
+            "Triggers": [
+              {
+                "TriggerType": "Cron",
+                "TriggerName": "Customer_Evidence",
+                "RepeatForever": "true",
+                "CronExpression": "0/30 * * * * ?"
+              }
+            ]
+          }               
+        ]
+      }
+    ]   
+  }
+}
