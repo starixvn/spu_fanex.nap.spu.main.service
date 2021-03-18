@@ -1,4 +1,2 @@
-/bin
-/obj
-/src/obj/
-/src/bin/
+src/Fanex.NAP.SPU.Main/obj/
+src/Fanex.NAP.SPU.Main/bin/
