@@ -11,7 +11,7 @@ namespace Fanex.NAP.SPU.Main.Middleware
 
         int HostingPort { get; }
 
-        Schedulers Schedulers { get; }
+        Scheduler Schedulers { get; }
     }
 
     public class AppSettings : IAppSettings
@@ -26,14 +26,14 @@ namespace Fanex.NAP.SPU.Main.Middleware
 
             HostingPort = GetValue<int>(nameof(HostingPort));
 
-            Schedulers = GetSection<Schedulers>(nameof(Schedulers));
+            Schedulers = GetSection<Scheduler>(nameof(Schedulers));
         }
 
         public string HealthCheckStorage { get; }
 
         public int HostingPort { get; }
 
-        public Schedulers Schedulers { get; }
+        public Scheduler Schedulers { get; }
 
         public T GetValue<T>(string key)
         {

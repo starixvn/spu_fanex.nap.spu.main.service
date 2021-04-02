@@ -7,10 +7,7 @@
 
     public interface IJobServiceApi
     {
-        [Get("/Scheduler")]
-        Task<Schedulers> GetScheduler();
-
         [Post("/job/execute")]
-        Task<bool> Execute(string jobName);
+        Task<bool> Execute(string jobName, int size = 0, int numberOfBatch = 0);
     }    
 }

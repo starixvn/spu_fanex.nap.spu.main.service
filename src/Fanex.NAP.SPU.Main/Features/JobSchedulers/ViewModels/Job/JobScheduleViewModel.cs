@@ -5,23 +5,22 @@
 
     public class JobScheduleViewModel
     {
-        public JobScheduleViewModel(string groupJob, Job jobModel, Trigger triggerModel)
+        public JobScheduleViewModel(GroupJob groupJob, Job jobModel, Trigger triggerModel)
         {
             Group = groupJob;
 
             JobName = jobModel.JobName;
             JobType = Type.GetType(jobModel.JobType);
-            APIUrl = jobModel.APIUrl;
-            HealthCheckUrl = jobModel.HealthCheckUrl;
+            APIUrl = jobModel.APIUrl;            
             IsActive = jobModel.Active;
-
+            MethodName = jobModel.MethodName;
             TriggerType = triggerModel.TriggerType;
             TriggerName = triggerModel.TriggerName;
             RepeatForever = triggerModel.RepeatForever;
             CronExpression = triggerModel.CronExpression;
         }
 
-        public string Group { get; set; }
+        public GroupJob Group { get; set; }
 
         public string JobName { get; set; }
 
@@ -29,7 +28,7 @@
 
         public string APIUrl { get; set; }
 
-        public string HealthCheckUrl { get; set; }
+        public string MethodName { get; set; }
 
         public bool IsActive { get; set; }
 

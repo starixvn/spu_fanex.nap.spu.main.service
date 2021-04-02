@@ -2,43 +2,69 @@
   "Schedulers": {
     "GroupJobs": [
       {
-        "GroupName": "Customer Classification",
+        "Id":  1,
+        "Name": "DCS",
+        "HealthCheck": "http://localhost:62391/healthz",
         "Jobs": [
           {
-            "JobName": "CTS_Auto_Tag_Customer_Clasification_Job",
+            "JobId": 1,
+            "JobName": "DCS_UserAgent_Job1",
             "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
             "APIUrl": "http://localhost:62391/api",
-            "HealthCheckUrl": "http://localhost:62391/healthz",
+            "MethodName": "UserAgent",
             "Active": "true",
             "Triggers": [
               {
+                "TriggerId": 1,
+                "TriggerName": "UserAgent_Trigger1",
                 "TriggerType": "Cron",
-                "TriggerName": "AutoTag_Normal",
                 "RepeatForever": "true",
-                "CronExpression": "0/45 * * * * ?"
+                "CronExpression": "0/30 * * * * ?"
+              }
+            ]
+          },
+          {
+            "JobId": 2,
+            "JobName": "DCS_Transform_Device_Job2",
+            "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
+            "APIUrl": "http://localhost:62391/api",
+            "MethodName": "TransformDevice",
+            "Active": "true",
+            "Triggers": [
+              {
+                "TriggerId": 1,
+                "TriggerName": "TransformDevice_Trigger",
+                "TriggerType": "Cron",
+                "RepeatForever": "true",
+                "CronExpression": "0/30 * * * * ?"
               }
             ]
           }
         ]
       },
       {
-        "GroupName": "Customer Evidence",
+        "Id": 2,
+        "Name": "CTS",
+        "HealthCheck": "http://localhost:62391/healthz",
         "Jobs": [
           {
-            "JobName": "CTS_Customer_Evidence",
+            "JobId": 1,
+            "JobName": "CTS_Customer_Evidence1",
             "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
-            "APIUrl": "https://localhost:44325/api",
-            "HealthCheckUrl": "http://localhost:44325/healthz",
+            "APIUrl": "http://localhost:62391/api",
+            "HealthCheckUrl": "http://localhost:62391/healthz",
+            "MethodName": "TransformDevice",
             "Active": "true",
             "Triggers": [
               {
+                "TriggerId": 1,
                 "TriggerType": "Cron",
                 "TriggerName": "Customer_Evidence",
                 "RepeatForever": "true",
                 "CronExpression": "0/30 * * * * ?"
               }
             ]
-          }               
+          }
         ]
       }
     ]   

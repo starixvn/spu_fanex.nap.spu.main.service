@@ -1,178 +1,186 @@
 ﻿namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
     using Fanex.NAP.SPU.Main.Features.JobSchedulers.Models;
-    using Fanex.NAP.SPU.Main.Features.JobSchedulers.ViewModels.Job;
+    using Fanex.NAP.SPU.Main.Middleware;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Quartz;
     using Quartz.Spi;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using System.Threading.Tasks;    
+    using System.Threading.Tasks;
 
     public class QuartzHostedService : IHostedService
     {
         private readonly ISchedulerFactory _schedulerFactory;
         private readonly IJobFactory _jobFactory;
-        private readonly JobSchedules _jobSchedules;
+        private readonly IConfiguration _configuration;
+        private readonly IAppSettings _appSettings;
+        private readonly IScheduler _scheduler;
 
         public QuartzHostedService(
             ISchedulerFactory schedulerFactory,
-            JobSchedules jobSchedules,            
-            IJobFactory jobFactory)
+            IJobFactory jobFactory,
+            IConfiguration _configuration,
+            IAppSettings _appSettings)
         {
             _schedulerFactory = schedulerFactory;
-            _jobSchedules = jobSchedules;
-            _jobFactory = jobFactory;            
+            _jobFactory = jobFactory;
+            this._configuration = _configuration;
+            this._appSettings = _appSettings;
+            _scheduler = _schedulerFactory.GetScheduler().Result;
+            JobSchedulers = _appSettings.Schedulers;
+
         }
 
-        public JobSchedules CurrentJobSchedules { get { return _jobSchedules; } }
+        public Scheduler JobSchedulers { get; set; }
+
+        public Scheduler NewJobSchedulers
+        {
+            get
+            {
+                return _configuration.GetSection(nameof(_appSettings.Schedulers)).Get<Scheduler>();
+            }
+        }
+
+        public IScheduler Scheduler
+        {
+            get
+            {
+                return _scheduler;
+            }
+        }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-            scheduler.JobFactory = _jobFactory;
-
-            foreach (var jobSchedule in _jobSchedules.JobScheduleList)
+            if (JobSchedulers.GroupJobs != null && JobSchedulers.GroupJobs.Any())
             {
-                if(!jobSchedule.Validate())
-                    continue;
+                _scheduler.JobFactory = _jobFactory;
 
-                var job = CreateJob(jobSchedule);
-                var trigger = CreateTrigger(jobSchedule);
+                var groupJobs = JobSchedulers.GroupJobs;
 
-                await scheduler.ScheduleJob(job, trigger, cancellationToken);
+                foreach (var groupJob in groupJobs)
+                {
+                    groupJob.Jobs.ToList().ForEach(job =>
+                    {
+                        var jobDetail = BuildJob(job, groupJob.Name);
 
-                if (!jobSchedule.IsActive)
-                    await scheduler.PauseTrigger(new TriggerKey(jobSchedule.TriggerName));
-            }
+                        job.Triggers.ToList().ForEach(trigger =>
+                        {
+                            var triggerDetail = BuildTrigger(trigger);
 
-            await scheduler.Start(cancellationToken);
+                            _scheduler.ScheduleJob(jobDetail, triggerDetail, cancellationToken);
+
+                            if (!job.Active)
+                            {
+                                _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
+                            }
+                        });
+
+                    });
+                }
+
+                await _scheduler.Start(cancellationToken);
+            }                        
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-           var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+            var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
             await scheduler.Shutdown(cancellationToken);
         }
 
-        public async Task<UpdateJobViewModel> UpdateSchedule(Schedulers newSchedule)
-        {            
-            var scheduler = await _schedulerFactory.GetScheduler();
-            
-            var newJobSchedules = JobInit.GetJobSchedules(newSchedule.GroupJobs);
-
-            var updateList = CheckUpdate(_jobSchedules, newJobSchedules);
-
-            var newList = CheckNew(_jobSchedules, newJobSchedules);
-
-            var deleteList = CheckDelete(_jobSchedules, newJobSchedules);
-
-            await DeleteJobTrigger(scheduler, deleteList);
-
-            await UpdateJobTrigger(scheduler, updateList);
-
-            await NewJobTrigger(scheduler, newList);
-
-            _jobSchedules.UpdateJobScheduleList(newJobSchedules.JobScheduleList);
-
-            return new UpdateJobViewModel(newList);
-        }
-
-        public IEnumerable<JobScheduleViewModel> CheckUpdate(JobSchedules oldJobSchedules, JobSchedules newJobSchedules)
+        public IEnumerable<GroupJob> GetJobSchedulerDiff()
         {
-            return oldJobSchedules.JobScheduleList.Join(newJobSchedules.JobScheduleList,
-                x1 => x1.JobName,
-                x2 => x2.JobName,
-                (x1, x2) => x2);
-        }
+            var result = JobSchedulers.Equals(NewJobSchedulers);
 
-        public IEnumerable<JobScheduleViewModel> CheckNew(JobSchedules oldJobSchedules, JobSchedules newJobSchedules)
-        {
-            var oldJobNameList = oldJobSchedules.JobScheduleList.Select(x => x.JobName);
-
-            return newJobSchedules.JobScheduleList.Where(x => !oldJobNameList.Contains(x.JobName));
-        }
-
-        public IEnumerable<JobScheduleViewModel> CheckDelete(JobSchedules oldJobSchedules, JobSchedules newJobSchedules)
-        {
-            var newJobNameList = newJobSchedules.JobScheduleList.Select(x => x.JobName);
-
-            return oldJobSchedules.JobScheduleList.Where(x => !newJobNameList.Contains(x.JobName));
-        }
-
-        private bool IsNewTrigger(JobScheduleViewModel newSchedule, JobSchedules oldJobSchedules)
-        {
-            var existed = oldJobSchedules.JobScheduleList.Any(x => x.TriggerName == newSchedule.TriggerName);
-
-            return !existed;
-        }
-
-        private async Task DeleteJobTrigger(IScheduler scheduler, IEnumerable<JobScheduleViewModel> jobScheduleList)
-        {
-            foreach (var jobSchedule in jobScheduleList)
+            if (!result)
             {
-                await scheduler.DeleteJob(new JobKey(jobSchedule.JobName));
+                return NewJobSchedulers.GroupJobs.Select(groupJob =>
+                {
+                    var newJobs = groupJob.Jobs;
+                    var oldJobs = JobSchedulers.GroupJobs.FirstOrDefault(x => x.Id == groupJob.Id).Jobs;
+
+                    var f1Jobs = newJobs.Where(f1 => oldJobs.All(f2 => !f1.Equals(f2)));
+
+                    groupJob.Jobs = f1Jobs;
+
+                    groupJob.ExistingJobs = f1Jobs.Where(x => oldJobs.Any(a => a.JobId == x.JobId));
+                    groupJob.NewJobs = f1Jobs.Where(x => !oldJobs.Any(a => a.JobId == x.JobId));
+
+                    return groupJob;
+                });
+            }
+
+            return new List<GroupJob>();
+        }
+
+        public void ReScheduleJob()
+        {
+            var groupJobs = GetJobSchedulerDiff();
+
+            if (groupJobs != null && groupJobs.Any())
+            {
+                groupJobs.ToList().ForEach(groupJob =>
+                {
+
+                    if (groupJob.ExistingJobs != null && groupJob.ExistingJobs.Any())
+                    {
+                        groupJob.ExistingJobs.ToList().ForEach(job =>
+                        {                               
+                            job.Triggers.ToList().ForEach(trigger => {
+                                
+                                _scheduler.RescheduleJob(new TriggerKey(trigger.TriggerName), BuildTrigger(trigger));
+                            });  
+                            
+                            if(!job.Active)
+                            {
+                                job.Triggers.ToList().ForEach(trigger => {
+
+                                    _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
+                                });                                
+                            }
+
+                        });
+                    }
+
+                    if (groupJob.NewJobs != null && groupJob.NewJobs.Any())
+                    {
+                        groupJob.NewJobs.ToList().ForEach(job =>
+                        {
+                            var buildJob = BuildJob(job, groupJob.Name);
+
+                            _scheduler.AddJob(buildJob, replace: false);
+                        });
+                    }
+                });
+
+                JobSchedulers = NewJobSchedulers;
             }
         }
 
-        private async Task UpdateJobTrigger(IScheduler scheduler, IEnumerable<JobScheduleViewModel> jobScheduleList)
-        {
-            foreach (var jobSchedule in jobScheduleList)
-            {
-                var trigger = CreateTrigger(jobSchedule);
-
-                var isNewTrigger = IsNewTrigger(jobSchedule, _jobSchedules);
-
-                if (isNewTrigger)                
-                    await scheduler.ScheduleJob(trigger);                
-                else                
-                    await scheduler.RescheduleJob(new TriggerKey(jobSchedule.TriggerName), trigger);
-
-                if (!jobSchedule.IsActive)                
-                    await scheduler.PauseTrigger(new TriggerKey(jobSchedule.TriggerName));                
-            }
-        }
-
-        private async Task NewJobTrigger(IScheduler scheduler, IEnumerable<JobScheduleViewModel> jobScheduleList)
-        {
-            foreach (var jobSchedule in jobScheduleList)
-            {
-                if (!jobSchedule.Validate())
-                    continue;
-
-                var job = CreateJob(jobSchedule);
-                var trigger = CreateTrigger(jobSchedule);
-
-                await scheduler.ScheduleJob(job, trigger);
-
-                if (!jobSchedule.IsActive)
-                    await scheduler.PauseTrigger(new TriggerKey(jobSchedule.TriggerName));
-            }
-        }
-
-        private static IJobDetail CreateJob(JobScheduleViewModel schedule)
+        private IJobDetail BuildJob(Job job, string groupName)
         {
             return JobBuilder
-                .Create(schedule.JobType)
-                .WithIdentity(schedule.JobName, schedule.Group)
-                .WithDescription(schedule.JobName)
-                .UsingJobData("apiUrl", schedule.APIUrl)
+                .Create(Type.GetType(job.JobType))
+                .WithIdentity(job.JobName, groupName)
+                .WithDescription(job.JobName)
+                .UsingJobData("apiUrl", job.APIUrl)
                 .Build();
         }
 
-        private static ITrigger CreateTrigger(JobScheduleViewModel schedule)
+        private ITrigger BuildTrigger(Trigger trigger)
         {
-            var builder = TriggerBuilder
+            return TriggerBuilder
                 .Create()
-                .WithIdentity($"{schedule.TriggerName}")
-                .WithDescription(schedule.TriggerName);
-
-            schedule.Cron.Apply(builder, schedule);
-
-            return builder.Build();
+                .WithIdentity(trigger.TriggerName)
+                .WithDescription(trigger.TriggerName)
+                .WithCronSchedule(trigger.CronExpression)
+                .Build();
         }
-       
+
     }
 }

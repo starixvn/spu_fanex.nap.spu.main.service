@@ -10,17 +10,17 @@
 
     public static class JobInit
     {
-        public static void AddSingletonJob(this IServiceCollection services, AppSettings appSettings)
+        public static void AddSingletonJob(this IServiceCollection services, IAppSettings appSettings)
         {
-            var schedule = appSettings.Schedulers;
+            var schedulers = appSettings.Schedulers;
 
-            if (schedule != null && schedule.GroupJobs.Any())
+            if (schedulers != null && schedulers.GroupJobs.Any())
             {
-                var jobSchedules = GetJobSchedules(schedule.GroupJobs);
+                //var jobSchedules = GetJobSchedules(schedulers.GroupJobs);
 
-                services.AddSingleton(jobSchedules);
+                //services.AddSingleton(schedulers);
 
-                services.AddSingletonHealthCheck(jobSchedules);
+                services.AddSingletonHealthCheck(schedulers);
             }
         }
 
@@ -34,7 +34,7 @@
                 {
                     foreach (var trigger in job.Triggers)
                     {
-                        jobScheduleList.Add(new JobScheduleViewModel(group.GroupName, job, trigger));
+                        jobScheduleList.Add(new JobScheduleViewModel(group, job, trigger));
                     }
                 }
             }

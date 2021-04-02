@@ -2,8 +2,11 @@
 using Quartz;
 using Sentry;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
@@ -25,7 +28,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
             var jobName = context.JobDetail.Key.Name;
             var apiUrl = dataMap.GetString("apiUrl");
             var count = dataMap.GetInt("count");
-
+            
             if(count >= 5)
             {
                 var e = new JobExecutionException("Retries exceeded");
@@ -39,7 +42,11 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
             try
             {
-                var result = await jobService.Execute(jobName, apiUrl);
+                var size = JobHelper.GetQueryInt(apiUrl, "size");
+                var numberOfBatch = JobHelper.GetQueryInt(apiUrl, "numberOfBatch");
+                var url = JobHelper.GetUrl(apiUrl);
+
+                var result = await jobService.Execute(jobName, url, size, numberOfBatch);
 
                 if (!result)
                 {
@@ -76,6 +83,6 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
             jobExecutionException.RefireImmediately = true;
 
             return jobExecutionException;
-        }
+        }        
     }
 }

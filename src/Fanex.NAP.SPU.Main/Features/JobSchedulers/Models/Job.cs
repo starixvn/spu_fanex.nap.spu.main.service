@@ -1,22 +1,51 @@
 ﻿namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Job
     {
+        public int JobId { get; set; }
+
         public string JobName { get; set; }
 
         public string JobType { get; set; }
 
         public string APIUrl { get; set; }
 
-        public string HealthCheckUrl { get; set; }
+        public string MethodName { get; set; }
 
         public bool Active { get; set; }
 
-        public UpdateStatus UpdateStatus { get; set; }
+        public IEnumerable<Trigger> Triggers { get; set; }               
 
-        public IEnumerable<Trigger> Triggers { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as Job;
+
+            if (other == null) return false;
+
+            if (other.JobName != JobName ||
+                other.JobType != JobType ||
+                other.APIUrl != APIUrl ||
+                other.MethodName != MethodName ||
+                other.Active != Active ||
+                !EqualTrigger(Triggers, other.Triggers)                )
+            {
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool EqualTrigger(IEnumerable<Trigger> triggers1, IEnumerable<Trigger> triggers2)
+        {            
+            return triggers1.All(triggers2.Contains);
+        }
+
+        public override int GetHashCode() => (JobName, JobType, APIUrl, MethodName, Active, Triggers).GetHashCode();
 
     }
 }

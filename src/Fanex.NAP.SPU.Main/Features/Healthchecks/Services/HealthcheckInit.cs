@@ -1,6 +1,7 @@
 ﻿namespace Fanex.NAP.SPU.Main.Features.Healthchecks.Services
 {
     using Fanex.NAP.SPU.Main.Features.Healthchecks.Models;
+    using Fanex.NAP.SPU.Main.Features.JobSchedulers.Models;
     using Fanex.NAP.SPU.Main.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.Middleware;
     using Microsoft.Extensions.DependencyInjection;
@@ -8,19 +9,16 @@
 
     public static class HealthcheckInit
     {
-        public static void AddSingletonHealthCheck(this IServiceCollection services, JobSchedules jobSchedules)
+        public static void AddSingletonHealthCheck(this IServiceCollection services, Scheduler jobSchedules)
         {
             services
                .AddHealthChecksUI(setup =>
                {
                    setup.AddHealthCheckEndpoint("Main Service", "/healthz");                                      
 
-                   foreach (var job in jobSchedules.JobScheduleList)
+                   foreach (var groupJob in jobSchedules.GroupJobs)
                    {
-                       if (!string.IsNullOrWhiteSpace(job.HealthCheckUrl))
-                       {
-                           setup.AddHealthCheckEndpoint(job.JobName, job.HealthCheckUrl);
-                       }
+                       setup.AddHealthCheckEndpoint(groupJob.Name, groupJob.HealthCheck);
                    }
 
                    setup.AddWebhookNotification("notification",
