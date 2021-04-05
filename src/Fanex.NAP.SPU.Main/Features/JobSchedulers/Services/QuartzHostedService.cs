@@ -130,19 +130,18 @@
                     if (groupJob.ExistingJobs != null && groupJob.ExistingJobs.Any())
                     {
                         groupJob.ExistingJobs.ToList().ForEach(job =>
-                        {                               
+                        {
                             job.Triggers.ToList().ForEach(trigger => {
                                 
-                                _scheduler.RescheduleJob(new TriggerKey(trigger.TriggerName), BuildTrigger(trigger));
-                            });  
-                            
-                            if(!job.Active)
-                            {
-                                job.Triggers.ToList().ForEach(trigger => {
-
+                                if (!job.Active)
+                                {
                                     _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
-                                });                                
-                            }
+                                }
+                                else
+                                {
+                                    _scheduler.RescheduleJob(new TriggerKey(trigger.TriggerName), BuildTrigger(trigger));
+                                }
+                            });                           
 
                         });
                     }
@@ -151,9 +150,19 @@
                     {
                         groupJob.NewJobs.ToList().ForEach(job =>
                         {
-                            var buildJob = BuildJob(job, groupJob.Name);
+                            var buildJob = BuildJob(job, groupJob.Name);                                                        
 
-                            _scheduler.AddJob(buildJob, replace: false);
+                            job.Triggers.ToList().ForEach(trigger => {
+
+                                var buildTrigger = BuildTrigger(trigger);
+
+                                _scheduler.ScheduleJob(buildJob, buildTrigger);
+
+                                if(!job.Active)
+                                {
+                                    _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
+                                }
+                            });
                         });
                     }
                 });
