@@ -22,10 +22,7 @@
         </td>
         <td class="table-job-td-header" style="width:60px">
             <span>IsActive</span>
-        </td>
-        <td class="table-job-td-header" style="width:60px">
-            <span>Status</span>
-        </td>
+        </td>        
     </tr>
 
             @if (Model != null && Model.Any())
@@ -54,13 +51,11 @@
                                 <td class="table-job-td-body">
                                     <span>@job.Active</span>
                                 </td>
-                                <td class="table-job-td-body">
-                                    <span>@(groupJob.ExistingJobs.Any(x=>x.JobId == job.JobId) ? "Existing" : "New")</span>
-                                </td>
+                               
                             </tr>
 
                         <tr data-job-name=@(job.JobName) class="is-hidden">
-                            <td colspan="5">
+                            <td colspan="4">
                                 <table class="table-trigger">
                                     <tr class="table-trigger-tr-header">
                                         <td class="table-trigger-td-header">

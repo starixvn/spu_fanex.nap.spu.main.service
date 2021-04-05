@@ -19,7 +19,7 @@
                 "TriggerName": "UserAgent_Trigger1",
                 "TriggerType": "Cron",
                 "RepeatForever": "true",
-                "CronExpression": "0/30 * * * * ?"
+                "CronExpression": "0/45 * * * * ?"
               }
             ]
           },
@@ -34,23 +34,6 @@
               {
                 "TriggerId": 1,
                 "TriggerName": "TransformDevice_Trigger",
-                "TriggerType": "Cron",
-                "RepeatForever": "true",
-                "CronExpression": "0/45 * * * * ?"
-              }
-            ]
-          },
-          {
-            "JobId": 3,
-            "JobName": "DCS_Transform_Device_Job3",
-            "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
-            "APIUrl": "http://localhost:62391/api",
-            "MethodName": "TransformDevice",
-            "Active": "true",
-            "Triggers": [
-              {
-                "TriggerId": 1,
-                "TriggerName": "TransformDevice_Trigger3",
                 "TriggerType": "Cron",
                 "RepeatForever": "true",
                 "CronExpression": "0/45 * * * * ?"

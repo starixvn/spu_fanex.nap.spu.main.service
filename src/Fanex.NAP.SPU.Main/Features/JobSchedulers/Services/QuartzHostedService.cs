@@ -105,11 +105,14 @@
                     var oldJobs = JobSchedulers.GroupJobs.FirstOrDefault(x => x.Id == groupJob.Id).Jobs;
 
                     var f1Jobs = newJobs.Where(f1 => oldJobs.All(f2 => !f1.Equals(f2)));
+                    var f2Jobs = newJobs.Count() != oldJobs.Count() ? oldJobs.Where(f1 => newJobs.All(f2 => !f1.Equals(f2))) : new List<Job>();
 
-                    groupJob.Jobs = f1Jobs;
+                    groupJob.Jobs = f1Jobs.Concat(f2Jobs);
 
                     groupJob.ExistingJobs = f1Jobs.Where(x => oldJobs.Any(a => a.JobId == x.JobId));
                     groupJob.NewJobs = f1Jobs.Where(x => !oldJobs.Any(a => a.JobId == x.JobId));
+
+                    groupJob.DeletedJobs = oldJobs.Where(x => !newJobs.Any(a=>a.JobId == x.JobId));
 
                     return groupJob;
                 });
@@ -124,50 +127,75 @@
 
             if (groupJobs != null && groupJobs.Any())
             {
+                var tasks = new List<Task>();
+
                 groupJobs.ToList().ForEach(groupJob =>
                 {
-
-                    if (groupJob.ExistingJobs != null && groupJob.ExistingJobs.Any())
-                    {
-                        groupJob.ExistingJobs.ToList().ForEach(job =>
-                        {
-                            job.Triggers.ToList().ForEach(trigger => {
-                                
-                                if (!job.Active)
-                                {
-                                    _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
-                                }
-                                else
-                                {
-                                    _scheduler.RescheduleJob(new TriggerKey(trigger.TriggerName), BuildTrigger(trigger));
-                                }
-                            });                           
-
-                        });
-                    }
-
-                    if (groupJob.NewJobs != null && groupJob.NewJobs.Any())
-                    {
-                        groupJob.NewJobs.ToList().ForEach(job =>
-                        {
-                            var buildJob = BuildJob(job, groupJob.Name);                                                        
-
-                            job.Triggers.ToList().ForEach(trigger => {
-
-                                var buildTrigger = BuildTrigger(trigger);
-
-                                _scheduler.ScheduleJob(buildJob, buildTrigger);
-
-                                if(!job.Active)
-                                {
-                                    _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
-                                }
-                            });
-                        });
-                    }
+                    tasks.Add(Task.Run(() => UpdateJob(groupJob)));
+                    tasks.Add(Task.Run(() => AddNewJob(groupJob)));
+                    tasks.Add(Task.Run(() => DeleteJob(groupJob)));                    
                 });
 
+                Task.WhenAll(tasks);
+
                 JobSchedulers = NewJobSchedulers;
+            }
+        }
+        private void DeleteJob(GroupJob groupJob)
+        {
+            if (groupJob.DeletedJobs != null && groupJob.DeletedJobs.Any())
+            {
+                groupJob.DeletedJobs.ToList().ForEach(job =>
+                {
+                    _scheduler.DeleteJob(new JobKey(job.JobName, groupJob.Name));
+                });
+            }
+        }
+
+        private void AddNewJob(GroupJob groupJob)
+        {
+            if (groupJob.NewJobs != null && groupJob.NewJobs.Any())
+            {
+                groupJob.NewJobs.ToList().ForEach(job =>
+                {
+                    var buildJob = BuildJob(job, groupJob.Name);
+
+                    job.Triggers.ToList().ForEach(trigger =>
+                    {
+
+                        var buildTrigger = BuildTrigger(trigger);
+
+                        _scheduler.ScheduleJob(buildJob, buildTrigger);
+
+                        if (!job.Active)
+                        {
+                            _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
+                        }
+                    });
+                });
+            }
+        }
+
+        private void UpdateJob(GroupJob groupJob)
+        {
+            if (groupJob.ExistingJobs != null && groupJob.ExistingJobs.Any())
+            {
+                groupJob.ExistingJobs.ToList().ForEach(job =>
+                {
+                    job.Triggers.ToList().ForEach(trigger =>
+                    {
+
+                        if (!job.Active)
+                        {
+                            _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
+                        }
+                        else
+                        {
+                            _scheduler.RescheduleJob(new TriggerKey(trigger.TriggerName), BuildTrigger(trigger));
+                        }
+                    });
+
+                });
             }
         }
 

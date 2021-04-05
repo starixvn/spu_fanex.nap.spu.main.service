@@ -26,7 +26,7 @@
 
         private bool EqualGroupJob(IEnumerable<GroupJob> groupJobs1, IEnumerable<GroupJob> groupJobs2)
         {
-            return groupJobs1.All(groupJobs2.Contains);
+            return groupJobs1.Count() == groupJobs2.Count() && groupJobs1.All(groupJobs2.Contains);
         }
 
         public override int GetHashCode() => (GroupJobs).GetHashCode();

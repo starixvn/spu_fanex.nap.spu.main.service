@@ -42,7 +42,7 @@
 
         private bool EqualTrigger(IEnumerable<Trigger> triggers1, IEnumerable<Trigger> triggers2)
         {            
-            return triggers1.All(triggers2.Contains);
+            return triggers1.Count() == triggers2.Count() &&  triggers1.All(triggers2.Contains);
         }
 
         public override int GetHashCode() => (JobName, JobType, APIUrl, MethodName, Active, Triggers).GetHashCode();

@@ -17,6 +17,8 @@
 
         public IEnumerable<Job> NewJobs { get; set; }
 
+        public IEnumerable<Job> DeletedJobs { get; set; }
+
         public override bool Equals(object obj)
         {
             var other = obj as GroupJob;
@@ -34,7 +36,7 @@
 
         private bool EqualJobs(IEnumerable<Job> jobs1, IEnumerable<Job> jobs2)
         {          
-            return jobs1.All(jobs2.Contains);
+            return jobs1.Count() == jobs2.Count() && jobs1.All(jobs2.Contains);
         }
 
         public override int GetHashCode() => (Name, HealthCheck, Jobs).GetHashCode();        
