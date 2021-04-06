@@ -10,7 +10,7 @@ RUN dotnet nuget add source http://nuget.nexdev.net/api/v2
 
 RUN dotnet restore -v n
 
-COPY ./Fanex.NAP.SPU.Main .
+COPY ./src/Fanex.NAP.SPU.Main .
 
 RUN dotnet publish -r linux-x64 --self-contained false -o /app
 
