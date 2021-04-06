@@ -41,7 +41,7 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
             {
                 var uri = new Uri(apiUrl);
 
-                return uri.AbsoluteUri;
+                return uri.AbsoluteUri.Replace(uri.Query, string.Empty);
 
             }
 

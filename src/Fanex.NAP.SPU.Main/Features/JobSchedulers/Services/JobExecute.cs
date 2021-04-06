@@ -28,12 +28,13 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
             var jobName = context.JobDetail.Key.Name;
             var apiUrl = dataMap.GetString("apiUrl");
             var count = dataMap.GetInt("count");
-            
-            if(count >= 5)
+            var methodName = dataMap.GetString("methodName");
+
+            if (count >= 5)
             {
                 var e = new JobExecutionException("Retries exceeded");
                 //unschedule it so that it doesn't run again
-                e.UnscheduleAllTriggers = true;
+                e.UnscheduleAllTriggers = true;                
 
                 sentryClient.CaptureMessage($"{jobName} is STOPPED. Cause of RETRIED EXECEEDED.", SentryLevel.Error);
 
@@ -45,8 +46,8 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 var size = JobHelper.GetQueryInt(apiUrl, "size");
                 var numberOfBatch = JobHelper.GetQueryInt(apiUrl, "numberOfBatch");
                 var url = JobHelper.GetUrl(apiUrl);
-
-                var result = await jobService.Execute(jobName, url, size, numberOfBatch);
+                
+                var result = await jobService.Execute(jobName, url, methodName, size, numberOfBatch);
 
                 if (!result)
                 {

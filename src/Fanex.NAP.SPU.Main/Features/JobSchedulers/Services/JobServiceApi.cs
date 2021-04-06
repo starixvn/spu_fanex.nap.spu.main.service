@@ -7,7 +7,7 @@
 
     public interface IJobServiceApi
     {
-        [Post("/job/execute")]
-        Task<bool> Execute(string jobName, int size = 0, int numberOfBatch = 0);
+        [Post("/job/{methodName}")]
+        Task<bool> Execute(string jobName, string methodName, int size = 0, int numberOfBatch = 0);
     }    
 }

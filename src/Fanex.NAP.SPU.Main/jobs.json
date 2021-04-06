@@ -8,32 +8,15 @@
         "Jobs": [
           {
             "JobId": 1,
-            "JobName": "DCS_UserAgent_Job1",
+            "JobName": "DCS_UserAgent_Job",
             "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
-            "APIUrl": "http://localhost:62391/api",
+            "APIUrl": "http://localhost:62391/api?size=100&numberOfBatch=2",
             "MethodName": "UserAgent",
             "Active": "true",
             "Triggers": [
               {
                 "TriggerId": 1,
-                "TriggerName": "UserAgent_Trigger1",
-                "TriggerType": "Cron",
-                "RepeatForever": "true",
-                "CronExpression": "0/45 * * * * ?"
-              }
-            ]
-          },
-          {
-            "JobId": 2,
-            "JobName": "DCS_Transform_Device_Job2",
-            "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
-            "APIUrl": "http://localhost:62391/api",
-            "MethodName": "TransformDevice",
-            "Active": "true",
-            "Triggers": [
-              {
-                "TriggerId": 1,
-                "TriggerName": "TransformDevice_Trigger",
+                "TriggerName": "UserAgent_Trigger",
                 "TriggerType": "Cron",
                 "RepeatForever": "true",
                 "CronExpression": "0/45 * * * * ?"
@@ -49,10 +32,9 @@
         "Jobs": [
           {
             "JobId": 1,
-            "JobName": "CTS_Customer_Evidence1",
+            "JobName": "CTS_Customer_Evidence",
             "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
-            "APIUrl": "http://localhost:62391/api",
-            "HealthCheckUrl": "http://localhost:62391/healthz",
+            "APIUrl": "http://localhost:62391/api?size=200&numberOfBatch=2",
             "MethodName": "TransformDevice",
             "Active": "true",
             "Triggers": [

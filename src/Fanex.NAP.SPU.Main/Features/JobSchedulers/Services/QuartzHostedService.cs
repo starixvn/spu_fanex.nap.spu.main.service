@@ -206,6 +206,7 @@
                 .WithIdentity(job.JobName, groupName)
                 .WithDescription(job.JobName)
                 .UsingJobData("apiUrl", job.APIUrl)
+                .UsingJobData("methodName", job.MethodName)
                 .Build();
         }
 
