@@ -5,6 +5,9 @@ WORKDIR /src
 COPY ["./src/Fanex.NAP.SPU.Main/Fanex.NAP.SPU.Main.csproj", "Fanex.NAP.SPU.Main/"]
 
 WORKDIR "/src/Fanex.NAP.SPU.Main"
+
+RUN dotnet nuget add source http://nuget.nexdev.net/api/v2
+
 RUN dotnet restore -v n
 
 COPY ./Fanex.NAP.SPU.Main .
