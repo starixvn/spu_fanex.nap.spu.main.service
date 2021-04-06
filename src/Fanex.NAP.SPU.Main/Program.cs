@@ -36,7 +36,7 @@ namespace Fanex.NAP.SPU.Main
                    .ConfigureWebHostDefaults(webBuilder =>
                    {
                        webBuilder                       
-                       .UseUrls($"http://*:{configuration["HostingPort"]}")
+                       .UseUrls($"http://0.0.0.0:5000")
                        .UseSentry()                       
                        .UseStartup<Startup>();
                    }).Build();
