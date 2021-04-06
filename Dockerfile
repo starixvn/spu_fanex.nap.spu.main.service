@@ -1,13 +1,13 @@
 FROM registry.nexdev.net:5050/docker/dotnet/core/sdk:5.0.102-ca-patch-buster-slim AS builder
 
-WORKDIR /src/Fanex.NAP.SPU.Main
+WORKDIR /src
 
-COPY ["Fanex.NAP.SPU.Main.csproj", "src/Fanex.NAP.SPU.Main/"]
+COPY ["./src/Fanex.NAP.SPU.Main/Fanex.NAP.SPU.Main.csproj", "Fanex.NAP.SPU.Main/"]
 
 WORKDIR "/src/Fanex.NAP.SPU.Main"
 RUN dotnet restore -v n
 
-COPY ./src/Fanex.NAP.SPU.Main .
+COPY ./Fanex.NAP.SPU.Main .
 
 RUN dotnet publish -r linux-x64 --self-contained false -o /app
 
