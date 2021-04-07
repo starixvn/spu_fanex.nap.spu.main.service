@@ -1,5 +1,6 @@
 namespace Fanex.NAP.SPU.Main
 {
+    using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
@@ -11,12 +12,19 @@ namespace Fanex.NAP.SPU.Main
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args);
-            SentrySdk.CaptureMessage(string.Format("{0} has been started at {1}", typeof(Program).FullName, DateTime.Now));
-            host.Run();
+            try
+            {
+                var host = CreateHostBuilder(args).Build();
+                SentrySdk.CaptureMessage(string.Format("{0} has been started at {1}", typeof(Program).FullName, DateTime.Now));
+                host.Run();
+            }
+            catch (Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+            }
         }
 
-        public static IHost CreateHostBuilder(string[] args)
+        public static IWebHostBuilder CreateHostBuilder(string[] args)
         {
             var configuration = new ConfigurationBuilder()
                    .SetBasePath(Directory.GetCurrentDirectory())
@@ -25,23 +33,18 @@ namespace Fanex.NAP.SPU.Main
                    .AddEnvironmentVariables()
                    .Build();
 
-
-            return Host.CreateDefaultBuilder(args)
-                     .ConfigureAppConfiguration((hostingContext, config) =>
+            return WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
                      {
                          config.Sources.Clear();
 
                          config.AddConfiguration(configuration);
                      })
-                   .ConfigureWebHostDefaults(webBuilder =>
-                   {
-                       webBuilder                      
-                       .UseStartup<Startup>()
-                       .UseSentry()                       
-                       .UseUrls($"http://0.0.0.0:{configuration["HostingPort"]}");
-
-
-                   }).Build();
+              .UseKestrel()
+              .UseUrls($"http://0.0.0.0:{configuration["HostingPort"]}")
+              .UseSentry()
+              .UseIISIntegration()
+              .UseStartup<Startup>();            
         }        
     }
 }
