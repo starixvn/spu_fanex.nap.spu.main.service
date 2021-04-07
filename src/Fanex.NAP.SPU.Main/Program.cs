@@ -27,18 +27,20 @@ namespace Fanex.NAP.SPU.Main
 
 
             return Host.CreateDefaultBuilder(args)
-                 .ConfigureAppConfiguration((hostingContext, config) =>
-                 {
-                     config.Sources.Clear();
+                     .ConfigureAppConfiguration((hostingContext, config) =>
+                     {
+                         config.Sources.Clear();
 
-                     config.AddConfiguration(configuration);
-                 })
+                         config.AddConfiguration(configuration);
+                     })
                    .ConfigureWebHostDefaults(webBuilder =>
                    {
-                       webBuilder                       
-                       .UseUrls($"http://*:{configuration["HostingPort"]}")
+                       webBuilder                      
+                       .UseStartup<Startup>()
                        .UseSentry()                       
-                       .UseStartup<Startup>();
+                       .UseUrls($"http://0.0.0.0:{configuration["HostingPort"]}");
+
+
                    }).Build();
         }        
     }
