@@ -106,7 +106,7 @@ namespace Fanex.NAP.SPU.Main
                 option.AddCustomStylesheet(@"wwwroot/css/healthcheck.css");
             });            
 
-            app.UseStaticFiles();
+            app.UseStaticFiles();                       
 
             app.UseRouting();
 

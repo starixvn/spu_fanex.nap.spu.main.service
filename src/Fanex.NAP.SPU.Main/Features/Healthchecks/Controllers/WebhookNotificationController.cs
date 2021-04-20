@@ -1,6 +1,7 @@
 ﻿using Fanex.NAP.SPU.Main.Features.Healthchecks.Models;
 using Microsoft.AspNetCore.Mvc;
 using Sentry;
+using Sentry.Protocol;
 using System;
 using System.Threading.Tasks;
 
@@ -15,12 +16,12 @@ namespace Fanex.NAP.SPU.Main.Features.Healthchecks.Controllers
             this.sentryClient = sentryClient;
         }
 
-        [HttpPost]        
-        public async Task<IActionResult> Send([FromBody] NotificationModel model)
+        [HttpPost]
+        public IActionResult Send([FromBody] NotificationModel model)
         {
-            if(model != null)
+            if (model != null)
             {
-                this.sentryClient.CaptureMessage(model.Message, model.ErrorCode == 0 ? SentryLevel.Info : SentryLevel.Error);                
+                this.sentryClient.CaptureMessage(model.Message, model.ErrorCode == 0 ? SentryLevel.Info : SentryLevel.Error);
             }
 
             return Ok();

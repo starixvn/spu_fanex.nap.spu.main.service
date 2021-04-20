@@ -1,6 +1,7 @@
 ﻿using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
 using Quartz;
 using Sentry;
+using Sentry.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;

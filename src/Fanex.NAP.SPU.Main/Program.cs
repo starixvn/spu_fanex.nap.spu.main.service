@@ -35,16 +35,16 @@ namespace Fanex.NAP.SPU.Main
 
             return WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
-                     {
-                         config.Sources.Clear();
+                {
+                    config.Sources.Clear();
 
-                         config.AddConfiguration(configuration);
-                     })
+                    config.AddConfiguration(configuration);
+                })
               .UseKestrel()
               .UseUrls($"http://0.0.0.0:{configuration["HostingPort"]}")
               .UseSentry()
               .UseIISIntegration()
-              .UseStartup<Startup>();            
-        }        
+              .UseStartup<Startup>();
+        }
     }
 }
