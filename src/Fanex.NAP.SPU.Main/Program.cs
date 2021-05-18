@@ -29,7 +29,7 @@ namespace Fanex.NAP.SPU.Main
             var configuration = new ConfigurationBuilder()
                    .SetBasePath(Directory.GetCurrentDirectory())
                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                   .AddJsonFile("jobs.json", optional: false, reloadOnChange: true)
+                   //.AddJsonFile("jobs.json", optional: false, reloadOnChange: true)
                    .AddEnvironmentVariables()
                    .Build();
 

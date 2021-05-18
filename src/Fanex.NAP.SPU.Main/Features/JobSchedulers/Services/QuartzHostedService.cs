@@ -71,9 +71,7 @@
                     groupJob.Jobs.ToList().ForEach(job =>
                     {
                         var jobDetail = BuildJob(job, groupJob.Name);
-
-                        sentryClient.CaptureMessage(job.JobName + " - " + job.APIUrl);
-
+                                                
                         job.Triggers.ToList().ForEach(trigger =>
                         {
                             var triggerDetail = BuildTrigger(trigger);
