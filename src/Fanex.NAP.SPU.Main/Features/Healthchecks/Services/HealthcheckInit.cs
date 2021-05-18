@@ -13,9 +13,7 @@
         {
             services
                .AddHealthChecksUI(setup =>
-               {
-                   setup.AddHealthCheckEndpoint("Main Service", "/healthz");                                      
-
+               {                   
                    foreach (var groupJob in jobSchedules.GroupJobs)
                    {
                        setup.AddHealthCheckEndpoint(groupJob.Name, groupJob.HealthCheck);
