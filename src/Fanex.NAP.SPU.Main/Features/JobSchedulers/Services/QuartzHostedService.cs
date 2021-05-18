@@ -6,6 +6,7 @@
     using Microsoft.Extensions.Hosting;
     using Quartz;
     using Quartz.Spi;
+    using Sentry;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -19,13 +20,17 @@
         private readonly IConfiguration _configuration;
         private readonly IAppSettings _appSettings;
         private readonly IScheduler _scheduler;
+        private readonly ISentryClient sentryClient;
+
 
         public QuartzHostedService(
             ISchedulerFactory schedulerFactory,
             IJobFactory jobFactory,
             IConfiguration _configuration,
-            IAppSettings _appSettings)
+            IAppSettings _appSettings,
+            ISentryClient sentryClient)
         {
+            this.sentryClient = sentryClient;
             _schedulerFactory = schedulerFactory;
             _jobFactory = jobFactory;
             this._configuration = _configuration;
@@ -60,12 +65,14 @@
                 _scheduler.JobFactory = _jobFactory;
 
                 var groupJobs = JobSchedulers.GroupJobs;
-
+                                
                 foreach (var groupJob in groupJobs)
                 {
                     groupJob.Jobs.ToList().ForEach(job =>
                     {
                         var jobDetail = BuildJob(job, groupJob.Name);
+
+                        sentryClient.CaptureMessage(job.JobName + " - " + job.APIUrl);
 
                         job.Triggers.ToList().ForEach(trigger =>
                         {
