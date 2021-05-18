@@ -3,7 +3,7 @@
     "GroupJobs": [
       {
         "Id": 1,
-        "Name": "DCS",
+        "Name": "DCS1",
         "HealthCheck": "http://spu-dcs-job.nexdev.net/healthz",
         "Jobs": [
           {

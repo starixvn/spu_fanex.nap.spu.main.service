@@ -152,7 +152,7 @@
                 Task.WhenAll(tasks);
 
                 JobSchedulers = NewJobSchedulers;
-            }
+            }           
         }
         private void DeleteJob(GroupJob groupJob)
         {

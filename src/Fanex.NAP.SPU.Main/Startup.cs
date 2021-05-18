@@ -40,6 +40,8 @@ namespace Fanex.NAP.SPU.Main
         {
             var appSettings = new AppSettings(this.Configuration);
 
+            
+
             services.AddControllersWithViews();           
 
             services.AddSingleton<IAppSettings>(appSettings);
@@ -72,11 +74,11 @@ namespace Fanex.NAP.SPU.Main
             services.AddRefitClient<IJobServiceApi>();
             services.AddSingleton<IJobService, JobService>();
 
-            services.AddSingleton<QuartzJobRunner>();
-            services.AddSingleton<QuartzHostedService>();
+            services.AddSingleton<QuartzJobRunner>();            
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<JobExecute>();
-            services.AddSingletonJob(appSettings);            
+
+            services.AddSingletonJob(appSettings);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

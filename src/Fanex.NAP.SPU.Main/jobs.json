@@ -2,15 +2,15 @@
   "Schedulers": {
     "GroupJobs": [
       {
-        "Id":  1,
+        "Id": 1,
         "Name": "DCS",
-        "HealthCheck": "http://localhost:62391/healthz",
+        "HealthCheck": "http://spu-dcs-job.nexdev.net/healthz",
         "Jobs": [
           {
             "JobId": 1,
             "JobName": "DCS_UserAgent_Job",
             "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
-            "APIUrl": "http://localhost:62391/api?size=100&numberOfBatch=2",
+            "APIUrl": "http://spu-dcs-job.nexdev.net/api?size=100&numberOfBatch=2",
             "MethodName": "UserAgent",
             "Active": "true",
             "Triggers": [
