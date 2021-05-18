@@ -83,7 +83,7 @@
                 }
 
                 await _scheduler.Start(cancellationToken);
-            }                        
+            }
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
@@ -99,23 +99,36 @@
 
             if (!result)
             {
-                return NewJobSchedulers.GroupJobs.Select(groupJob =>
+                var newGroupJobScheduler = NewJobSchedulers.GroupJobs.Where(x => !JobSchedulers.GroupJobs.Any(a => a.Id == x.Id));
+
+                if (newGroupJobScheduler != null && newGroupJobScheduler.Any())
                 {
-                    var newJobs = groupJob.Jobs;
-                    var oldJobs = JobSchedulers.GroupJobs.FirstOrDefault(x => x.Id == groupJob.Id).Jobs;
+                    return newGroupJobScheduler.Select(x=> {
+                        x.NewJobs = x.Jobs;
+                        return x;
+                    });
+                }
+                else
+                {
+                    return NewJobSchedulers.GroupJobs.Select(groupJob =>
+                    {
+                        var newJobs = groupJob.Jobs;
+                        var oldJobs = JobSchedulers.GroupJobs.FirstOrDefault(x => x.Id == groupJob.Id).Jobs;
 
-                    var f1Jobs = newJobs.Where(f1 => oldJobs.All(f2 => !f1.Equals(f2)));
-                    var f2Jobs = newJobs.Count() != oldJobs.Count() ? oldJobs.Where(f1 => newJobs.All(f2 => !f1.Equals(f2))) : new List<Job>();
+                        var f1Jobs = newJobs.Where(f1 => oldJobs.All(f2 => !f1.Equals(f2)));
+                        var f2Jobs = newJobs.Count() != oldJobs.Count() ? oldJobs.Where(f1 => newJobs.All(f2 => !f1.Equals(f2))) : new List<Job>();
 
-                    groupJob.Jobs = f1Jobs.Concat(f2Jobs);
+                        groupJob.Jobs = f1Jobs.Concat(f2Jobs);
 
-                    groupJob.ExistingJobs = f1Jobs.Where(x => oldJobs.Any(a => a.JobId == x.JobId));
-                    groupJob.NewJobs = f1Jobs.Where(x => !oldJobs.Any(a => a.JobId == x.JobId));
+                        groupJob.ExistingJobs = f1Jobs.Where(x => oldJobs != null && oldJobs.Any(a => a.JobId == x.JobId));
+                        groupJob.NewJobs = f1Jobs.Where(x => oldJobs != null && !oldJobs.Any(a => a.JobId == x.JobId));
 
-                    groupJob.DeletedJobs = oldJobs.Where(x => !newJobs.Any(a=>a.JobId == x.JobId));
+                        groupJob.DeletedJobs = oldJobs.Where(x => !newJobs.Any(a => a.JobId == x.JobId));
 
-                    return groupJob;
-                });
+                        return groupJob;
+                    });
+                }
+
             }
 
             return new List<GroupJob>();
@@ -133,7 +146,7 @@
                 {
                     tasks.Add(Task.Run(() => UpdateJob(groupJob)));
                     tasks.Add(Task.Run(() => AddNewJob(groupJob)));
-                    tasks.Add(Task.Run(() => DeleteJob(groupJob)));                    
+                    tasks.Add(Task.Run(() => DeleteJob(groupJob)));
                 });
 
                 Task.WhenAll(tasks);

@@ -48,6 +48,47 @@
             ]
           }
         ]
+      },
+      {
+        "Id": 3,
+        "Name": "FS",
+        "HealthCheck": "http://spu-fs-job.nexdev.net/healthz",
+        "Jobs": [
+          {
+            "JobId": 1,
+            "JobName": "FS_BigStateNearGoal",
+            "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
+            "APIUrl": "http://spu-fs-job.nexdev.net/api",
+            "MethodName": "bigstateneargoal",
+            "Active": "true",
+            "Triggers": [
+              {
+                "TriggerId": 1,
+                "TriggerType": "Cron",
+                "TriggerName": "FS_BigStateNearGoal_Trigger",
+                "RepeatForever": "true",
+                "CronExpression": "0/30 * * * * ?"
+              }
+            ]
+          },
+          {
+            "JobId": 2,
+            "JobName": "FS_CheckBet",
+            "JobType": "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
+            "APIUrl": "http://spu-fs-job.nexdev.net/api",
+            "MethodName": "checkbet",
+            "Active": "true",
+            "Triggers": [
+              {
+                "TriggerId": 1,
+                "TriggerType": "Cron",
+                "TriggerName": "FS_CheckBet_Trigger",
+                "RepeatForever": "true",
+                "CronExpression": "0/30 * * * * ?"
+              }
+            ]
+          }
+        ]
       }
     ]   
   }

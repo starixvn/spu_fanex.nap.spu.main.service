@@ -41,7 +41,7 @@
               {
                 "TriggerId": 1,
                 "TriggerType": "Cron",
-                "TriggerName": "Customer_Evidence",
+                "TriggerName": "Customer_Evidence_Trigger",
                 "RepeatForever": "true",
                 "CronExpression": "0/30 * * * * ?"
               }
@@ -65,7 +65,7 @@
               {
                 "TriggerId": 1,
                 "TriggerType": "Cron",
-                "TriggerName": "FS_BigStateNearGoal",
+                "TriggerName": "FS_BigStateNearGoal_Trigger",
                 "RepeatForever": "true",
                 "CronExpression": "0/30 * * * * ?"
               }
@@ -82,7 +82,7 @@
               {
                 "TriggerId": 1,
                 "TriggerType": "Cron",
-                "TriggerName": "FS_CheckBet",
+                "TriggerName": "FS_CheckBet_Trigger",
                 "RepeatForever": "true",
                 "CronExpression": "0/30 * * * * ?"
               }
