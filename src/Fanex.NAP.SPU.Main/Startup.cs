@@ -57,10 +57,7 @@ namespace Fanex.NAP.SPU.Main
             services.AddSingleton<IMaintenanceService, MaintenanceService>();
 
             services
-                .AddHealthChecks()
-                .AddMySql("Data Source=10.18.200.70;Port=3307;Initial Catalog=CTS_DataCenter;Persist Security Info=True;User ID=ctsServiceAdmin;Password=Welcome1")
-                .AddCheck<RandomHealthCheck>("random")
-                .AddDiskStorageHealthCheck(setup => { DriveInfo.GetDrives(); });           
+                .AddHealthChecks();         
 
             services.AddSingleton<IJobFactory, JobFactory>();
             services.AddSingleton<ISchedulerFactory>(p => new StdSchedulerFactory(new NameValueCollection {

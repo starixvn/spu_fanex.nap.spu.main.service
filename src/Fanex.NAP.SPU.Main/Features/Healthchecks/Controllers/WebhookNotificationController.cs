@@ -9,11 +9,11 @@ namespace Fanex.NAP.SPU.Main.Features.Healthchecks.Controllers
 {
     public class WebhookNotificationController : Controller
     {
-        private readonly ISentryClient sentryClient;
+        private readonly ISentryClient sentryClient;       
 
         public WebhookNotificationController(ISentryClient sentryClient)
         {
-            this.sentryClient = sentryClient;
+            this.sentryClient = sentryClient;           
         }
 
         [HttpPost]
@@ -21,7 +21,7 @@ namespace Fanex.NAP.SPU.Main.Features.Healthchecks.Controllers
         {
             if (model != null)
             {
-                this.sentryClient.CaptureMessage(model.Message, model.ErrorCode == 0 ? SentryLevel.Info : SentryLevel.Error);
+               this.sentryClient.CaptureMessage(model.Message, model.ErrorCode == 0 ? SentryLevel.Info : SentryLevel.Error);
             }
 
             return Ok();
