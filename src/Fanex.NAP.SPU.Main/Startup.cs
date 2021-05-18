@@ -74,7 +74,8 @@ namespace Fanex.NAP.SPU.Main
             services.AddRefitClient<IJobServiceApi>();
             services.AddSingleton<IJobService, JobService>();
 
-            services.AddSingleton<QuartzJobRunner>();            
+            services.AddSingleton<QuartzJobRunner>();
+            services.AddSingleton<QuartzHostedService>();
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<JobExecute>();
 
