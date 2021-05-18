@@ -12,6 +12,7 @@ using System.Web;
 namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
     [DisallowConcurrentExecutionAttribute]
+    [PersistJobDataAfterExecution]
     public class JobExecute : IJob
     {
         
