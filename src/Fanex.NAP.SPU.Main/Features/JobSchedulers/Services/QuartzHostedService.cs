@@ -5,6 +5,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Quartz;
+    using Quartz.Impl.Matchers;
     using Quartz.Spi;
     using Sentry;
     using System;
@@ -139,7 +140,7 @@
             return new List<GroupJob>();
         }
 
-        public void ReScheduleJob()
+        public void UpdateScheduleJob()
         {
             var groupJobs = GetJobSchedulerDiff();
 
@@ -159,6 +160,7 @@
                 JobSchedulers = NewJobSchedulers;
             }           
         }
+
         private void DeleteJob(GroupJob groupJob)
         {
             if (groupJob.DeletedJobs != null && groupJob.DeletedJobs.Any())

@@ -42,10 +42,9 @@
         [HttpGet]
         public async Task<IActionResult> SaveUpdateJobs()
         {
-            _quartzHostedService.ReScheduleJob();
+            _quartzHostedService.UpdateScheduleJob();
 
             return RedirectToAction("CheckUpdateJobs") ;
-        }               
-           
+        }
     }
 }

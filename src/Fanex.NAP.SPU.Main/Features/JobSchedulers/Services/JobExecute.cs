@@ -15,16 +15,19 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
     [PersistJobDataAfterExecution]
     public class JobExecute : IJob
     {
-        
+        private readonly ISchedulerFactory schedulerFactory;
         private readonly ISentryClient sentryClient;
         private readonly IJobService jobService;
-        public JobExecute(ISentryClient sentryClient, IJobService jobService)
-        {            
+        private readonly IScheduler scheduler;
+        public JobExecute(ISentryClient sentryClient, IJobService jobService, ISchedulerFactory schedulerFactory)
+        {
             this.sentryClient = sentryClient;
             this.jobService = jobService;
+            this.schedulerFactory = schedulerFactory;
+            scheduler = this.schedulerFactory.GetScheduler().Result;
         }
 
-        public async Task Execute(IJobExecutionContext context) 
+        public async Task Execute(IJobExecutionContext context)
         {
             var dataMap = context.JobDetail.JobDataMap;
             var jobName = context.JobDetail.Key.Name;
@@ -34,9 +37,12 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
             if (count >= 5)
             {
+
                 var e = new JobExecutionException("Retries exceeded");
-                //unschedule it so that it doesn't run again
-                e.UnscheduleAllTriggers = true;                
+
+                await scheduler.PauseTrigger(context.Trigger.Key);
+
+                dataMap.PutAsString("count", 0);
 
                 sentryClient.CaptureMessage($"{jobName} is STOPPED. Cause of RETRIED EXECEEDED.", SentryLevel.Error);
 
@@ -48,7 +54,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 var size = JobHelper.GetQueryInt(apiUrl, "size");
                 var numberOfBatch = JobHelper.GetQueryInt(apiUrl, "numberOfBatch");
                 var url = JobHelper.GetUrl(apiUrl);
-                
+
                 var result = await jobService.Execute(jobName, url, methodName, size, numberOfBatch);
 
                 if (!result)
@@ -56,7 +62,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                     count++;
 
                     dataMap.PutAsString("count", count);
-                    var errorMessage = $"{jobName} is failed at {DateTime.Now}.";                   
+                    var errorMessage = $"{jobName} is failed at {DateTime.Now}.";
 
                     throw JobExecuteFailed(errorMessage);
                 }
@@ -76,7 +82,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
         }
 
         private JobExecutionException JobExecuteFailed(string errorMessage)
-        {            
+        {
             var jobExecutionException = new JobExecutionException(errorMessage);
 
             sentryClient.CaptureMessage(errorMessage, SentryLevel.Error);
@@ -86,6 +92,6 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
             jobExecutionException.RefireImmediately = true;
 
             return jobExecutionException;
-        }        
+        }
     }
 }
