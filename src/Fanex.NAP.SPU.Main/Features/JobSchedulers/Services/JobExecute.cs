@@ -3,28 +3,23 @@ using Quartz;
 using Sentry;
 using Sentry.Protocol;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
     [DisallowConcurrentExecutionAttribute]
     [PersistJobDataAfterExecution]
     public class JobExecute : IJob
-    {
-        private readonly ISchedulerFactory schedulerFactory;
+    {        
         private readonly ISentryClient sentryClient;
         private readonly IJobService jobService;
         private readonly IScheduler scheduler;
         public JobExecute(ISentryClient sentryClient, IJobService jobService, ISchedulerFactory schedulerFactory)
         {
             this.sentryClient = sentryClient;
-            this.jobService = jobService;
-            this.schedulerFactory = schedulerFactory;
-            scheduler = this.schedulerFactory.GetScheduler().Result;
+            this.jobService = jobService;            
+            scheduler = schedulerFactory.GetScheduler().Result;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -87,7 +82,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
             sentryClient.CaptureMessage(errorMessage, SentryLevel.Error);
 
-            Thread.Sleep(20000); //sleep for 20 secs
+            Thread.Sleep(60000); //sleep for 20 secs
 
             jobExecutionException.RefireImmediately = true;
 
