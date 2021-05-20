@@ -38,9 +38,7 @@ namespace Fanex.NAP.SPU.Main
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var appSettings = new AppSettings(this.Configuration);
-
-            
+            var appSettings = new AppSettings(this.Configuration);                       
 
             services.AddControllersWithViews();           
 

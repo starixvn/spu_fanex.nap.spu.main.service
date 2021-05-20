@@ -12,11 +12,14 @@ namespace Fanex.NAP.SPU.Main.Middleware
         int HostingPort { get; }
 
         Scheduler Schedulers { get; }
+
+        int Environment { get; }
     }
 
     public class AppSettings : IAppSettings
     {
         private readonly IConfiguration configuration;
+        private readonly string environment;
 
         public AppSettings(IConfiguration configuration)
         {
@@ -27,6 +30,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
             HostingPort = GetValue<int>(nameof(HostingPort));
 
             Schedulers = GetSection<Scheduler>(nameof(Schedulers));
+
+            environment = GetValue<string>(nameof(Environment));
         }
 
         public string HealthCheckStorage { get; }
@@ -34,6 +39,22 @@ namespace Fanex.NAP.SPU.Main.Middleware
         public int HostingPort { get; }
 
         public Scheduler Schedulers { get; }
+
+        public int Environment
+        {
+            get
+            {
+                switch (environment)
+                {
+                    case "LOCAL":
+                        return 1;
+                    case "UAT":
+                        return 2;
+                    default:
+                        return 3;
+                }
+            }
+        }
 
         public T GetValue<T>(string key)
         {

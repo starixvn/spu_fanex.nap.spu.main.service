@@ -45,6 +45,6 @@
             _quartzHostedService.UpdateScheduleJob();
 
             return RedirectToAction("CheckUpdateJobs") ;
-        }
+        }        
     }
 }
