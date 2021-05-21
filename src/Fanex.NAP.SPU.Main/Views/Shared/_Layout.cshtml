@@ -15,10 +15,10 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
+                </button>               
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
@@ -27,19 +27,28 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" target="_blank" asp-area="" asp-controller="Healthcheck" asp-action="Index">Health Check</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" target="_blank" asp-area="" asp-controller="Home" asp-action="PortainerUrl">Portainer</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Job API
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" target="_blank" asp-area="" asp-controller="Home" asp-action="DCSUrl">DCS</a>
+                                <a class="dropdown-item" target="_blank" asp-area="" asp-controller="Home" asp-action="CTSUrl">CTS</a>
+                                <a class="dropdown-item" target="_blank" asp-area="" asp-controller="Home" asp-action="FSUrl">FS</a>
+                                <a class="dropdown-item" target="_blank" asp-area="" asp-controller="Home" asp-action="VRUrl">VR</a>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" target="_blank" href="https://gitlab.nexdev.net/spu">GitLab</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                External Sites
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" target="_blank" asp-area="" asp-controller="Home" asp-action="PortainerUrl">Portainer</a>
+                                <a class="dropdown-item" target="_blank" href="https://gitlab.nexdev.net/spu">GitLab</a>
+                                <a class="dropdown-item" target="_blank" href="https://rocketor.nexdev.net/">Rocketor</a>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" target="_blank" href="https://rocketor.nexdev.net/">Rocketor</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Scheduler" asp-action="CheckUpdateJobs">Update Jobs</a>
-                        </li>
-                    </ul>
+                    </ul>                   
                 </div>
             </div>
         </nav>

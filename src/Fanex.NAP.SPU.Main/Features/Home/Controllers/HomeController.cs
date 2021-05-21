@@ -26,5 +26,49 @@
             return Redirect("https://sbportainer.starixplay.com/");
 
         }
+
+        public IActionResult DCSUrl()
+        {
+            if (_appSettings.Environment == 1)
+            {
+                return Redirect("http://spu-dcs-job.nexdev.net/swagger/index.html");
+            }
+
+            return Redirect("https://spudcs.oneops.net/swagger/index.html");
+
+        }
+
+        public IActionResult CTSUrl()
+        {
+            if (_appSettings.Environment == 1)
+            {
+                return Redirect("http://spu-cts-job.nexdev.net/swagger/index.html");
+            }
+
+            return Redirect("https://spucts.oneops.net/swagger/index.html");
+
+        }
+
+        public IActionResult FSUrl()
+        {
+            if (_appSettings.Environment == 1)
+            {
+                return Redirect("http://spu-fs-job.nexdev.net/swagger/index.html");
+            }
+
+            return Redirect("https://spufs.oneops.net/swagger/index.html");
+
+        }
+
+        public IActionResult VRUrl()
+        {
+            if (_appSettings.Environment == 1)
+            {
+                return Redirect("http://spu-vr-job.nexdev.net/swagger/index.html");
+            }
+
+            return Redirect("https://spuvr.oneops.net/swagger/index.html");
+
+        }
     }
 }
