@@ -2,17 +2,16 @@
 {
     public class Trigger
     {
-
         public int TriggerId { get; set; }
 
         public string TriggerType { get; set; }
 
         public string TriggerName { get; set; }
 
-        public bool RepeatForever { get; set; }
-
         public string CronExpression { get; set; }
-              
+
+        public int IntervalInSecond { get; set; }
+
 
         public override bool Equals(object obj)
         {
@@ -21,9 +20,9 @@
             if (other == null) return false;
 
             if (other.TriggerName != TriggerName ||
-                other.TriggerType != TriggerType ||
-                other.RepeatForever != RepeatForever ||
-                other.CronExpression != CronExpression)
+                other.TriggerType != TriggerType ||               
+                other.CronExpression != CronExpression ||
+                other.IntervalInSecond != IntervalInSecond)
             {               
 
                 return false;
@@ -32,6 +31,6 @@
             return true;
         }
 
-        public override int GetHashCode() => (TriggerType, TriggerName, RepeatForever, CronExpression).GetHashCode();        
+        public override int GetHashCode() => (TriggerType, TriggerName, CronExpression).GetHashCode();        
     }
 }

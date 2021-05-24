@@ -55,7 +55,7 @@
                             </tr>
 
                         <tr data-job-name=@(job.JobName) class="is-hidden">
-                            <td colspan="4">
+                            <td colspan="3">
                                 <table class="table-trigger">
                                     <tr class="table-trigger-tr-header">
                                         <td class="table-trigger-td-header">
@@ -63,10 +63,7 @@
                                         </td>
                                         <td class="table-trigger-td-header">
                                             <span>Trigger Type</span>
-                                        </td>
-                                        <td class="table-trigger-td-header">
-                                            <span>Repeat Forever</span>
-                                        </td>
+                                        </td>                                       
                                         <td class="table-trigger-td-header">
                                             <span>Cron Expression</span>
                                         </td>
@@ -84,12 +81,7 @@
                                                 <span>
                                                     @trigger.TriggerType
                                                 </span>
-                                            </td>
-                                            <td class="table-trigger-td-body">
-                                                <span>
-                                                    @trigger.RepeatForever
-                                                </span>
-                                            </td>
+                                            </td>                                           
                                             <td class="table-trigger-td-body">
                                                 <span>
                                                     @trigger.CronExpression

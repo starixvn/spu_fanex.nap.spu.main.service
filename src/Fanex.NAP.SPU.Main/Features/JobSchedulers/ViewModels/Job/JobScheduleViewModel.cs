@@ -15,8 +15,7 @@
             IsActive = jobModel.Active;
             MethodName = jobModel.MethodName;
             TriggerType = triggerModel.TriggerType;
-            TriggerName = triggerModel.TriggerName;
-            RepeatForever = triggerModel.RepeatForever;
+            TriggerName = triggerModel.TriggerName;           
             CronExpression = triggerModel.CronExpression;
         }
 
@@ -35,8 +34,6 @@
         public string TriggerType { get; set; }
 
         public string TriggerName { get; set; }
-
-        public bool RepeatForever { get; set; }
 
         public string CronExpression { get; }
 

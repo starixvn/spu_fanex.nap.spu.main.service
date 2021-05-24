@@ -232,12 +232,22 @@
 
         private ITrigger BuildTrigger(Trigger trigger)
         {
-            return TriggerBuilder
+            var triggerBuilder = TriggerBuilder
                 .Create()
                 .WithIdentity(trigger.TriggerName)
                 .WithDescription(trigger.TriggerName)
-                .WithCronSchedule(trigger.CronExpression)
-                .Build();
+                .StartNow();               
+
+            if(trigger.TriggerType != "Cron")
+            {
+                triggerBuilder.WithSimpleSchedule(x => x.WithIntervalInSeconds(trigger.IntervalInSecond).RepeatForever());
+            }
+            else
+            {
+                triggerBuilder.WithCronSchedule(trigger.CronExpression);
+            }
+
+            return triggerBuilder.Build();
         }
 
     }
