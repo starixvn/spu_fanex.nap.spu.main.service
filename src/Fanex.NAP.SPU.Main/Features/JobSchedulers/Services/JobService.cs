@@ -13,16 +13,15 @@
 
     public class JobService : IJobService
     {
-        private readonly HttpClient httpClient;
-        public JobService() {
-            httpClient = new HttpClient();
-        }
         public async Task<bool> Execute(string jobName, string apiUrl, string methodName, int size = 0, int numberOfBatch = 0)
-        {            
-            httpClient.Timeout = TimeSpan.FromDays(1);
-            httpClient.BaseAddress = new Uri(apiUrl);
-
-            var jobServiceAPI = RestService.For<IJobServiceApi>(httpClient);            
+        {
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(apiUrl),
+                Timeout = TimeSpan.FromDays(1)
+            };
+            
+            var jobServiceAPI = RestService.For<IJobServiceApi>(httpClient);
 
             return await jobServiceAPI.Execute(jobName, methodName, size, numberOfBatch);
         }
