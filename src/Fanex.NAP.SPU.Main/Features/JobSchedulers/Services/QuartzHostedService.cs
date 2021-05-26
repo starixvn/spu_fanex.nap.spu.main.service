@@ -5,7 +5,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Quartz;
-    using Quartz.Impl.Matchers;
     using Quartz.Spi;
     using Sentry;
     using System;
