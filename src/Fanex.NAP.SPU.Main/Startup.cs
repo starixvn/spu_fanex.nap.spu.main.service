@@ -76,6 +76,7 @@ namespace Fanex.NAP.SPU.Main
             services.AddSingleton<QuartzHostedService>();
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<JobExecute>();
+            services.AddSingleton<MonitoringExecute>();
 
             services.AddSingletonJob(appSettings);
         }

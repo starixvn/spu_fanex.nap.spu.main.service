@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
-    [DisallowConcurrentExecutionAttribute]
+    [DisallowConcurrentExecution]
     [PersistJobDataAfterExecution]
     public class JobExecute : IJob
     {        
@@ -59,7 +59,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                     dataMap.PutAsString("count", count);
                     var errorMessage = $"{jobName} is failed at {DateTime.Now}.";
 
-                    throw JobExecuteFailed(errorMessage);
+                    throw JobHelper.JobExecuteFailed(errorMessage, sentryClient);
                 }
                 else
                 {
@@ -72,21 +72,8 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
                 dataMap.PutAsString("count", count);
 
-                throw JobExecuteFailed(ex.Message);
+                throw JobHelper.JobExecuteFailed(ex.Message, sentryClient);
             }
-        }
-
-        private JobExecutionException JobExecuteFailed(string errorMessage)
-        {
-            var jobExecutionException = new JobExecutionException(errorMessage);
-
-            sentryClient.CaptureMessage(errorMessage, SentryLevel.Error);
-
-            Thread.Sleep(60000);
-
-            jobExecutionException.RefireImmediately = true;
-
-            return jobExecutionException;
-        }
+        }                
     }
 }

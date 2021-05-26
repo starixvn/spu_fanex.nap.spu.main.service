@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Quartz;
+using Sentry;
+using Sentry.Protocol;
+using System;
+using System.Threading;
 using System.Web;
 
 namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
@@ -42,6 +46,19 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
             }
 
             return string.Empty;
+        }
+
+        public static JobExecutionException JobExecuteFailed(string errorMessage, ISentryClient sentryClient)
+        {
+            var jobExecutionException = new JobExecutionException(errorMessage);
+
+            sentryClient.CaptureMessage(errorMessage, SentryLevel.Error);
+
+            Thread.Sleep(60000);
+
+            jobExecutionException.RefireImmediately = true;
+
+            return jobExecutionException;
         }
     }
 }

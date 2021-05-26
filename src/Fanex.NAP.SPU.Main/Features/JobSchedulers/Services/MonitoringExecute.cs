@@ -1,13 +1,12 @@
 ﻿using Quartz;
 using Sentry;
+using Sentry.Protocol;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
 {
-    [DisallowConcurrentExecutionAttribute]
+    [DisallowConcurrentExecution]
     [PersistJobDataAfterExecution]
     public class MonitoringExecute : IJob
     {
@@ -21,9 +20,56 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
             scheduler = schedulerFactory.GetScheduler().Result;
         }
 
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-            throw new NotImplementedException();
+            var dataMap = context.JobDetail.JobDataMap;
+            var jobName = context.JobDetail.Key.Name;
+            var apiUrl = dataMap.GetString("apiUrl");
+            var count = dataMap.GetInt("count");
+            var methodName = dataMap.GetString("methodName");
+
+            if (count >= 5)
+            {
+
+                var e = new JobExecutionException("Retries exceeded");
+
+                await scheduler.PauseTrigger(context.Trigger.Key);
+
+                dataMap.PutAsString("count", 0);
+
+                sentryClient.CaptureMessage($"{jobName} is STOPPED. Cause of RETRIED EXECEEDED.", SentryLevel.Error);
+
+                throw e;
+            }
+
+            try
+            {                
+                var url = JobHelper.GetUrl(apiUrl);
+
+                var result = await jobService.Monitor(jobName, url, methodName);
+
+                if (!result)
+                {
+                    count++;
+
+                    dataMap.PutAsString("count", count);
+                    var errorMessage = $"{jobName} is failed at {DateTime.Now}.";
+
+                    throw JobHelper.JobExecuteFailed(errorMessage, sentryClient);
+                }
+                else
+                {
+                    dataMap.PutAsString("count", 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                count++;
+
+                dataMap.PutAsString("count", count);
+
+                throw JobHelper.JobExecuteFailed(ex.Message, sentryClient);
+            }
         }
     }
 }
