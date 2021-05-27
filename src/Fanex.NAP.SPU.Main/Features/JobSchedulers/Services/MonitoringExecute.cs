@@ -1,10 +1,11 @@
-﻿using Quartz;
+﻿using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
+using Quartz;
 using Sentry;
 using Sentry.Protocol;
 using System;
 using System.Threading.Tasks;
 
-namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
+namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
     [DisallowConcurrentExecution]
     [PersistJobDataAfterExecution]

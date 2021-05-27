@@ -1,9 +1,6 @@
 ﻿namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
 {
-    using Fanex.NAP.SPU.Main.Features.JobSchedulers.Models;
     using Refit;
-    using System;
-    using System.Threading;
     using System.Threading.Tasks;
 
     public interface IJobServiceApi
