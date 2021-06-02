@@ -243,6 +243,8 @@
             }
             else
             {
+                //triggerBuilder.WithCronSchedule(trigger.CronExpression, x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")));
+
                 triggerBuilder.WithCronSchedule(trigger.CronExpression);
             }
 
