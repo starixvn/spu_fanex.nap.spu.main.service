@@ -45,12 +45,12 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
             }
 
             try
-            {
-                var size = JobHelper.GetQueryInt(apiUrl, "size");
-                var numberOfBatch = JobHelper.GetQueryInt(apiUrl, "numberOfBatch");
+            {                
+                var queryString = JobHelper.GetQueryData(apiUrl);
+
                 var url = JobHelper.GetUrl(apiUrl);
 
-                var result = await jobService.Execute(jobName, url, methodName, size, numberOfBatch);
+                var result = await jobService.Execute(jobName, url, methodName, queryString);
 
                 if (!result)
                 {
