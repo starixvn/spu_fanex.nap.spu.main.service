@@ -6,7 +6,6 @@ namespace Fanex.NAP.SPU.Main
     using Fanex.NAP.SPU.Main.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.Middleware;
     using HealthChecks.UI.Client;
-    using HealthChecks.UI.Configuration;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
@@ -24,7 +23,6 @@ namespace Fanex.NAP.SPU.Main
     using Quartz.Spi;
     using Refit;
     using System.Collections.Specialized;
-    using System.IO;
 
     public class Startup
     {
@@ -77,8 +75,6 @@ namespace Fanex.NAP.SPU.Main
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<JobExecute>();
             services.AddSingleton<MonitoringExecute>();
-
-            services.AddSingletonJob(appSettings);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -98,13 +94,7 @@ namespace Fanex.NAP.SPU.Main
                 Predicate = _ => true,
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
-
-            //app.UseHealthChecksUI(delegate (Options option)
-            //{
-            //    option.UIPath = "/healthcheck";
-            //    option.AddCustomStylesheet(@"wwwroot/css/healthcheck.css");
-            //});            
-
+            
             app.UseStaticFiles();                       
 
             app.UseRouting();
