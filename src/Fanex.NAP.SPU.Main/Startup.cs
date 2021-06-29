@@ -99,11 +99,11 @@ namespace Fanex.NAP.SPU.Main
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
 
-            app.UseHealthChecksUI(delegate (Options option)
-            {
-                option.UIPath = "/healthcheck";
-                option.AddCustomStylesheet(@"wwwroot/css/healthcheck.css");
-            });            
+            //app.UseHealthChecksUI(delegate (Options option)
+            //{
+            //    option.UIPath = "/healthcheck";
+            //    option.AddCustomStylesheet(@"wwwroot/css/healthcheck.css");
+            //});            
 
             app.UseStaticFiles();                       
 

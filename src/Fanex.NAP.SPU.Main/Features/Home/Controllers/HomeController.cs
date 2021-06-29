@@ -70,5 +70,16 @@
             return Redirect("https://spuvr.oneops.net/swagger/index.html");
 
         }
+
+        public IActionResult TGRUrl()
+        {
+            if (_appSettings.Environment == 1)
+            {
+                return Redirect("http://spu-tgr-job.nexdev.net/swagger/index.html");
+            }
+
+            return Redirect("https://sputgr.oneops.net/swagger/index.html");
+
+        }
     }
 }

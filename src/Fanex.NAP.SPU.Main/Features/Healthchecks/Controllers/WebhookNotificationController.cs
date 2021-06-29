@@ -19,10 +19,10 @@ namespace Fanex.NAP.SPU.Main.Features.Healthchecks.Controllers
         [HttpPost]
         public IActionResult Send([FromBody] NotificationModel model)
         {
-            if (model != null)
-            {
-               this.sentryClient.CaptureMessage(model.Message, model.ErrorCode == 0 ? SentryLevel.Info : SentryLevel.Error);
-            }
+            //if (model != null)
+            //{
+            //   this.sentryClient.CaptureMessage(model.Message, model.ErrorCode == 0 ? SentryLevel.Info : SentryLevel.Error);
+            //}
 
             return Ok();
         }

@@ -9,12 +9,12 @@
     {
         public static void AddSingletonJob(this IServiceCollection services, IAppSettings appSettings)
         {
-            var schedulers = appSettings.Schedulers;
+           // var schedulers = appSettings.Schedulers;
 
-            if (schedulers != null && schedulers.GroupJobs.Any())
-            {
-                services.AddSingletonHealthCheck(schedulers);
-            }
+            //if (schedulers != null && schedulers.GroupJobs.Any())
+            //{
+            //    services.AddSingletonHealthCheck(schedulers);
+            //}
         }
     }
 }
