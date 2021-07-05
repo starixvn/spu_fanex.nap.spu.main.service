@@ -226,6 +226,7 @@
                 .WithDescription(job.JobName)
                 .UsingJobData("apiUrl", job.APIUrl)
                 .UsingJobData("methodName", job.MethodName)
+                .UsingJobData("controller", job.Controller)
                 .Build();
         }
 

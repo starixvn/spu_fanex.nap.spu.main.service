@@ -23,12 +23,13 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
         }
 
         public async Task Execute(IJobExecutionContext context)
-        {
+       {
             var dataMap = context.JobDetail.JobDataMap;
             var jobName = context.JobDetail.Key.Name;
             var apiUrl = dataMap.GetString("apiUrl");
             var count = dataMap.GetInt("count");
             var methodName = dataMap.GetString("methodName");
+            var controller = dataMap.GetString("controller")?? "job";
 
             if (count >= 5)
             {
@@ -50,7 +51,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
                 var url = JobHelper.GetUrl(apiUrl);
 
-                var result = await jobService.Execute(jobName, url, methodName, queryString);
+                var result = await jobService.Execute(jobName, url, methodName, controller, queryString);
 
                 if (!result)
                 {

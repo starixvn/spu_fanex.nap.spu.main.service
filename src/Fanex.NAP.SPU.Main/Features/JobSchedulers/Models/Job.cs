@@ -15,6 +15,8 @@
 
         public string MethodName { get; set; }
 
+        public string Controller { get; set; }
+
         public bool Active { get; set; }
 
         public IEnumerable<Trigger> Triggers { get; set; }               
@@ -30,6 +32,7 @@
                 other.JobType != JobType ||
                 other.APIUrl != APIUrl ||
                 other.MethodName != MethodName ||
+                other.Controller != Controller ||
                 other.Active != Active ||
                 !EqualTrigger(Triggers, other.Triggers)                )
             {
@@ -45,7 +48,7 @@
             return triggers1.Count() == triggers2.Count() &&  triggers1.All(triggers2.Contains);
         }
 
-        public override int GetHashCode() => (JobName, JobType, APIUrl, MethodName, Active, Triggers).GetHashCode();
+        public override int GetHashCode() => (JobName, JobType, APIUrl, MethodName, Controller, Active, Triggers).GetHashCode();
 
     }
 }

@@ -10,7 +10,7 @@
     {
         Task<bool> Execute(string jobName, string apiUrl, string methodName, int size = 0, int numberOfBatch = 0);
 
-        Task<bool> Execute(string jobName, string apiUrl, string methodName, Dictionary<string, object> data);
+        Task<bool> Execute(string jobName, string apiUrl, string methodName, string controller, Dictionary<string, object> data);
 
         Task<bool> Monitor(string jobName, string apiUrl, string methodName);
     }
@@ -30,7 +30,7 @@
             return await jobServiceAPI.Execute(jobName, methodName, size, numberOfBatch);
         }
 
-        public async Task<bool> Execute(string jobName, string apiUrl, string methodName, Dictionary<string, object> data)
+        public async Task<bool> Execute(string jobName, string apiUrl, string methodName, string controller, Dictionary<string, object> data)
         {
             var httpClient = new HttpClient
             {
@@ -40,7 +40,7 @@
 
             var jobServiceAPI = RestService.For<IJobServiceApi>(httpClient);
 
-            return await jobServiceAPI.Execute(jobName, methodName, data);
+            return await jobServiceAPI.Execute(jobName, methodName, controller, data);
         }
 
         public async Task<bool> Monitor(string jobName, string apiUrl, string methodName)
