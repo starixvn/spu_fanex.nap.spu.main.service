@@ -29,7 +29,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
             var apiUrl = dataMap.GetString("apiUrl");
             var count = dataMap.GetInt("count");
             var methodName = dataMap.GetString("methodName");
-            var controller = dataMap.GetString("controller")?? "job";
+            var controller = dataMap.GetString("controller");
 
             if (count >= 5)
             {
