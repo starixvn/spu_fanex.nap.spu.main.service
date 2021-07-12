@@ -74,13 +74,13 @@
                                                 
                         job.Triggers.ToList().ForEach(trigger =>
                         {
-                            var triggerDetail = BuildTrigger(trigger);
+                            var triggerDetail = BuildTrigger(trigger, groupJob.Name);
 
                             _scheduler.ScheduleJob(jobDetail, triggerDetail, cancellationToken);
 
                             if (!job.Active)
                             {
-                                _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
+                                _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
                             }
                         });
 
@@ -182,13 +182,13 @@
                     job.Triggers.ToList().ForEach(trigger =>
                     {
 
-                        var buildTrigger = BuildTrigger(trigger);
+                        var buildTrigger = BuildTrigger(trigger, groupJob.Name);
 
                         _scheduler.ScheduleJob(buildJob, buildTrigger);
 
                         if (!job.Active)
                         {
-                            _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
+                            _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
                         }
                     });
                 });
@@ -206,11 +206,11 @@
 
                         if (!job.Active)
                         {
-                            _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName));
+                            _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
                         }
                         else
                         {
-                            _scheduler.RescheduleJob(new TriggerKey(trigger.TriggerName), BuildTrigger(trigger));
+                            _scheduler.RescheduleJob(new TriggerKey(trigger.TriggerName, groupJob.Name), BuildTrigger(trigger, groupJob.Name));
                         }
                     });
 
@@ -230,11 +230,11 @@
                 .Build();
         }
 
-        private ITrigger BuildTrigger(Trigger trigger)
+        private ITrigger BuildTrigger(Trigger trigger, string groupName)
         {
             var triggerBuilder = TriggerBuilder
                 .Create()
-                .WithIdentity(trigger.TriggerName)
+                .WithIdentity(trigger.TriggerName, groupName)
                 .WithDescription(trigger.TriggerName)
                 .StartNow();               
 
@@ -243,9 +243,7 @@
                 triggerBuilder.WithSimpleSchedule(x => x.WithIntervalInSeconds(trigger.IntervalInSecond).RepeatForever());
             }
             else
-            {
-                //triggerBuilder.WithCronSchedule(trigger.CronExpression, x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")));
-
+            {                
                 triggerBuilder.WithCronSchedule(trigger.CronExpression);
             }
 

@@ -7,6 +7,8 @@ namespace Fanex.NAP.SPU.Main
     using Sentry;
     using System;
     using System.IO;
+    using SilkierQuartz;
+    using System.Net;
 
     public class Program
     {
@@ -24,27 +26,32 @@ namespace Fanex.NAP.SPU.Main
             }
         }
 
-        public static IWebHostBuilder CreateHostBuilder(string[] args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var configuration = new ConfigurationBuilder()
                    .SetBasePath(Directory.GetCurrentDirectory())
                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                   //.AddJsonFile("jobs.json", optional: false, reloadOnChange: true)
                    .AddEnvironmentVariables()
                    .Build();
 
-            return WebHost.CreateDefaultBuilder(args)
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.Sources.Clear();
 
                     config.AddConfiguration(configuration);
                 })
-              .UseKestrel()
-              .UseUrls($"http://0.0.0.0:{configuration["HostingPort"]}")
-              .UseSentry()
-              .UseIISIntegration()
-              .UseStartup<Startup>();
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder                   
+                    .UseSentry()
+                    .ConfigureKestrel(options =>
+                    {
+                        options.ListenAnyIP(5000);
+                    })
+                     .UseStartup<Startup>();                    
+                })
+             .ConfigureSilkierQuartzHost();
         }
     }
 }

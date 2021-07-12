@@ -1,7 +1,5 @@
 namespace Fanex.NAP.SPU.Main
 {
-    using CrystalQuartz.Application;
-    using CrystalQuartz.AspNetCore;
     using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.Middleware;
@@ -22,6 +20,8 @@ namespace Fanex.NAP.SPU.Main
     using Quartz.Impl;
     using Quartz.Spi;
     using Refit;
+    using SilkierQuartz;
+    using System.Collections.Generic;
     using System.Collections.Specialized;
 
     public class Startup
@@ -36,17 +36,17 @@ namespace Fanex.NAP.SPU.Main
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var appSettings = new AppSettings(this.Configuration);                       
+            var appSettings = new AppSettings(this.Configuration);
 
-            services.AddControllersWithViews();           
+            services.AddControllersWithViews();
 
             services.AddSingleton<IAppSettings>(appSettings);
-            
+
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
-            });          
-                       
+            });
+
             services.AddSingleton(new UMClientConfiguration().Initialize(Configuration));
             services.AddSingleton<IUMCacheService, UMCacheService>();
             services.AddSingleton<IUMRestClient, UMRestClient>();
@@ -55,25 +55,21 @@ namespace Fanex.NAP.SPU.Main
             services.AddSingleton<IMaintenanceService, MaintenanceService>();
 
             services
-                .AddHealthChecks();         
+                .AddHealthChecks();
 
-            services.AddSingleton<IJobFactory, JobFactory>();
-            services.AddSingleton<ISchedulerFactory>(p => new StdSchedulerFactory(new NameValueCollection {
-                { "quartz.threadPool.type", "Quartz.Simpl.SimpleThreadPool, Quartz" },
-                { "quartz.threadPool.threadCount", "100" },
-                { "quartz.threadPool.threadPriority", "Normal" },                                       
-                { "quartz.scheduler.exporter.bindName", "QuartzScheduler" },
-                { "quartz.scheduler.instanceName", "SPUService" },
-                { "quartz.scheduler.instanceId", "AUTO" },
-            }));
-                        
+            
+            services.AddRazorPages();
+            services.AddSilkierQuartz();
+            services.AddOptions();
+
             services.AddRefitClient<IJobServiceApi>();
             services.AddSingleton<IJobService, JobService>();
 
             services.AddSingleton<QuartzJobRunner>();
             services.AddSingleton<QuartzHostedService>();
             services.AddHostedService<QuartzHostedService>();
-            services.AddSingleton<JobExecute>();           
+            services.AddSingleton<JobExecute>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,32 +89,50 @@ namespace Fanex.NAP.SPU.Main
                 Predicate = _ => true,
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
-            
-            app.UseStaticFiles();                       
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
+            app.UseSilkierQuartzAuthentication();
             app.UseAuthorization();
+
+            var schedulerProvider = (ISchedulerFactory)app.ApplicationServices.GetService(typeof(ISchedulerFactory));
+
+            app.UseSilkierQuartz(
+                new SilkierQuartzOptions()
+                {
+
+                    VirtualPathRoot = "/quartz",                                        
+                    Scheduler = schedulerProvider.GetScheduler().Result,
+                    UseLocalTime = true,
+                    DefaultDateFormat = "yyyy-MM-dd",
+                    DefaultTimeFormat = "HH:mm:ss",
+                    CronExpressionOptions = new CronExpressionDescriptor.Options()
+                    {
+                        DayOfWeekStartIndexZero = false
+                    },
+                    AccountName = "admin",
+                    AccountPassword = "admin!Q@W#E",
+                    IsAuthenticationPersist = false
+                }
+                );
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");                                
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            var schedulerProvider = (ISchedulerFactory)app.ApplicationServices.GetService(typeof(ISchedulerFactory));
-            var crystalQuartzOptions = new CrystalQuartzOptions
+            app.UseEndpoints(endpoints =>
             {
-                ErrorDetectionOptions = new ErrorDetectionOptions
-                {
-                    VerbosityLevel = ErrorVerbosityLevel.Detailed
-                }
-            };
+                endpoints.MapRazorPages();
+            });
 
-            app.UseCrystalQuartz(() => schedulerProvider.GetScheduler().Result, crystalQuartzOptions);
-
-            app.UseMiddleware<ExceptionHandlerMiddleware>();           
+            //app.UseMiddleware<ExceptionHandlerMiddleware>();
 
         }
 
