@@ -108,7 +108,7 @@ namespace Fanex.NAP.SPU.Main
                     VirtualPathRoot = "/quartz",                                        
                     Scheduler = schedulerProvider.GetScheduler().Result,
                     UseLocalTime = true,
-                    DefaultDateFormat = "yyyy-MM-dd",
+                    DefaultDateFormat = "MM/dd/yyyy",
                     DefaultTimeFormat = "HH:mm:ss",
                     CronExpressionOptions = new CronExpressionDescriptor.Options()
                     {
