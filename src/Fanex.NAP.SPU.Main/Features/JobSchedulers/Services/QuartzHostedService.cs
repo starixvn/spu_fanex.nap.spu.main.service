@@ -5,6 +5,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Quartz;
+    using Quartz.Impl.Matchers;
     using Quartz.Spi;
     using Sentry;
     using System;
@@ -65,13 +66,15 @@
                 _scheduler.JobFactory = _jobFactory;
 
                 var groupJobs = JobSchedulers.GroupJobs;
-                                
+
+
+
                 foreach (var groupJob in groupJobs)
                 {
                     groupJob.Jobs.ToList().ForEach(job =>
                     {
                         var jobDetail = BuildJob(job, groupJob.Name);
-                                                
+
                         job.Triggers.ToList().ForEach(trigger =>
                         {
                             var triggerDetail = BuildTrigger(trigger, groupJob.Name);
@@ -83,12 +86,21 @@
                                 _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
                             }
                         });
-
                     });
+
+                    if (IsPauseTrigger(groupJob.Jobs))
+                    {
+                        await _scheduler.PauseTriggers(GroupMatcher<TriggerKey>.GroupEquals(groupJob.Name));
+                    }
                 }
 
                 await _scheduler.Start(cancellationToken);
             }
+        }
+
+        private bool IsPauseTrigger(IEnumerable<Job> jobs)
+        {
+            return !jobs.Any(x => x.Active);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
@@ -108,7 +120,8 @@
 
                 if (newGroupJobScheduler != null && newGroupJobScheduler.Any())
                 {
-                    return newGroupJobScheduler.Select(x=> {
+                    return newGroupJobScheduler.Select(x =>
+                    {
                         x.NewJobs = x.Jobs;
                         return x;
                     });
@@ -157,7 +170,7 @@
                 Task.WhenAll(tasks);
 
                 JobSchedulers = NewJobSchedulers;
-            }           
+            }
         }
 
         private void DeleteJob(GroupJob groupJob)
@@ -236,14 +249,14 @@
                 .Create()
                 .WithIdentity(trigger.TriggerName, groupName)
                 .WithDescription(trigger.TriggerName)
-                .StartNow();               
+                .StartNow();
 
-            if(trigger.TriggerType != "Cron")
+            if (trigger.TriggerType != "Cron")
             {
                 triggerBuilder.WithSimpleSchedule(x => x.WithIntervalInSeconds(trigger.IntervalInSecond).RepeatForever());
             }
             else
-            {                
+            {
                 triggerBuilder.WithCronSchedule(trigger.CronExpression);
             }
 
