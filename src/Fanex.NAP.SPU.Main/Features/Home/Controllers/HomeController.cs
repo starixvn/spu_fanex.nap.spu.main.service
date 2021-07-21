@@ -49,6 +49,17 @@
 
         }
 
+        public IActionResult CTS_CCUrl()
+        {
+            if (_appSettings.Environment == 1)
+            {
+                return Redirect("http://spu-cts-cc-job.nexdev.net/swagger/index.html");
+            }
+
+            return Redirect("https://spuctscc.oneops.net/swagger/index.html");
+
+        }
+
         public IActionResult FSUrl()
         {
             if (_appSettings.Environment == 1)
