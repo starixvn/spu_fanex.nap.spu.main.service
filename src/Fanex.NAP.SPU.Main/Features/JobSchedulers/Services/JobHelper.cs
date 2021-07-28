@@ -73,6 +73,20 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
             return new Dictionary<string, object>();
         }
 
+        public static string GetQueryParameter(string apiUrl)
+        {
+            if (!string.IsNullOrWhiteSpace(apiUrl))
+            {
+                var uri = new Uri(apiUrl);
+
+                if (string.IsNullOrWhiteSpace(uri.Query)) return apiUrl;
+
+                return uri.Query;                
+            }
+
+            return apiUrl;
+        }
+
         public static JobExecutionException JobExecuteFailed(string errorMessage, ISentryClient sentryClient)
         {
             var jobExecutionException = new JobExecutionException(errorMessage);

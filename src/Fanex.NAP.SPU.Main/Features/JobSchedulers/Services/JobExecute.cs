@@ -3,13 +3,12 @@ using Quartz;
 using Sentry;
 using Sentry.Protocol;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
-    [DisallowConcurrentExecution]
     [PersistJobDataAfterExecution]
+    [DisallowConcurrentExecution]    
     public class JobExecute : IJob
     {        
         private readonly ISentryClient sentryClient;
@@ -47,11 +46,11 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
             try
             {                
-                var queryString = JobHelper.GetQueryData(apiUrl);
+                var queryString = JobHelper.GetQueryParameter(apiUrl);
 
                 var url = JobHelper.GetUrl(apiUrl);
 
-                var result = await jobService.Execute(jobName, url, methodName, controller, queryString);
+                var result = jobService.Execute(jobName, url, methodName, controller, queryString);
 
                 if (!result)
                 {
