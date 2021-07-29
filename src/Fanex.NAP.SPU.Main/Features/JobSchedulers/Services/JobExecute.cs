@@ -7,22 +7,21 @@ using System.Threading.Tasks;
 
 namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
-    [PersistJobDataAfterExecution]
-    [DisallowConcurrentExecution]    
+    [DisallowConcurrentExecution, PersistJobDataAfterExecution]
     public class JobExecute : IJob
-    {        
+    {
         private readonly ISentryClient sentryClient;
         private readonly IJobService jobService;
         private readonly IScheduler scheduler;
         public JobExecute(ISentryClient sentryClient, IJobService jobService, ISchedulerFactory schedulerFactory)
         {
             this.sentryClient = sentryClient;
-            this.jobService = jobService;            
+            this.jobService = jobService;
             scheduler = schedulerFactory.GetScheduler().Result;
         }
 
         public async Task Execute(IJobExecutionContext context)
-       {
+        {
             var dataMap = context.JobDetail.JobDataMap;
             var jobName = context.JobDetail.Key.Name;
             var apiUrl = dataMap.GetString("apiUrl");
@@ -45,7 +44,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
             }
 
             try
-            {                
+            {
                 var queryString = JobHelper.GetQueryParameter(apiUrl);
 
                 var url = JobHelper.GetUrl(apiUrl);
@@ -74,6 +73,6 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
                 throw JobHelper.JobExecuteFailed(ex.Message, sentryClient);
             }
-        }                
+        }
     }
 }
