@@ -28,7 +28,6 @@
     <PackageReference Include="Quartz" Version="3.3.2" />
     <PackageReference Include="Refit" Version="6.0.38" />
     <PackageReference Include="Refit.HttpClientFactory" Version="6.0.38" />
-    <PackageReference Include="RestSharp" Version="105.2.3" />
     <PackageReference Include="Sentry.AspNetCore" Version="2.1.8" />
     <PackageReference Include="SilkierQuartz" Version="5.0.244" />
     <PackageReference Include="SilkierQuartz.Plugins.RecentHistory" Version="5.0.244" />
