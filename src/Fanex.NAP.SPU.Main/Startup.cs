@@ -17,12 +17,8 @@ namespace Fanex.NAP.SPU.Main
     using ONEbook.UM.Services;
     using ONEbook.UM.Transport;
     using Quartz;
-    using Quartz.Impl;
-    using Quartz.Spi;
     using Refit;
     using SilkierQuartz;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
 
     public class Startup
     {
@@ -54,10 +50,8 @@ namespace Fanex.NAP.SPU.Main
             services.AddSingleton<IHttpContextHelper, HttpContextHelper>();
             services.AddSingleton<IMaintenanceService, MaintenanceService>();
 
-            services
-                .AddHealthChecks();
+            services.AddHealthChecks();
 
-            
             services.AddRazorPages();
             services.AddSilkierQuartz();
             services.AddOptions();
@@ -65,11 +59,9 @@ namespace Fanex.NAP.SPU.Main
             services.AddRefitClient<IJobServiceApi>();
             services.AddSingleton<IJobService, JobService>();
 
-            services.AddSingleton<QuartzJobRunner>();
             services.AddSingleton<QuartzHostedService>();
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<JobExecute>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,8 +96,7 @@ namespace Fanex.NAP.SPU.Main
             app.UseSilkierQuartz(
                 new SilkierQuartzOptions()
                 {
-
-                    VirtualPathRoot = "/quartz",                                        
+                    VirtualPathRoot = "/quartz",
                     Scheduler = schedulerProvider.GetScheduler().Result,
                     UseLocalTime = true,
                     DefaultDateFormat = "MM/dd/yyyy",
@@ -133,8 +124,6 @@ namespace Fanex.NAP.SPU.Main
             });
 
             //app.UseMiddleware<ExceptionHandlerMiddleware>();
-
         }
-
     }
 }
