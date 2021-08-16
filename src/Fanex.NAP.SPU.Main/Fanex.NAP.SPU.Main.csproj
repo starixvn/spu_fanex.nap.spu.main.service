@@ -29,8 +29,8 @@
     <PackageReference Include="Refit" Version="6.0.38" />
     <PackageReference Include="Refit.HttpClientFactory" Version="6.0.38" />
     <PackageReference Include="Sentry.AspNetCore" Version="2.1.8" />
-    <PackageReference Include="SilkierQuartz" Version="5.0.244" />
-    <PackageReference Include="SilkierQuartz.Plugins.RecentHistory" Version="5.0.244" />
+    <PackageReference Include="SilkierQuartz" Version="5.0.0.3" />
+    <PackageReference Include="SilkierQuartz.Plugins.RecentHistory" Version="5.0.0.1" />
   </ItemGroup>
 
   <ItemGroup>
