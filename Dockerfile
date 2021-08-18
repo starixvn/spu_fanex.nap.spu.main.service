@@ -19,4 +19,6 @@ FROM registry.nexdev.net:5050/docker/dotnet/core/aspnet:5.0-buster-slim AS base
 WORKDIR /app
 COPY --from=builder /app .
 
+ENV TZ="America/New_York"
+
 ENTRYPOINT ["dotnet", "Fanex.NAP.SPU.Main.dll"]

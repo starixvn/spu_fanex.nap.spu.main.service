@@ -6,14 +6,7 @@
 
     public interface IJobServiceApi
     {
-        [Post("/job/{methodName}")]
-        Task<bool> Execute(string jobName, string methodName, int size = 0, int numberOfBatch = 0);
-
-        [Post("/monitoring/{methodName}")]
-        Task<bool> Detect(string jobName, string methodName);
-
-        [Post("/job/{methodName}")]
-        Task<bool> Execute(string jobName, string methodName, [Body(BodySerializationMethod.UrlEncoded)] Dictionary<string, object> data);
-       
+        [Post("/{controller}/{methodName}")]
+        Task<bool> Execute(string jobName, string methodName, string controller, [Body(BodySerializationMethod.UrlEncoded)] Dictionary<string, object> data);
     }    
 }

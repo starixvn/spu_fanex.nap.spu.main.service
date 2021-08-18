@@ -14,6 +14,7 @@
             APIUrl = jobModel.APIUrl;            
             IsActive = jobModel.Active;
             MethodName = jobModel.MethodName;
+            Controller = jobModel.Controller;
             TriggerType = triggerModel.TriggerType;
             TriggerName = triggerModel.TriggerName;           
             CronExpression = triggerModel.CronExpression;
@@ -28,6 +29,8 @@
         public string APIUrl { get; set; }
 
         public string MethodName { get; set; }
+
+        public string Controller { get; set; }
 
         public bool IsActive { get; set; }
 
