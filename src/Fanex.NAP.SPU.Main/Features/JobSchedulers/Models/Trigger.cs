@@ -12,6 +12,8 @@
 
         public int IntervalInSecond { get; set; }
 
+        public string TimeZone { get; set; }
+
 
         public override bool Equals(object obj)
         {
@@ -22,7 +24,8 @@
             if (other.TriggerName != TriggerName ||
                 other.TriggerType != TriggerType ||               
                 other.CronExpression != CronExpression ||
-                other.IntervalInSecond != IntervalInSecond)
+                other.IntervalInSecond != IntervalInSecond ||
+                other.TimeZone != TimeZone)
             {               
 
                 return false;

@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Web;
-using System.Linq;
-using System.Collections.Specialized;
 
 namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
 {

@@ -257,7 +257,14 @@
             }
             else
             {
-                triggerBuilder.WithCronSchedule(trigger.CronExpression);
+                if(!string.IsNullOrWhiteSpace(trigger.TimeZone))
+                {
+                    triggerBuilder.WithCronSchedule(trigger.CronExpression, x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById(trigger.TimeZone)));
+                }
+                else
+                {
+                    triggerBuilder.WithCronSchedule(trigger.CronExpression);
+                }
             }
 
             return triggerBuilder.Build();
