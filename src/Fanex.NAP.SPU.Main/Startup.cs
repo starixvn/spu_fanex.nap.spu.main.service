@@ -5,6 +5,7 @@ namespace Fanex.NAP.SPU.Main
     using Fanex.NAP.SPU.Main.Middleware;
     using HealthChecks.UI.Client;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -32,6 +33,10 @@ namespace Fanex.NAP.SPU.Main
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services
+            //    .AddDataProtection()
+            //    .DisableAutomaticKeyGeneration();
+
             var appSettings = new AppSettings(this.Configuration);
 
             services.AddControllersWithViews();
@@ -96,6 +101,7 @@ namespace Fanex.NAP.SPU.Main
             app.UseSilkierQuartz(
                 new SilkierQuartzOptions()
                 {
+                    ProductName = "Job Management",
                     VirtualPathRoot = "/quartz",
                     Scheduler = schedulerProvider.GetScheduler().Result,
                     UseLocalTime = true,
