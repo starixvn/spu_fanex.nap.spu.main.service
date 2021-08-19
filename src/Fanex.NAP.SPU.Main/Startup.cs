@@ -20,6 +20,7 @@ namespace Fanex.NAP.SPU.Main
     using Quartz;
     using Refit;
     using SilkierQuartz;
+    using StackExchange.Redis;
 
     public class Startup
     {
@@ -33,11 +34,13 @@ namespace Fanex.NAP.SPU.Main
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services
-            //    .AddDataProtection()
-            //    .DisableAutomaticKeyGeneration();
-
             var appSettings = new AppSettings(this.Configuration);
+                                    
+            var redis = ConnectionMultiplexer.Connect(appSettings.Redis);
+
+            services
+                .AddDataProtection()
+                .PersistKeysToStackExchangeRedis(redis, "SPU.Main.Service.ProtectionKeys");
 
             services.AddControllersWithViews();
 

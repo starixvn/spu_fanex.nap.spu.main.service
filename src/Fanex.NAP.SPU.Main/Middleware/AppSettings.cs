@@ -9,6 +9,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
     {
         string HealthCheckStorage { get; }
 
+        string Redis { get; }
+
         int HostingPort { get; }
 
         Scheduler Schedulers { get; }
@@ -32,6 +34,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
             Schedulers = GetSection<Scheduler>(nameof(Schedulers));
 
             environment = GetValue<string>(nameof(Environment));
+
+            Redis = GetValue<string>(nameof(Redis));
         }
 
         public string HealthCheckStorage { get; }
@@ -55,6 +59,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
                 }
             }
         }
+
+        public string Redis { get; }
 
         public T GetValue<T>(string key)
         {
