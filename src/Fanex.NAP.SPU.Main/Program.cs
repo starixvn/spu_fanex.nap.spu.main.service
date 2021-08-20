@@ -43,11 +43,7 @@ namespace Fanex.NAP.SPU.Main
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-#if DEBUG
-                    webBuilder.UseUrls("https://*:5001;http://*:5000");
-#else
                     webBuilder.UseUrls("http://*:5000");
-#endif
 
                     webBuilder
                     .UseSentry()                    
