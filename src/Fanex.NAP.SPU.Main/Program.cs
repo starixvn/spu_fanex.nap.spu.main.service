@@ -43,13 +43,15 @@ namespace Fanex.NAP.SPU.Main
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder                   
-                    .UseSentry()
-                    .ConfigureKestrel(options =>
-                    {
-                        options.ListenAnyIP(5000);
-                    })
-                     .UseStartup<Startup>();                    
+#if DEBUG
+                    webBuilder.UseUrls("https://*:5001;http://*:5000");
+#else
+                    webBuilder.UseUrls("http://*:5000");
+#endif
+
+                    webBuilder
+                    .UseSentry()                    
+                    .UseStartup<Startup>();
                 })
              .ConfigureSilkierQuartzHost();
         }
