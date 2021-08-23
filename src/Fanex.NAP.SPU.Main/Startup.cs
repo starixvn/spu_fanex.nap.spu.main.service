@@ -1,5 +1,7 @@
 namespace Fanex.NAP.SPU.Main
 {
+    using Fanex.Logging.Extensions;
+    using Fanex.Logging.Extensions.AspNetCore;
     using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.Middleware;
@@ -70,6 +72,9 @@ namespace Fanex.NAP.SPU.Main
             services.AddSingleton<QuartzHostedService>();
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<JobExecute>();
+
+            ExceptionHandler
+                .UseConfig(new LoggingConfiguration());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -131,8 +136,6 @@ namespace Fanex.NAP.SPU.Main
             {
                 endpoints.MapRazorPages();
             });
-
-            app.UseMiddleware<ExceptionHandlerMiddleware>();
         }
     }
 }
