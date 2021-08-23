@@ -132,7 +132,7 @@ namespace Fanex.NAP.SPU.Main
                 endpoints.MapRazorPages();
             });
 
-            app.UseMiddleware<ExceptionHandlerMiddleware>();
+           // app.UseMiddleware<ExceptionHandlerMiddleware>();
         }
     }
 }

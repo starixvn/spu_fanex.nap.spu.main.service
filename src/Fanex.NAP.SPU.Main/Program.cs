@@ -1,16 +1,13 @@
 namespace Fanex.NAP.SPU.Main
 {
-    using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Sentry;
-    using System;
-    using System.IO;
     using SilkierQuartz;
-    using System.Net;
+    using System;
 
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -28,25 +25,22 @@ namespace Fanex.NAP.SPU.Main
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            var configuration = new ConfigurationBuilder()
-                   .SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                   .AddEnvironmentVariables()
-                   .Build();
-
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.Sources.Clear();
+                    var env = hostingContext.HostingEnvironment;
 
-                    config.AddConfiguration(configuration);
+                    config.SetBasePath(env.ContentRootPath);
+                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+                    config.AddEnvironmentVariables();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseUrls("http://*:5000");
 
                     webBuilder
-                    .UseSentry()                    
+                    .UseSentry()
                     .UseStartup<Startup>();
                 })
              .ConfigureSilkierQuartzHost();
