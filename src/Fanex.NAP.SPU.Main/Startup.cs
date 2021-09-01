@@ -72,6 +72,7 @@ namespace Fanex.NAP.SPU.Main
             services.AddSingleton<QuartzHostedService>();
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<JobExecute>();
+            services.AddSingleton<JobMonitoring>();
 
             ExceptionHandler
                 .UseConfig(new LoggingConfiguration());

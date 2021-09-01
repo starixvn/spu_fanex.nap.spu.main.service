@@ -16,6 +16,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
         Scheduler Schedulers { get; }
 
         int Environment { get; }
+
+        string EnvironmentString { get; }
     }
 
     public class AppSettings : IAppSettings
@@ -61,6 +63,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
         }
 
         public string Redis { get; }
+
+        public string EnvironmentString => environment;
 
         public T GetValue<T>(string key)
         {
