@@ -13,43 +13,61 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
 {
     [DisallowConcurrentExecution, PersistJobDataAfterExecution]
     public class JobMonitoring : IJob
-    {        
-        private readonly IScheduler scheduler;
+    {
+        private readonly ISentryClient _sentryClient;
+        private readonly IScheduler _scheduler;
         private readonly IMaintenanceService _maintenanceService;
         private readonly IAppSettings _appSettings;
-        public JobMonitoring(IAppSettings appSettings, ISchedulerFactory schedulerFactory, IMaintenanceService maintenanceService)
-        {     
-            scheduler = schedulerFactory.GetScheduler().Result;
+        private DateTime lastTime;
+
+        public JobMonitoring(ISentryClient sentryClient, IAppSettings appSettings, ISchedulerFactory schedulerFactory, IMaintenanceService maintenanceService)
+        {
+            _scheduler = schedulerFactory.GetScheduler().Result;
             _maintenanceService = maintenanceService;
             _appSettings = appSettings;
+            _sentryClient = sentryClient;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var isUM = _maintenanceService.GetUnderMaintenanceTime().IsUnderMaintenanceTime;
-
-            if(!isUM)
+            try
             {
-                var allTriggerKeys = scheduler.GetTriggerKeys(GroupMatcher<TriggerKey>.AnyGroup());
-                var result = new List<string>();
+                var isUM = _maintenanceService.GetUnderMaintenanceTime().IsUnderMaintenanceTime;
 
-                foreach (var triggerKey in allTriggerKeys.Result)
+                if (!isUM)
                 {
-                    var triggerdetails = await scheduler.GetTrigger(triggerKey);
-                    var state = await scheduler.GetTriggerState(triggerdetails.Key);                                        
-                    
-                    if(state == TriggerState.Paused)
+                    var allTriggerKeys = _scheduler.GetTriggerKeys(GroupMatcher<TriggerKey>.AnyGroup());
+                    var result = new List<string>();
+
+                    foreach (var triggerKey in allTriggerKeys.Result)
                     {
-                        result.Add(triggerdetails.JobKey.Name);                                               
-                    }                                       
-                }
+                        var triggerdetails = await _scheduler.GetTrigger(triggerKey);
+                        var state = await _scheduler.GetTriggerState(triggerdetails.Key);
 
-                if(result.Any())
-                {
-                    var jobName = string.Join("\n\r - ", result.ToArray());
+                        if (state == TriggerState.Paused)
+                        {
+                            result.Add(triggerdetails.JobKey.Name);
+                        }
+                    }
 
-                    Notification("Jobs State Monitoring", "The jobs are PAUSED. Please check again.", jobName);
+                    if (result.Any())
+                    {
+                        var totalSecond = (DateTime.Now - lastTime).TotalSeconds;
+
+                        if (totalSecond >= 300)
+                        {
+                            var message = "The jobs are PAUSED.\n\r - " + string.Join("\n\r - ", result.ToArray());
+
+                            _sentryClient.CaptureMessage(message, Sentry.Protocol.SentryLevel.Error);
+
+                            lastTime = DateTime.Now;
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _sentryClient.CaptureException(ex);
             }
         }
 
