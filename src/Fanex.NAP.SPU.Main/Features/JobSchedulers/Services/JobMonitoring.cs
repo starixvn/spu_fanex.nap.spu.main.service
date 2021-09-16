@@ -18,7 +18,6 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
         private readonly IScheduler _scheduler;
         private readonly IMaintenanceService _maintenanceService;
         private readonly IAppSettings _appSettings;
-        private DateTime lastTime;
 
         public JobMonitoring(ISentryClient sentryClient, IAppSettings appSettings, ISchedulerFactory schedulerFactory, IMaintenanceService maintenanceService)
         {
@@ -52,16 +51,9 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
 
                     if (result.Any())
                     {
-                        var totalSecond = (DateTime.Now - lastTime).TotalSeconds;
-
-                        if (totalSecond >= 300)
-                        {
-                            var message = "The jobs are PAUSED.\n\r - " + string.Join("\n\r - ", result.ToArray());
-
-                            _sentryClient.CaptureMessage(message, Sentry.Protocol.SentryLevel.Error);
-
-                            lastTime = DateTime.Now;
-                        }
+                        var jobName = string.Join("", result.Select(x => "\n\r - " + x));
+                        
+                        Notification("Jobs Monitoring", "The JOBS are PAUSED.", "The List of jobs. \n\r" + jobName);
                     }
                 }
             }
@@ -76,7 +68,7 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
             var notification = new NotificationService();
 
             notification
-                      .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "-1001571051228")
+                      .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "-1001571051228", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken")
                       .Message(new MessageModel(jobName, DateTime.UtcNow.AddHours(7), _appSettings.EnvironmentString, message, moreInfo))
                       .SendWithDelay(300);
         }
