@@ -32,19 +32,19 @@
             return View();
         }
 
-        [HttpGet]
-        public IActionResult CheckUpdateJobs()
-        {
+        //[HttpGet]
+        //public IActionResult CheckUpdateJobs()
+        //{
            
-            return View(_quartzHostedService.GetJobSchedulerDiff()) ;
-        }
+        //    return View(_quartzHostedService.GetJobSchedulerDiff()) ;
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> SaveUpdateJobs()
-        {
-            _quartzHostedService.UpdateScheduleJob();
+        //[HttpGet]
+        //public async Task<IActionResult> SaveUpdateJobs()
+        //{
+        //    _quartzHostedService.UpdateScheduleJob();
 
-            return RedirectToAction("CheckUpdateJobs") ;
-        }        
+        //    return RedirectToAction("CheckUpdateJobs") ;
+        //}        
     }
 }

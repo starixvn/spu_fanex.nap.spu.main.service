@@ -67,8 +67,6 @@
 
                 var groupJobs = JobSchedulers.GroupJobs;
 
-
-
                 foreach (var groupJob in groupJobs)
                 {
                     groupJob.Jobs.ToList().ForEach(job =>
@@ -110,126 +108,126 @@
             await scheduler.Shutdown(cancellationToken);
         }
 
-        public IEnumerable<GroupJob> GetJobSchedulerDiff()
-        {
-            var result = JobSchedulers.Equals(NewJobSchedulers);
+        //public IEnumerable<GroupJob> GetJobSchedulerDiff()
+        //{
+        //    var result = JobSchedulers.Equals(NewJobSchedulers);
 
-            if (!result)
-            {
-                var newGroupJobScheduler = NewJobSchedulers.GroupJobs.Where(x => !JobSchedulers.GroupJobs.Any(a => a.Id == x.Id));
+        //    if (!result)
+        //    {
+        //        var newGroupJobScheduler = NewJobSchedulers.GroupJobs.Where(x => !JobSchedulers.GroupJobs.Any(a => a.Id == x.Id));
 
-                if (newGroupJobScheduler != null && newGroupJobScheduler.Any())
-                {
-                    return newGroupJobScheduler.Select(x =>
-                    {
-                        x.NewJobs = x.Jobs;
-                        return x;
-                    });
-                }
-                else
-                {
-                    return NewJobSchedulers.GroupJobs.Select(groupJob =>
-                    {
-                        var newJobs = groupJob.Jobs;
-                        var oldJobs = JobSchedulers.GroupJobs.FirstOrDefault(x => x.Id == groupJob.Id).Jobs;
+        //        if (newGroupJobScheduler != null && newGroupJobScheduler.Any())
+        //        {
+        //            return newGroupJobScheduler.Select(x =>
+        //            {
+        //                x.NewJobs = x.Jobs;
+        //                return x;
+        //            });
+        //        }
+        //        else
+        //        {
+        //            return NewJobSchedulers.GroupJobs.Select(groupJob =>
+        //            {
+        //                var newJobs = groupJob.Jobs;
+        //                var oldJobs = JobSchedulers.GroupJobs.FirstOrDefault(x => x.Id == groupJob.Id).Jobs;
 
-                        var f1Jobs = newJobs.Where(f1 => oldJobs.All(f2 => !f1.Equals(f2)));
-                        var f2Jobs = newJobs.Count() != oldJobs.Count() ? oldJobs.Where(f1 => newJobs.All(f2 => !f1.Equals(f2))) : new List<Job>();
+        //                var f1Jobs = newJobs.Where(f1 => oldJobs.All(f2 => !f1.Equals(f2)));
+        //                var f2Jobs = newJobs.Count() != oldJobs.Count() ? oldJobs.Where(f1 => newJobs.All(f2 => !f1.Equals(f2))) : new List<Job>();
 
-                        groupJob.Jobs = f1Jobs.Concat(f2Jobs);
+        //                groupJob.Jobs = f1Jobs.Concat(f2Jobs);
 
-                        groupJob.ExistingJobs = f1Jobs.Where(x => oldJobs != null && oldJobs.Any(a => a.JobId == x.JobId));
-                        groupJob.NewJobs = f1Jobs.Where(x => oldJobs != null && !oldJobs.Any(a => a.JobId == x.JobId));
+        //                groupJob.ExistingJobs = f1Jobs.Where(x => oldJobs != null && oldJobs.Any(a => a.JobId == x.JobId));
+        //                groupJob.NewJobs = f1Jobs.Where(x => oldJobs != null && !oldJobs.Any(a => a.JobId == x.JobId));
 
-                        groupJob.DeletedJobs = oldJobs.Where(x => !newJobs.Any(a => a.JobId == x.JobId));
+        //                groupJob.DeletedJobs = oldJobs.Where(x => !newJobs.Any(a => a.JobId == x.JobId));
 
-                        return groupJob;
-                    });
-                }
+        //                return groupJob;
+        //            });
+        //        }
 
-            }
+        //    }
 
-            return new List<GroupJob>();
-        }
+        //    return new List<GroupJob>();
+        //}
 
-        public void UpdateScheduleJob()
-        {
-            var groupJobs = GetJobSchedulerDiff();
+        //public void UpdateScheduleJob()
+        //{
+        //    var groupJobs = GetJobSchedulerDiff();
 
-            if (groupJobs != null && groupJobs.Any())
-            {
-                var tasks = new List<Task>();
+        //    if (groupJobs != null && groupJobs.Any())
+        //    {
+        //        var tasks = new List<Task>();
 
-                groupJobs.ToList().ForEach(groupJob =>
-                {
-                    tasks.Add(Task.Run(() => UpdateJob(groupJob)));
-                    tasks.Add(Task.Run(() => AddNewJob(groupJob)));
-                    tasks.Add(Task.Run(() => DeleteJob(groupJob)));
-                });
+        //        groupJobs.ToList().ForEach(groupJob =>
+        //        {
+        //            tasks.Add(Task.Run(() => UpdateJob(groupJob)));
+        //            tasks.Add(Task.Run(() => AddNewJob(groupJob)));
+        //            tasks.Add(Task.Run(() => DeleteJob(groupJob)));
+        //        });
 
-                Task.WhenAll(tasks);
+        //        Task.WhenAll(tasks);
 
-                JobSchedulers = NewJobSchedulers;
-            }
-        }
+        //        JobSchedulers = NewJobSchedulers;
+        //    }
+        //}
 
-        private void DeleteJob(GroupJob groupJob)
-        {
-            if (groupJob.DeletedJobs != null && groupJob.DeletedJobs.Any())
-            {
-                groupJob.DeletedJobs.ToList().ForEach(job =>
-                {
-                    _scheduler.DeleteJob(new JobKey(job.JobName, groupJob.Name));
-                });
-            }
-        }
+        //private void DeleteJob(GroupJob groupJob)
+        //{
+        //    if (groupJob.DeletedJobs != null && groupJob.DeletedJobs.Any())
+        //    {
+        //        groupJob.DeletedJobs.ToList().ForEach(job =>
+        //        {
+        //            _scheduler.DeleteJob(new JobKey(job.JobName, groupJob.Name));
+        //        });
+        //    }
+        //}
 
-        private void AddNewJob(GroupJob groupJob)
-        {
-            if (groupJob.NewJobs != null && groupJob.NewJobs.Any())
-            {
-                groupJob.NewJobs.ToList().ForEach(job =>
-                {
-                    var buildJob = BuildJob(job, groupJob.Name);
+        //private void AddNewJob(GroupJob groupJob)
+        //{
+        //    if (groupJob.NewJobs != null && groupJob.NewJobs.Any())
+        //    {
+        //        groupJob.NewJobs.ToList().ForEach(job =>
+        //        {
+        //            var buildJob = BuildJob(job, groupJob.Name);
 
-                    job.Triggers.ToList().ForEach(trigger =>
-                    {
+        //            job.Triggers.ToList().ForEach(trigger =>
+        //            {
 
-                        var buildTrigger = BuildTrigger(trigger, groupJob.Name);
+        //                var buildTrigger = BuildTrigger(trigger, groupJob.Name);
 
-                        _scheduler.ScheduleJob(buildJob, buildTrigger);
+        //                _scheduler.ScheduleJob(buildJob, buildTrigger);
 
-                        if (!job.Active)
-                        {
-                            _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
-                        }
-                    });
-                });
-            }
-        }
+        //                if (!job.Active)
+        //                {
+        //                    _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
+        //                }
+        //            });
+        //        });
+        //    }
+        //}
 
-        private void UpdateJob(GroupJob groupJob)
-        {
-            if (groupJob.ExistingJobs != null && groupJob.ExistingJobs.Any())
-            {
-                groupJob.ExistingJobs.ToList().ForEach(job =>
-                {
-                    job.Triggers.ToList().ForEach(trigger =>
-                    {
+        //private void UpdateJob(GroupJob groupJob)
+        //{
+        //    if (groupJob.ExistingJobs != null && groupJob.ExistingJobs.Any())
+        //    {
+        //        groupJob.ExistingJobs.ToList().ForEach(job =>
+        //        {
+        //            job.Triggers.ToList().ForEach(trigger =>
+        //            {
 
-                        if (!job.Active)
-                        {
-                            _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
-                        }
-                        else
-                        {
-                            _scheduler.RescheduleJob(new TriggerKey(trigger.TriggerName, groupJob.Name), BuildTrigger(trigger, groupJob.Name));
-                        }
-                    });
+        //                if (!job.Active)
+        //                {
+        //                    _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
+        //                }
+        //                else
+        //                {
+        //                    _scheduler.RescheduleJob(new TriggerKey(trigger.TriggerName, groupJob.Name), BuildTrigger(trigger, groupJob.Name));
+        //                }
+        //            });
 
-                });
-            }
-        }
+        //        });
+        //    }
+        //}
 
         private IJobDetail BuildJob(Job job, string groupName)
         {
