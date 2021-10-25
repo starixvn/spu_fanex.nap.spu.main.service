@@ -1,4 +1,5 @@
 ﻿using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
+using Fanex.NAP.SPU.Main.Middleware;
 using ONEbook.UM.Services;
 using Quartz;
 using Sentry;
@@ -15,13 +16,19 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
         private readonly IJobService jobService;
         private readonly IScheduler scheduler;
         private readonly IMaintenanceService _maintenanceService;
+        private readonly IAppSettings _appSettings;
 
-        public JobExecute(ISentryClient sentryClient, IJobService jobService, ISchedulerFactory schedulerFactory, IMaintenanceService maintenanceService)
+        public JobExecute(ISentryClient sentryClient
+            , IJobService jobService
+            , ISchedulerFactory schedulerFactory
+            , IMaintenanceService maintenanceService
+            , IAppSettings appSettings)
         {
             this.sentryClient = sentryClient;
             this.jobService = jobService;
             scheduler = schedulerFactory.GetScheduler().Result;
             _maintenanceService = maintenanceService;
+            _appSettings = appSettings;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -45,7 +52,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
                     dataMap.PutAsString("count", 0);
 
-                    sentryClient.CaptureMessage($"{jobName} is STOPPED. Cause of RETRIED EXECEEDED.", SentryLevel.Error);
+                    sentryClient.CaptureMessage($"{_appSettings.EnvironmentString} - {jobName} is STOPPED. Cause of RETRIED EXECEEDED.", SentryLevel.Error);
 
                     throw e;
                 }
@@ -63,7 +70,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                         count++;
 
                         dataMap.PutAsString("count", count);
-                        var errorMessage = $"{jobName} is failed at {DateTime.Now}.";
+                        var errorMessage = $"{_appSettings.EnvironmentString} - {jobName} is failed at {DateTime.Now}.";
 
                         throw JobHelper.JobExecuteFailed(errorMessage, sentryClient);
                     }
@@ -78,7 +85,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
                     dataMap.PutAsString("count", count);
 
-                    throw JobHelper.JobExecuteFailed(ex.Message, sentryClient);
+                    throw JobHelper.JobExecuteFailed($"{_appSettings.EnvironmentString} - " + ex.Message, sentryClient);
                 }
             }
         }
