@@ -44,6 +44,10 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 var methodName = dataMap.GetString("methodName");
                 var controller = dataMap.GetString("controller");
 
+
+                var flagError = false;
+                var messageError = string.Empty;
+
                 if (count >= 5)
                 {
                     var e = new JobExecutionException("Retries exceeded");
@@ -67,12 +71,8 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
                     if (!result)
                     {
-                        count++;
-
-                        dataMap.PutAsString("count", count);
-                        var errorMessage = $"{_appSettings.EnvironmentString} - {jobName} is failed at {DateTime.Now}.";
-
-                        throw JobHelper.JobExecuteFailed(errorMessage, sentryClient);
+                        flagError = true;
+                        messageError = $"{_appSettings.EnvironmentString} - {jobName} is failed at {DateTime.Now}.";
                     }
                     else
                     {
@@ -81,11 +81,15 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 }
                 catch (Exception ex)
                 {
+                    flagError = true;
+                    messageError = $"{_appSettings.EnvironmentString} - " + ex.Message;
+                }
+
+                if (flagError)
+                {
                     count++;
-
                     dataMap.PutAsString("count", count);
-
-                    throw JobHelper.JobExecuteFailed($"{_appSettings.EnvironmentString} - " + ex.Message, sentryClient);
+                    throw JobHelper.JobExecuteFailed(messageError, sentryClient);
                 }
             }
         }
