@@ -51,9 +51,9 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
 
                     if (result.Any())
                     {
-                        var jobName = string.Join("", result.Select(x => "\n\r - " + x));
+                        var jobName = string.Join("", result.Select(x => x + "\r\n"));
 
-                        NotifyTelegramMessage("Jobs Monitoring", "The JOBS are PAUSED.", "The List of jobs. \n\r" + jobName, _appSettings.EnvironmentString);
+                        NotifyTelegramMessage("Jobs Monitoring", $"The <b>{result.Count}</b> jobs are PAUSED.", $"The List of jobs: \n\r {jobName}", _appSettings.EnvironmentString);
                     }
                 }
             }
