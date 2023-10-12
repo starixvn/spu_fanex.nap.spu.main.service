@@ -52,8 +52,8 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
                     if (result.Any())
                     {
                         var jobName = string.Join("", result.Select(x => "\n\r - " + x));
-                        
-                        Notification("Jobs Monitoring", "The JOBS are PAUSED.", "The List of jobs. \n\r" + jobName);
+
+                        NotifyTelegramMessage("Jobs Monitoring", "The JOBS are PAUSED.", "The List of jobs. \n\r" + jobName, _appSettings.EnvironmentString);
                     }
                 }
             }
@@ -63,14 +63,17 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
             }
         }
 
-        private void Notification(string jobName, string message, string moreInfo)
+        private static void NotifyTelegramMessage(string systemName, string message, string moreInfo, string environment)
         {
-            var notification = new NotificationService();
-
-            notification
-                      .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "-1001571051228", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken")
-                      .Message(new MessageModel(jobName, DateTime.UtcNow.AddHours(7), _appSettings.EnvironmentString, message, moreInfo))
-                      .SendWithDelay(300);
+            if (environment == "PROD")
+            {
+                var telegramService = new NotificationService();
+                string proxy = "10.2.252.100:8801";
+                telegramService
+                   .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "-1001571051228", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken", proxy)
+                   .Message(new MessageModel(systemName, DateTime.Now, environment, message, moreInfo))
+                   .SendWithoutDelay();
+            }
         }
     }
 }
