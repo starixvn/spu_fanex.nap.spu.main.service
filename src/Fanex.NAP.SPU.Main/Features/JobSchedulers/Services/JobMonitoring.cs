@@ -68,7 +68,7 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
             if (environment == "PROD")
             {
                 var telegramService = new NotificationService();
-                string proxy = "10.2.252.100:8801";
+                string proxy = "lisasqd.nebula.prod:8801";
                 telegramService
                    .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "-1001571051228", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken", proxy)
                    .Message(new MessageModel(systemName, DateTime.Now, environment, message, moreInfo))
