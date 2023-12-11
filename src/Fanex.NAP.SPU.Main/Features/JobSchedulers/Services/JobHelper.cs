@@ -91,7 +91,7 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
 
             sentryClient.CaptureMessage(errorMessage, SentryLevel.Error);
 
-            Thread.Sleep(60000);
+            Thread.Sleep(120000);
 
             jobExecutionException.RefireImmediately = true;
 
