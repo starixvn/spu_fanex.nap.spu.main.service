@@ -18,6 +18,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
         int Environment { get; }
 
         string EnvironmentString { get; }
+
+        string Proxy { get; }
     }
 
     public class AppSettings : IAppSettings
@@ -38,6 +40,9 @@ namespace Fanex.NAP.SPU.Main.Middleware
             environment = GetValue<string>(nameof(Environment));
 
             Redis = GetValue<string>(nameof(Redis));
+
+
+            Proxy = GetValue<string>(nameof(Proxy));
         }
 
         public string HealthCheckStorage { get; }
@@ -63,6 +68,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
         }
 
         public string Redis { get; }
+
+        public string Proxy { get; }
 
         public string EnvironmentString => environment;
 
