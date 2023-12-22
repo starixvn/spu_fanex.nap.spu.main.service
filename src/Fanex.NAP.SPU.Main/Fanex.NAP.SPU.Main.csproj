@@ -41,6 +41,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="appsettings.KLDR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\Images\collapse.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
