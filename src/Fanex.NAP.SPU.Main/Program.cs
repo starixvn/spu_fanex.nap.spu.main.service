@@ -31,8 +31,15 @@ builder.ConfigureWebHostDefaults(webBuilder =>
 
 builder.ConfigureSilkierQuartzHost();
 
-SentrySdk.CaptureMessage(string.Format("{0} has been started at {1}", typeof(Program).FullName, DateTime.Now));
+try
+{
+    var app = builder.Build();
 
-var app = builder.Build();
+    SentrySdk.CaptureMessage(string.Format("{0} has been started at {1}", typeof(Program).FullName, DateTime.Now));
 
-app.Run();
+    app.Run();
+}
+catch (Exception ex)
+{
+    SentrySdk.CaptureException(ex);
+}
