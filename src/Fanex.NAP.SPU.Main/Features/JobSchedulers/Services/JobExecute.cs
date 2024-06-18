@@ -48,7 +48,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 var flagError = false;
                 var messageError = string.Empty;
 
-                if (count >= 5)
+                if (count >= 1)
                 {
                     var e = new JobExecutionException("Retries exceeded");
 
