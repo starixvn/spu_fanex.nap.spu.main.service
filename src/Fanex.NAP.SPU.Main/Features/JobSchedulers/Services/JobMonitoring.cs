@@ -67,10 +67,10 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
         {
             if (environment == "PROD" || environment == "KLDR")
             {
-                var telegramService = new NotificationService();
+                var notificationService = new NotificationService();
 
-                telegramService
-                   .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "-1001571051228", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken", proxy)
+                notificationService
+                   .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "19:c816d008fc134c1b8253609ebcbe128f@thread.tacv2", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken", proxy)
                    .Message(new MessageModel(systemName, DateTime.Now, environment, message, moreInfo))
                    .SendWithoutDelay();
             }
