@@ -1,4 +1,4 @@
-FROM hub.nexdev.net/base/dotnet/core/sdk:5.0.102-ca-patch-buster-slim AS builder
+FROM hub.nexdev.net/base/dotnet/core/sdk:8.0-alpine AS builder
 
 WORKDIR /src
 
@@ -14,7 +14,7 @@ COPY ./src/Fanex.NAP.SPU.Main .
 
 RUN dotnet publish -r linux-x64 --self-contained false -o /app
 
-FROM hub.nexdev.net/rebuild-baseimage/dotnetcore/aspnet:5.0-alpine AS base
+FROM hub.nexdev.net/base/dotnet/core/aspnet:8.0-alpine AS base
 
 WORKDIR /app
 
