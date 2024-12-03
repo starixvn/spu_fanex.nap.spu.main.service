@@ -1,16 +1,21 @@
 ﻿namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
-    using Fanex.NAP.SPU.Main.Features.JobSchedulers.Models;
+    using Fanex.NAP.SPU.CTS.Features.JobSchedulers.Model;
+    using Fanex.NAP.SPU.CTS.Shares;
+    using Fanex.NAP.SPU.Main.Features.SchedulerManager.Service;
     using Fanex.NAP.SPU.Main.Middleware;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Quartz;
+    using Quartz.Impl;
     using Quartz.Impl.Matchers;
     using Quartz.Spi;
     using Sentry;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -21,24 +26,28 @@
         private readonly IConfiguration _configuration;
         private readonly IAppSettings _appSettings;
         private readonly IScheduler _scheduler;
-        private readonly ISentryClient sentryClient;
-
+        private readonly ISentryClient _sentryClient;
+        private readonly ISchedulerManagerJobService _schedulerManagerJobService;
 
         public QuartzHostedService(
             ISchedulerFactory schedulerFactory,
             IJobFactory jobFactory,
-            IConfiguration _configuration,
-            IAppSettings _appSettings,
-            ISentryClient sentryClient)
+            IConfiguration configuration,
+            IAppSettings appSettings,
+            ISentryClient sentryClient,
+            ISchedulerManagerJobService schedulerManagerJobService)
         {
-            this.sentryClient = sentryClient;
+            _sentryClient = sentryClient;
             _schedulerFactory = schedulerFactory;
             _jobFactory = jobFactory;
-            this._configuration = _configuration;
-            this._appSettings = _appSettings;
+            _configuration = configuration;
+            _appSettings = appSettings;
+            _schedulerManagerJobService = schedulerManagerJobService;
             _scheduler = _schedulerFactory.GetScheduler().Result;
-            JobSchedulers = _appSettings.Schedulers;
 
+            // GOTO - Test, will delete
+            //JobSchedulers = appSettings.Schedulers;
+            JobSchedulers = _configuration.GetSection("SchedulerTests").Get<Scheduler>();
         }
 
         public Scheduler JobSchedulers { get; set; }
@@ -46,8 +55,8 @@
         public Scheduler NewJobSchedulers
         {
             get
-            {
-                return _configuration.GetSection(nameof(_appSettings.Schedulers)).Get<Scheduler>();
+            {               
+                return _configuration.GetSection("NewSchedulerTests").Get<Scheduler>();
             }
         }
 
@@ -61,29 +70,125 @@
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            if (JobSchedulers.GroupJobs != null && JobSchedulers.GroupJobs.Any())
-            {
-                _scheduler.JobFactory = _jobFactory;
+            //if (JobSchedulers == null || JobSchedulers.GroupJobs == null)
+            //{
+            //    return;
+            //}
 
-                var groupJobs = JobSchedulers.GroupJobs;
+            //if (JobSchedulers.GroupJobs != null && JobSchedulers.GroupJobs.Any())
+            //{
+            //    _scheduler.JobFactory = _jobFactory;
+
+            //    var groupJobs = JobSchedulers.GroupJobs;
+
+            //    foreach (var groupJob in groupJobs)
+            //    {
+            //        groupJob.Jobs.ToList().ForEach(job =>
+            //        {
+            //            var jobDetail = _schedulerManagerJobService.BuildJob(job, groupJob.Name);
+
+            //            job.Triggers.ToList().ForEach(trigger =>
+            //            {
+            //                var triggerDetail = _schedulerManagerJobService.BuildTrigger(trigger, groupJob.Name);
+
+            //                _scheduler.ScheduleJob(jobDetail, triggerDetail, cancellationToken);
+
+            //                if (!job.Active)
+            //                {
+            //                    _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
+            //                }
+            //            });
+            //        });
+
+            //        if (IsPauseTrigger(groupJob.Jobs))
+            //        {
+            //            await _scheduler.PauseTriggers(GroupMatcher<TriggerKey>.GroupEquals(groupJob.Name));
+            //        }
+            //    }
+
+            //    await _scheduler.Start(cancellationToken);
+            //}
+
+            var groupJobs = _schedulerManagerJobService.GetJobsFromDb(false);
+
+            await UpdateJobs(cancellationToken, groupJobs);
+
+            await RestartAsync(cancellationToken);
+        }
+
+        private bool IsPauseTrigger(IEnumerable<Job> jobs)
+        {
+            return !jobs.Any(x => x.Active);
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {          
+            if (!_scheduler.IsShutdown)
+            {
+                await _scheduler.Shutdown(cancellationToken);
+            }
+        }
+
+        public async Task RestartAsync(CancellationToken cancellationToken)
+        {
+            if (!_scheduler.IsShutdown)
+            {
+                await _scheduler.Start(cancellationToken);
+            }
+        }
+
+        public async Task RestartSchedulerFromDb(CancellationToken cancellationToken)
+        {
+            var groupJobs = _schedulerManagerJobService.GetJobsFromDb(false);
+
+            await UpdateJobs(cancellationToken, groupJobs);
+
+            await RestartAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<GroupJob>> LoadJobsUpdateFromDb(CancellationToken cancellationToken)
+        {            
+            var groupJobs = _schedulerManagerJobService.GetJobsFromDb(true);
+
+            return await Task.FromResult(groupJobs);
+        }
+
+        public async Task UpdateJobsFromDb(CancellationToken cancellationToken)
+        {
+            var groupJobs = _schedulerManagerJobService.GetJobsFromDb(true);
+
+            await UpdateJobs(cancellationToken, groupJobs);
+
+            await RestartAsync(cancellationToken);
+        }
+
+        private async Task UpdateJobs(CancellationToken cancellationToken, IEnumerable<GroupJob> groupJobs)
+        {
+            foreach (var groupJob in groupJobs)
+            {
+                groupJob.Jobs.ToList().ForEach(job =>
+                {
+                    _schedulerManagerJobService.ReplaceJob(job, groupJob.Name);
+                });
+
+                if (IsPauseTrigger(groupJob.Jobs))
+                {
+                    await _scheduler.PauseTriggers(GroupMatcher<TriggerKey>.GroupEquals(groupJob.Name));
+                }
+            }           
+        }
+
+        public async Task ReplaceJob(CancellationToken cancellationToken)
+        {
+            if (NewJobSchedulers.GroupJobs != null && NewJobSchedulers.GroupJobs.Any())
+            {               
+                var groupJobs = NewJobSchedulers.GroupJobs;
 
                 foreach (var groupJob in groupJobs)
                 {
                     groupJob.Jobs.ToList().ForEach(job =>
                     {
-                        var jobDetail = BuildJob(job, groupJob.Name);
-
-                        job.Triggers.ToList().ForEach(trigger =>
-                        {
-                            var triggerDetail = BuildTrigger(trigger, groupJob.Name);
-
-                            _scheduler.ScheduleJob(jobDetail, triggerDetail, cancellationToken);
-
-                            if (!job.Active)
-                            {
-                                _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupJob.Name));
-                            }
-                        });
+                        _schedulerManagerJobService.ReplaceJob(job, groupJob.Name);                      
                     });
 
                     if (IsPauseTrigger(groupJob.Jobs))
@@ -93,21 +198,54 @@
                 }
 
                 await _scheduler.Start(cancellationToken);
+            }            
+        }
+
+        public async Task UpdateJob(string jobName, string groupName, CancellationToken cancellationToken)
+        {
+            var newJob = _schedulerManagerJobService.GetJob(jobName, groupName);
+
+            if (newJob != null) {
+                await _schedulerManagerJobService.ReplaceJob(newJob, groupName);                
             }
+
+            await _scheduler.Start(cancellationToken);
         }
 
-        private bool IsPauseTrigger(IEnumerable<Job> jobs)
+        public async Task DeleteJob(string jobName, string groupName, CancellationToken cancellationToken)
         {
-            return !jobs.Any(x => x.Active);
+            var isSuccess = await _schedulerManagerJobService.DeleteJob(jobName, groupName);         
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        public async Task DeleteAllJobs()
         {
-            var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-
-            await scheduler.Shutdown(cancellationToken);
+            await _schedulerManagerJobService.DeleteAllJobs();
         }
 
+        public bool UpdateFlagJobUpdate(bool isUpdate)
+        {
+            return _schedulerManagerJobService.UpdateFlagJobUpdate(isUpdate);
+        }
+
+        //public async Task<(List<string>, List<string>)> LoadJobsUpdateFromDb(CancellationToken cancellationToken)
+        //{
+        //    // Get jobs from databse
+        //    //var jobsFromDb =_schedulerManagerJobService.GetJobsFromDb();
+
+        //    //var jobsFromScheduler = await _schedulerManagerJobService.GetJobsFromScheduler();
+        //    //var jobsNameFromDb = jobsFromDb.Jobs.Select(x => x.JobName).ToList();
+
+        //    //// Compare jobs in database and scheduler
+        //    //var (newJobs, removeJobs) = JobComparison.CompareJobs(jobsFromScheduler, jobsNameFromDb);
+
+        //    //return (newJobs, removeJobs);
+
+        //    //return new(new List<string>(), new List<string>());
+
+        //    //await ReplaceJob(cancellationToken);
+        //}
+
+        #region Delete
         //public IEnumerable<GroupJob> GetJobSchedulerDiff()
         //{
         //    var result = JobSchedulers.Equals(NewJobSchedulers);
@@ -229,44 +367,7 @@
         //    }
         //}
 
-        private IJobDetail BuildJob(Job job, string groupName)
-        {
-            return JobBuilder
-                .Create(Type.GetType(job.JobType))
-                .WithIdentity(job.JobName, groupName)
-                .WithDescription(job.JobName)
-                .UsingJobData("apiUrl", job.APIUrl)
-                .UsingJobData("methodName", job.MethodName)
-                .UsingJobData("controller", job.Controller)
-                .Build();
-        }
-
-        private ITrigger BuildTrigger(Trigger trigger, string groupName)
-        {
-            var triggerBuilder = TriggerBuilder
-                .Create()
-                .WithIdentity(trigger.TriggerName, groupName)
-                .WithDescription(trigger.TriggerName)
-                .StartNow();
-
-            if (trigger.TriggerType != "Cron")
-            {
-                triggerBuilder.WithSimpleSchedule(x => x.WithIntervalInSeconds(trigger.IntervalInSecond).RepeatForever());
-            }
-            else
-            {
-                if(!string.IsNullOrWhiteSpace(trigger.TimeZone))
-                {
-                    triggerBuilder.WithCronSchedule(trigger.CronExpression, x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById(trigger.TimeZone)));
-                }
-                else
-                {
-                    triggerBuilder.WithCronSchedule(trigger.CronExpression);
-                }
-            }
-
-            return triggerBuilder.Build();
-        }
+        #endregion
 
     }
 }

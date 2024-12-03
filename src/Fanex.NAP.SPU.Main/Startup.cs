@@ -1,8 +1,12 @@
 namespace Fanex.NAP.SPU.Main
 {
+    using Fanex.Data;
+    using Fanex.Data.MySql;
     using Fanex.Logging.Extensions;
     using Fanex.Logging.Extensions.AspNetCore;
+    using Fanex.NAP.SPU.CTS.Features.SchedulerManager;
     using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
+    using Fanex.NAP.SPU.Main.Features.SchedulerManager.Service;
     using Fanex.NAP.SPU.Main.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.Middleware;
     using HealthChecks.UI.Client;
@@ -23,6 +27,8 @@ namespace Fanex.NAP.SPU.Main
     using Refit;
     using SilkierQuartz;
     using StackExchange.Redis;
+    using System;
+    using System.Linq;
 
     public class Startup
     {
@@ -69,10 +75,26 @@ namespace Fanex.NAP.SPU.Main
             services.AddRefitClient<IJobServiceApi>();
             services.AddSingleton<IJobService, JobService>();
 
+            services.AddSingleton<ISchedulerManagerJobService, SchedulerManagerJobService>();
             services.AddSingleton<QuartzHostedService>();
+            
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<JobExecute>();
             services.AddSingleton<JobMonitoring>();
+
+            services.AddSingleton<ISchedulerManagerDataAccess, SchedulerManagerDataAccess>();
+            services.AddSingleton<ISchedulerManagerService, SchedulerManagerService>();
+
+            services.AddAuthentication().AddCookie("AdminScheme", options =>
+            {
+                options.LoginPath = "/Authenticates/Login"; // Login path for admins
+                options.LogoutPath = "/Authenticates/Logout"; // Redirect to logout
+                options.AccessDeniedPath = "/Authenticates/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Set the cookie expiration time
+                options.SlidingExpiration = true; // Specify if the cookie should persist after the browser is closed
+            });
+
+            FanexDataConfig(appSettings);
 
             ExceptionHandler
                 .UseConfig(new LoggingConfiguration());
@@ -107,25 +129,26 @@ namespace Fanex.NAP.SPU.Main
 
             var schedulerProvider = (ISchedulerFactory)app.ApplicationServices.GetService(typeof(ISchedulerFactory));
 
-            app.UseSilkierQuartz(
-                new SilkierQuartzOptions()
+            var option = new SilkierQuartzOptions()
+            {
+                ProductName = "Job Management",
+                VirtualPathRoot = "/quartz",
+                Scheduler = schedulerProvider.GetScheduler().Result,
+                UseLocalTime = true,
+                DefaultDateFormat = "MM/dd/yyyy",
+                DefaultTimeFormat = "HH:mm:ss",
+                CronExpressionOptions = new CronExpressionDescriptor.Options()
                 {
-                    ProductName = "Job Management",
-                    VirtualPathRoot = "/quartz",
-                    Scheduler = schedulerProvider.GetScheduler().Result,
-                    UseLocalTime = true,
-                    DefaultDateFormat = "MM/dd/yyyy",
-                    DefaultTimeFormat = "HH:mm:ss",
-                    CronExpressionOptions = new CronExpressionDescriptor.Options()
-                    {
-                        DayOfWeekStartIndexZero = false
-                    },
-                    AccountName = "admin",
-                    AccountPassword = "admin!Q@W#E",
-                    IsAuthenticationPersist = false
-                }
-                );
+                    DayOfWeekStartIndexZero = false
+                },
+                AccountName = "admin",
+                //AccountPassword = "admin!Q@W#E",
+                AccountPassword = "admin",
+                IsAuthenticationPersist = false
+            };                       
 
+            app.UseSilkierQuartz(option);
+           
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -137,6 +160,23 @@ namespace Fanex.NAP.SPU.Main
             {
                 endpoints.MapRazorPages();
             });
+        }
+
+        private void FanexDataConfig(IAppSettings appSettings)
+        {
+            var connections = Configuration
+                                  .GetSection("Connections")
+                                  .GetChildren()
+                                  .AsEnumerable()
+                                  .ToDictionary(
+                                           x => x.GetValue<string>("Name"),
+                                           y => new ConnectionConfiguration(y.GetValue<string>("Name"), y.GetValue<string>("ConnectionString"), y.GetValue<string>("ProviderName"))
+                                   );
+            DbSettingProviderManager.StartNewSession()
+                .Use(connections)
+                .WithMySql()
+                .UseDefaultDbSettingProvider(resourcePath: "~/App_Data/DEV")
+                .Run();           
         }
     }
 }
