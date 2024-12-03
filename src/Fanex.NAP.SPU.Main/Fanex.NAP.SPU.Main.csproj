@@ -52,4 +52,20 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\JobSchedulers\Controllers\" />
+    <Folder Include="Features\SchedulerManager\Model\" />
+    <Folder Include="Features\SchedulerManager\ViewModel\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Fanex.NAP.SPU.CTS\Fanex.NAP.SPU.CTS.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App_Data\DEV\SPNames.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
