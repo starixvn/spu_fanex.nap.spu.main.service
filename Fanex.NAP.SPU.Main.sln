@@ -5,7 +5,7 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fanex.NAP.SPU.Main", "src\Fanex.NAP.SPU.Main\Fanex.NAP.SPU.Main.csproj", "{F40DAF63-B40C-4DAC-A4C4-528EFDD48855}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fanex.NAP.SPU.CTS", "Fanex.NAP.SPU.CTS\Fanex.NAP.SPU.CTS.csproj", "{D31CC7F9-47A5-4FE6-8F7E-DE44D334B29B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fanex.NAP.SPU.CTS", "src\Fanex.NAP.SPU.CTS\Fanex.NAP.SPU.CTS.csproj", "{D31CC7F9-47A5-4FE6-8F7E-DE44D334B29B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
