@@ -8,6 +8,8 @@
         IEnumerable<GroupJob> GetGroupJobs(bool isUpdate);
 
         bool UpdateFlagJobUpdate(bool isUpdate);
+
+        bool DeleteJob(string jobName, string groupName);
     }
 
     public class SchedulerManagerService : ISchedulerManagerService 
@@ -51,6 +53,11 @@
         public bool UpdateFlagJobUpdate(bool isUpdate)
         {
             return _dataAccess.UpdateFlagJobUpdate(isUpdate);
+        }
+
+        public bool DeleteJob(string jobName, string groupName) 
+        {
+            return _dataAccess.DeleteJob(jobName, groupName);
         }
     }
 }

@@ -59,7 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Fanex.NAP.SPU.CTS\Fanex.NAP.SPU.CTS.csproj" />
+    <ProjectReference Include="..\Fanex.NAP.SPU.CTS\Fanex.NAP.SPU.CTS.csproj" />
   </ItemGroup>
 
   <ItemGroup>

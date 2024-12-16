@@ -8,6 +8,8 @@
         JobInfoModel GetJobs(bool isUpdate);
 
         bool UpdateFlagJobUpdate(bool isUpdate);
+
+        bool DeleteJob(string jobName, string groupName);
     }
 
     public class SchedulerManagerDataAccess : ISchedulerManagerDataAccess   
@@ -35,6 +37,15 @@
         public bool UpdateFlagJobUpdate(bool isUpdate)
         {
             var criteria = new UpdateFlagJobUpdateCriteria { IsUpdate = isUpdate };
+
+            _repository.Execute(criteria);
+
+            return true;
+        }
+
+        public bool DeleteJob(string jobName, string groupName)
+        {
+            var criteria = new DeleteJobCriteria { JobName = jobName, GroupName = groupName };
 
             _repository.Execute(criteria);
 
