@@ -1,13 +1,9 @@
 ﻿namespace Fanex.NAP.SPU.CTS.Features.SchedulerManager
 {
-    using Fanex.Data;
     using Fanex.Data.Repository;
 
     public class GetJobsCriteria : CriteriaBase
-    {
-        [SpParam(SqlParamName = "ip_IsUpdate")]
-        public bool IsUpdate { get; set; }
-
+    {      
         public override string GetSettingKey()
         {
             return "CTS_AD_CTSJob_Get";

@@ -16,6 +16,7 @@
             MethodName = data.MethodName;   
             Controller = data.Controller;
             Active = data.IsActive;
+            IsNew = data.IsNew;
         }
 
         //public int JobId { get; set; }
@@ -31,6 +32,8 @@
         public string Controller { get; set; }
 
         public bool Active { get; set; }
+
+        public bool IsNew { get; set; }
 
         public IEnumerable<Trigger> Triggers { get; set; }               
 

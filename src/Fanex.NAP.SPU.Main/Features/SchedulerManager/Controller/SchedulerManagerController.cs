@@ -1,10 +1,12 @@
 ﻿namespace Fanex.NAP.SPU.Main.Features.SchedulerManager.Controller
 {
+    using Fanex.NAP.SPU.Main.Features.SchedulerManager.ViewModel;
     using Fanex.NAP.SPU.Main.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.Middleware;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
+    using Newtonsoft.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -38,14 +40,19 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoadJobsUpdateFromDb(CancellationToken cancellationToken)
-        {           
-            var groupJobs = await _quartzHostedService.LoadJobsUpdateFromDb(cancellationToken);
+        public async Task<IActionResult> GetGroupJobs()
+        {
+            var groups = await _quartzHostedService.GetGroupJobs();
 
-            return Json(new
-            {
-                groupJobs
-            });
+            return Json(new { groups });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetJobsFromDb(CancellationToken cancellationToken)
+        {           
+            var groupJobs = await _quartzHostedService.GetJobsFromDb(cancellationToken);
+
+            return Json(new { groupJobs });
         }
 
         [HttpPost]
@@ -57,17 +64,33 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateJob(string jobName, string groupName, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddJob(AddJobViewModel addJobModel, CancellationToken cancellationToken)
         {
-            await _quartzHostedService.UpdateJob(jobName, groupName, cancellationToken);
+            await _quartzHostedService.AddJob(addJobModel, cancellationToken);
 
             return Ok();
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteJob(string jobName, string groupName, CancellationToken cancellationToken)
+        public async Task<IActionResult> ApplyNewJobFromDb(string jobName, string groupName, CancellationToken cancellationToken)
         {
-            await _quartzHostedService.DeleteJob(jobName, groupName, cancellationToken);
+            await _quartzHostedService.ApplyNewJobFromDb(jobName, groupName, cancellationToken);
+
+            return Ok();
+        }      
+
+        [HttpPost]
+        public async Task<IActionResult> ReloadJobFromDb(string jobName, string groupName, CancellationToken cancellationToken)
+        {
+            await _quartzHostedService.ReloadJobFromDb(jobName, groupName, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteJobToDb(string jobName, string groupName, CancellationToken cancellationToken)
+        {
+            await _quartzHostedService.DeleteJobToDb(jobName, groupName, cancellationToken);
 
             return Ok();
         }

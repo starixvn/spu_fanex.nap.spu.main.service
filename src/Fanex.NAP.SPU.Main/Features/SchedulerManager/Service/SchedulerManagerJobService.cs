@@ -4,6 +4,7 @@
     using Fanex.NAP.SPU.CTS.Features.SchedulerManager;
     using Fanex.NAP.SPU.CTS.Features.SchedulerManager.Model;
     using Fanex.NAP.SPU.CTS.Shares;
+    using Fanex.NAP.SPU.Main.Features.SchedulerManager.ViewModel;
     using Microsoft.AspNetCore.Mvc;
     using Quartz;
     using Quartz.Impl.Matchers;
@@ -25,17 +26,23 @@
 
         Task ReplaceJob(Job job, string groupName);
 
-        Task<bool> DeleteJob(string jobName, string groupName);
+        Task AddJob(string jobTriggerJson);
+
+        Task<bool> DeleteJobToDb(string jobName, string groupName);
 
         Task DeleteAllJobs();
 
-        Job GetJob(string jobName, string groupName);
+        IEnumerable<GroupJobEntity> GetGroupJobs();
 
-        IEnumerable<GroupJob> GetJobsFromDb(bool isUpdate);
+        Job GetSingleJob(string jobName, string groupName);
+
+        IEnumerable<GroupJob> GetGroupJobTriggers();
 
         Task<HashSet<string>> GetJobsFromScheduler();
 
         bool UpdateFlagJobUpdate(bool isUpdate);
+
+        bool ClearedJobNew(string jobName, string groupName);
     }
 
     public class SchedulerManagerJobService : ISchedulerManagerJobService
@@ -101,6 +108,11 @@
             await ReplaceJobAsync(job, groupName);
         }
 
+        public async Task AddJob(string jobTriggerJson)
+        {
+            _schedulerManagerService.AddJob(jobTriggerJson);
+        }
+
         public async Task UpdateJobDataAsync(IScheduler scheduler, string jobID, string newDataKey, string newDataValue)
         {
             var jobKey = new JobKey(jobID, "Group1");
@@ -154,9 +166,9 @@
             Console.WriteLine("All jobs have been deleted.");
         }
 
-        public async Task<bool> DeleteJob(string jobName, string groupName)
+        public async Task<bool> DeleteJobToDb(string jobName, string groupName)
         {
-            var isSuccess = _schedulerManagerService.DeleteJob(jobName, groupName);
+            var isSuccess = _schedulerManagerService.DeleteJobToDb(jobName, groupName);
 
             if (isSuccess) 
                 return await _scheduler.DeleteJob(new JobKey(jobName, groupName));
@@ -164,28 +176,20 @@
             return true;
         }
 
-        public Job GetJob(string jobName, string groupName)
+        public IEnumerable<GroupJobEntity> GetGroupJobs()
         {
-            return new Job
-            {
-                JobName = jobName,
-                JobType = "Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute",
-                APIUrl = "",
-                MethodName = "",
-                Controller = "",
-                Active = false,
-                Triggers = new List<Trigger> { new Trigger {                 
-                    TriggerName = jobName,
-                    TriggerType = "Simple",
-                    IntervalInSecond = 400
-                } }
-            };
+            return _schedulerManagerService.GetGroupJobs();
         }
 
-        public IEnumerable<GroupJob> GetJobsFromDb(bool isUpdate)
-        {
-            return _schedulerManagerService.GetGroupJobs(isUpdate);
+        public Job GetSingleJob(string jobName, string groupName)
+        {          
+            return _schedulerManagerService.GetSingleJob(jobName, groupName);
         }
+
+        public IEnumerable<GroupJob> GetGroupJobTriggers()
+        {
+            return _schedulerManagerService.GetGroupJobTriggers();
+        }      
 
         public async Task<HashSet<string>> GetJobsFromScheduler()
         {
@@ -201,7 +205,12 @@
             }
 
             return jobSet;
-        }      
+        }
+
+        public bool ClearedJobNew(string jobName, string groupName)
+        {
+            return _schedulerManagerService.ClearedJobNew(jobName, groupName);
+        }
 
         public bool UpdateFlagJobUpdate(bool isUpdate)
         {

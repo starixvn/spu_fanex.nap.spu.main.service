@@ -6,6 +6,10 @@
     <title>@ViewData["Title"] - Fanex.NAP.SPU.Main</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/schedulermannager.css" />   
+    @* <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" /> *@
+    <link href="~/css/datatables/dt-2.2.0/datatables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/fonts/style.css" />
 </head>
 <body>
     <header>
@@ -54,7 +58,6 @@
                                 Check Update
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                @* <a class="nav-link text-dark" asp-area="" asp-controller="SchedulerManager" asp-action="CheckUpdateJobs">Update Jobs</a> *@
                                 <a class="nav-link text-dark" href="/SchedulerManager/Index">Scheduler Manager</a>
                             </div>
                         </li>
@@ -79,12 +82,5 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
-  @*   <script>
-        $(document).ready(function() {         
-            // Append a custom link to the SilkierQuartz menu
-            var customLink = $('<a class="nav-link" href="/Custom/CustomPage">My Custom Page</a>');
-            $('.container').append(customLink);  // Append the custom link to the existing navbar
-        });
-    </script> *@
 </body>
 </html>

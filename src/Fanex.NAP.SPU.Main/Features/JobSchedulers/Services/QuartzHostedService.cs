@@ -1,12 +1,15 @@
 ﻿namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 {
     using Fanex.NAP.SPU.CTS.Features.JobSchedulers.Model;
+    using Fanex.NAP.SPU.CTS.Features.SchedulerManager;
     using Fanex.NAP.SPU.CTS.Shares;
     using Fanex.NAP.SPU.Main.Features.SchedulerManager.Service;
+    using Fanex.NAP.SPU.Main.Features.SchedulerManager.ViewModel;
     using Fanex.NAP.SPU.Main.Middleware;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
+    using Newtonsoft.Json;
     using Quartz;
     using Quartz.Impl;
     using Quartz.Impl.Matchers;
@@ -109,9 +112,9 @@
             //    await _scheduler.Start(cancellationToken);
             //}
 
-            var groupJobs = _schedulerManagerJobService.GetJobsFromDb(false);
+            //var groupJobs = _schedulerManagerJobService.GetJobsFromDb(false);
 
-            await UpdateJobs(cancellationToken, groupJobs);
+            //await UpdateJobs(cancellationToken, groupJobs);
 
             await RestartAsync(cancellationToken);
         }
@@ -139,23 +142,30 @@
 
         public async Task RestartSchedulerFromDb(CancellationToken cancellationToken)
         {
-            var groupJobs = _schedulerManagerJobService.GetJobsFromDb(false);
+            var groupJobs = _schedulerManagerJobService.GetGroupJobTriggers();
 
             await UpdateJobs(cancellationToken, groupJobs);
 
             await RestartAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<GroupJob>> LoadJobsUpdateFromDb(CancellationToken cancellationToken)
+        public async Task<IEnumerable<GroupJobEntity>> GetGroupJobs()
+        {
+            var groupJobs = _schedulerManagerJobService.GetGroupJobs();
+
+            return await Task.FromResult(groupJobs);
+        }
+
+        public async Task<IEnumerable<GroupJob>> GetJobsFromDb(CancellationToken cancellationToken)
         {            
-            var groupJobs = _schedulerManagerJobService.GetJobsFromDb(true);
+            var groupJobs = _schedulerManagerJobService.GetGroupJobTriggers();
 
             return await Task.FromResult(groupJobs);
         }
 
         public async Task UpdateJobsFromDb(CancellationToken cancellationToken)
         {
-            var groupJobs = _schedulerManagerJobService.GetJobsFromDb(true);
+            var groupJobs = _schedulerManagerJobService.GetGroupJobTriggers();
 
             await UpdateJobs(cancellationToken, groupJobs);
 
@@ -201,20 +211,42 @@
             }            
         }
 
-        public async Task UpdateJob(string jobName, string groupName, CancellationToken cancellationToken)
+        public async Task ApplyNewJobFromDb(string jobName, string groupName, CancellationToken cancellationToken)
         {
-            var newJob = _schedulerManagerJobService.GetJob(jobName, groupName);
+            var newJob = _schedulerManagerJobService.GetSingleJob(jobName, groupName);
 
-            if (newJob != null) {
+            if (newJob != null)
+            {
+                await _schedulerManagerJobService.ReplaceJob(newJob, groupName);
+
+                _schedulerManagerJobService.ClearedJobNew(jobName, groupName);
+            }
+
+            await _scheduler.Start(cancellationToken);
+        }
+
+        public async Task ReloadJobFromDb(string jobName, string groupName, CancellationToken cancellationToken)
+        {
+            var newJob = _schedulerManagerJobService.GetSingleJob(jobName, groupName);
+
+            if (newJob != null)
+            {
                 await _schedulerManagerJobService.ReplaceJob(newJob, groupName);                
             }
 
             await _scheduler.Start(cancellationToken);
         }
 
-        public async Task DeleteJob(string jobName, string groupName, CancellationToken cancellationToken)
+        public async Task AddJob(AddJobViewModel addJobModel, CancellationToken cancellationToken)
         {
-            var isSuccess = await _schedulerManagerJobService.DeleteJob(jobName, groupName);         
+            var data = new List<AddJobViewModel>() { addJobModel };
+
+            await _schedulerManagerJobService.AddJob(JsonConvert.SerializeObject(data));
+        }
+
+        public async Task DeleteJobToDb(string jobName, string groupName, CancellationToken cancellationToken)
+        {
+            var isSuccess = await _schedulerManagerJobService.DeleteJobToDb(jobName, groupName);         
         }
 
         public async Task DeleteAllJobs()

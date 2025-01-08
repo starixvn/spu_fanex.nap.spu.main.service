@@ -18,6 +18,7 @@ namespace Fanex.NAP.SPU.Main
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Newtonsoft.Json.Serialization;
     using ONEbook.UM.AspNetCore;
     using ONEbook.UM.Configurations;
     using ONEbook.UM.Helpers;
@@ -51,6 +52,10 @@ namespace Fanex.NAP.SPU.Main
                 .PersistKeysToStackExchangeRedis(redis, "SPU.Main.Service.ProtectionKeys");
 
             services.AddControllersWithViews();
+
+            services.AddControllers().AddJsonOptions(options => {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null; // Use PascalCase
+            });
 
             services.AddSingleton<IAppSettings>(appSettings);
 
@@ -87,8 +92,8 @@ namespace Fanex.NAP.SPU.Main
 
             services.AddAuthentication().AddCookie("AdminScheme", options =>
             {
-                options.LoginPath = "/Authenticates/Login"; // Login path for admins
-                options.LogoutPath = "/Authenticates/Logout"; // Redirect to logout
+                options.LoginPath = "/Authenticates/Login";
+                options.LogoutPath = "/Authenticates/Logout";
                 options.AccessDeniedPath = "/Authenticates/AccessDenied";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Set the cookie expiration time
                 options.SlidingExpiration = true; // Specify if the cookie should persist after the browser is closed
