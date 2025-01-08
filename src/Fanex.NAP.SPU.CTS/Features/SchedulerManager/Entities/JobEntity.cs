@@ -15,5 +15,7 @@
         public string Controller { get; set; }
 
         public bool IsActive { get; set; }
+
+        public bool IsNew { get; set; }
     }
 }

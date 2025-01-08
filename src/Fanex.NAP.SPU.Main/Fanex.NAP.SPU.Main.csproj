@@ -53,9 +53,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="App_Data\KLRD\" />
+    <Folder Include="App_Data\SIT\" />
+    <Folder Include="App_Data\PROD\" />
+    <Folder Include="App_Data\UAT\" />
     <Folder Include="Features\JobSchedulers\Controllers\" />
     <Folder Include="Features\SchedulerManager\Model\" />
-    <Folder Include="Features\SchedulerManager\ViewModel\" />
+    <Folder Include="wwwroot\css\fonts\" />
+    <Folder Include="wwwroot\css\components\" />
+    <Folder Include="wwwroot\css\abstracts\" />
+    <Folder Include="wwwroot\css\base\" />
   </ItemGroup>
 
   <ItemGroup>

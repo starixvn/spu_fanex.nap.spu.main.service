@@ -5,21 +5,42 @@
     ViewData["Title"] = "Updated Jobs";
 }
 
-<div class="group-info">
-    @*
-    <input id="btnSaveUpdateJobs" type="button" title="ReSchedule Jobs" value="Update" onclick="if (confirm('Are you sure you want to reschedule all jobs?')) { location.href = '@Url.Action("SaveUpdateJobs", "Scheduler")' } ">
-    *@
-    <br />
-    <div>
-        <button id="btnRestartSchedulerFromDb" class="btn btn-primary">Restart Scheduler from Database</button>
-    </div>
-    <br />
-    <div class="group width-200">
-        <button id="btnLoadJobsUpdateFromDb" class="btn btn-primary">Load Jobs from Database</button>
-    </div>
-    <br />
+<div class="page-container">
+    <div class="group-info">
+        <div>
+            <span>
+                <a class="text-dark" href="/Authenticates/Logout"><i class="icon-logout"></i> Logout</a>
+            </span>
+        </div>
+             
+        <div class="group width-200">
+            <button id="btnAddJob" class="btn btn-primary">Add Job</button>
 
-    <div class="group width-200">
+            <button id="btnGetJobsFromDb" class="btn btn-primary">Load Jobs from Db</button>
+
+            <button id="btnRestartSchedulerFromDb" class="btn btn-primary">Restart Scheduler from Db</button>
+       
+        </div>
+    </div>
+    @Html.Partial("AddJob")
+
+    <div id="tabsContainer" class="tabs-container">
+        <div id="tabsHeader" class="tabs">
+        </div>
+
+        <div id="tabsContent">
+        </div>
+
+    </div>
+</div>
+
+<div class="group-info">
+   @*  <br />
+    <div>
+        <button id="btnRestartSchedulerFromDb" class="btn btn-primary">Restart Scheduler from Db</button>
+    </div> *@ 
+
+  @*   <div class="group width-200">
         <button id="btnUpdateJobsFromDb" class="btn btn-primary">Update Jobs from Database</button>
     </div>
 
@@ -45,15 +66,19 @@
     <br />
     <div class="group width-200">
         <button id="btnUpdateFlagJobUpdate" class="btn btn-primary">Update Flag Job Update</button>
-    </div>
+    </div> *@
 
-    <br />   
+  @*   <br />   
     <div>
-        <a class="nav-link text-dark" href="/Authenticates/Logout">Logout</a>
-    </div>    
+        <span>
+            <a class="text-dark" href="/Authenticates/Logout"><i class="icon-logout"></i> Logout</a>
+            
+        </span>
+        
+    </div>     *@
 </div>
 
-
 @section Scripts {
+    <script src="~/lib/datatables/dt-2.2.0/datatables.min.js"></script>
     <script src="~/js/SchedulerManager/index.js"></script>
 }

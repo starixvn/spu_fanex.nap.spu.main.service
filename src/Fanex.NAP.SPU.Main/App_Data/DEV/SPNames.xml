@@ -2,9 +2,13 @@
 
 <Functions>
   <Function Name="Job">
+    <Setting Key="CTS_AD_CTSGroupJob_Get" SpName="CTS_AD_CTSGroupJob_Get" DbName="MySQL.CTS_Admin.Reporter" />
     <Setting Key="CTS_AD_CTSJob_Get" SpName="CTS_AD_CTSJob_Get" DbName="MySQL.CTS_Admin.Reporter" />
+    <Setting Key="CTS_AD_CTSJob_GetSingle" SpName="CTS_AD_CTSJob_GetSingle" DbName="MySQL.CTS_Admin.Reporter" />
+    <Setting Key="CTS_AD_CTSJob_NewJobCleared" SpName="CTS_AD_CTSJob_NewJobCleared" DbName="MySQL.CTS_Admin.Admin" />
     <Setting Key="CTS_AD_CTSJob_FlagUpdate_Update" SpName="CTS_AD_CTSJob_FlagUpdate_Update" DbName="MySQL.CTS_Admin.Admin" />
     <Setting Key="CTS_AD_CTSJob_Delete" SpName="CTS_AD_CTSJob_Delete" DbName="MySQL.CTS_Admin.Admin" />
+    <Setting Key="CTS_AD_CTSJob_Add" SpName="CTS_AD_CTSJob_Add" DbName="MySQL.CTS_Admin.Admin" />
   </Function>
 
 </Functions>

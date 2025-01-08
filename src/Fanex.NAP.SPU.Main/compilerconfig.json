@@ -2,5 +2,17 @@
   {
     "outputFile": "wwwroot/css/site.css",
     "inputFile": "wwwroot/css/site.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/schedulermannager.css",
+    "inputFile": "wwwroot/css/schedulermannager.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/components/_tables.css",
+    "inputFile": "wwwroot/css/components/_tables.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/components/_accordion.css",
+    "inputFile": "wwwroot/css/components/_accordion.scss"
   }
 ]
