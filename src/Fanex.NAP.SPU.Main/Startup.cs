@@ -177,10 +177,11 @@ namespace Fanex.NAP.SPU.Main
                                            x => x.GetValue<string>("Name"),
                                            y => new ConnectionConfiguration(y.GetValue<string>("Name"), y.GetValue<string>("ConnectionString"), y.GetValue<string>("ProviderName"))
                                    );
+            
             DbSettingProviderManager.StartNewSession()
                 .Use(connections)
                 .WithMySql()
-                .UseDefaultDbSettingProvider(resourcePath: "~/App_Data/DEV")
+                .UseDefaultDbSettingProvider(resourcePath: "~/App_Data/" + appSettings.EnvironmentString)
                 .Run();           
         }
     }

@@ -252,12 +252,7 @@
         public async Task DeleteAllJobs()
         {
             await _schedulerManagerJobService.DeleteAllJobs();
-        }
-
-        public bool UpdateFlagJobUpdate(bool isUpdate)
-        {
-            return _schedulerManagerJobService.UpdateFlagJobUpdate(isUpdate);
-        }
+        }       
 
         //public async Task<(List<string>, List<string>)> LoadJobsUpdateFromDb(CancellationToken cancellationToken)
         //{

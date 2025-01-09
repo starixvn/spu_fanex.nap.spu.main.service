@@ -102,13 +102,6 @@
 
             return Ok();
         }   
-        
-        [HttpPost]
-        public async Task<IActionResult> UpdateFlagJobUpdate()
-        {
-            await Task.FromResult(_quartzHostedService.UpdateFlagJobUpdate(true));
-
-            return Ok();
-        }
+               
     }
 }

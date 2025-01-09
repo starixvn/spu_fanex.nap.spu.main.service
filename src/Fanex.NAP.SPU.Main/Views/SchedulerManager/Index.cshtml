@@ -7,19 +7,16 @@
 
 <div class="page-container">
     <div class="group-info">
-        <div>
+        <div class="margin-10">
             <span>
                 <a class="text-dark" href="/Authenticates/Logout"><i class="icon-logout"></i> Logout</a>
             </span>
         </div>
              
         <div class="group width-200">
-            <button id="btnAddJob" class="btn btn-primary">Add Job</button>
-
-            <button id="btnGetJobsFromDb" class="btn btn-primary">Load Jobs from Db</button>
-
-            <button id="btnRestartSchedulerFromDb" class="btn btn-primary">Restart Scheduler from Db</button>
-       
+            <span class="margin-10"><button id="btnAddJob" class="btn btn-primary">Add Job</button></span>
+            <span class="margin-10"><button id="btnGetJobsFromDb" class="btn btn-primary">Load Jobs from Db</button></span>
+            <span class="margin-10"><button id="btnRestartSchedulerFromDb" class="btn btn-primary">Restart Scheduler from Db</button></span>
         </div>
     </div>
     @Html.Partial("AddJob")
@@ -63,19 +60,9 @@
         <button id="btnDeleteAllJobs" class="btn btn-primary">Delete All Jobs from Scheduler</button>
     </div>
 
-    <br />
-    <div class="group width-200">
-        <button id="btnUpdateFlagJobUpdate" class="btn btn-primary">Update Flag Job Update</button>
-    </div> *@
-
-  @*   <br />   
-    <div>
-        <span>
-            <a class="text-dark" href="/Authenticates/Logout"><i class="icon-logout"></i> Logout</a>
-            
-        </span>
-        
-    </div>     *@
+    *@
+   
+   
 </div>
 
 @section Scripts {

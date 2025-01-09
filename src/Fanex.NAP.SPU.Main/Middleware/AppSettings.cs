@@ -61,7 +61,13 @@ namespace Fanex.NAP.SPU.Main.Middleware
                     case "LOCAL":
                         return 1;
                     case "UAT":
-                        return 2;
+                        return 2;                    
+                    case "PROD":
+                        return 3;
+                    case "SIT":
+                        return 4;
+                    case "KLDR":
+                        return 5;
                     default:
                         return 3;
                 }

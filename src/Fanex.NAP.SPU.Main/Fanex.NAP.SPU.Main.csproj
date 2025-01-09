@@ -53,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="App_Data\KLRD\" />
+    <Folder Include="App_Data\KLDR\" />
     <Folder Include="App_Data\SIT\" />
     <Folder Include="App_Data\PROD\" />
     <Folder Include="App_Data\UAT\" />
@@ -70,7 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="App_Data\DEV\SPNames.xml">
+    <None Update="App_Data\LOCAL\SPNames.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

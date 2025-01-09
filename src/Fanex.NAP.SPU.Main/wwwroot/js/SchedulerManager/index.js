@@ -26,8 +26,7 @@
         txtDeleteJobName: $('#txtDeleteJobName'),
         txtDeleteGroupName: $('#txtDeleteGroupName'),
         btnDeleteJob: $('#btnDeleteJob'),        
-        btnDeleteAllJobs: $('#btnDeleteAllJobs'),
-        btnUpdateFlagJobUpdate: $('#btnUpdateFlagJobUpdate')
+        btnDeleteAllJobs: $('#btnDeleteAllJobs')      
     }
 
     function RestartSchedulerFromDb() {
@@ -199,50 +198,37 @@
             }
         });
     }  
-
-    function UpdateFlagJobUpdate() {
-        $.ajax({
-            url: '/SchedulerManager/UpdateFlagJobUpdate',
-            type: 'POST',
-            success: function (response) {
-                alert("Update Flag Job Update successful");
-            },
-            error: function (xhr, status, error) {
-                alert('Error: ' + error);
-            }
-        });
-    }  
-
+  
     function GenerateTable(data) {
         domElements.tabsHeader.empty();
         domElements.tabsContent.empty();
 
         if (data != undefined) {
             let active = 'active';
-
+            let i = 0;
             data.forEach(group => {
-                domElements.tabsHeader.append(`<div class='tab ${active}' data-tab="${group.Name}">${group.Name}</div>`);                
+                domElements.tabsHeader.append(`<div class='tab ${active}' data-tab="${group.Name}">${group.Name}</div>`);
 
                 if (group.Jobs != undefined) {
                     let $div = $(`<div class='tab-content ${active}' id='tab-${group.Name}'></div>`);
                     active = '';
-                    
-                    let $table = RenderTable(group.Jobs, group.Name);
+
+                    let $table = InitTable(group.Name);
 
                     $div.append($table);
 
-                    domElements.tabsContent.append($div);  
-                }
-                active = '';
+                    domElements.tabsContent.append($div);
+
+                    RenderTable(group.Jobs, group.Name, $table);
+                }     
             })         
         }        
 
         WriteTabEvent();
     }
 
-    function RenderTable(data, groupName) {
-        let active = 'active';
-        let $table = $('<table class="table table-striped"></table>');        
+    function InitTable(groupName) {       
+        let $table = $(`<table id="${groupName}" class="table table-striped"></table>`);
         let $thead = $(`<thead><tr>
                             <th></th>
                             <th>JobName</th>                          
@@ -256,38 +242,16 @@
 
         let $tbody = $('<tbody></tbody>');
 
-        //group.Jobs.forEach(row => {
-        //    let btnApplyNewJobFromDb = `<span class='btnApplyNewJobFromDb sub-icon' data-group=${group.Name} data-job=${row.JobName}
-        //                    title='Apply Scheduler from Db'><i class='icon-approval'></i></span>`;
-
-        //    let btnReloadJobFromDb = `<span class='btnReloadJobFromDb sub-icon' data-group=${group.Name} data-job=${row.JobName}
-        //                    title='Reload Scheduler from Db'><i class='icon-autorenew'></i></span>`;
-
-        //    let btnDeleteJobToDb = `<span class='btnDeleteToDb sub-icon' data-group=${group.Name} data-job=${row.JobName}
-        //                    title='Remove Scheduler to Db'><i class='icon-delete'></i></span>`;
-
-        //    let $tr = $('<tr></tr>');
-        //    $tr.append(`<td><label><input type="checkbox" class="col-checkbox" name="chkbx" /></label></td>`);
-        //    $tr.append(`<td>${row.JobName}</td>`);
-        //    $tr.append(`<td>${row.APIUrl}</td>`);
-        //    $tr.append(`<td>${row.MethodName}</td>`);
-        //    $tr.append(`<td>${row.Controller}</td>`);
-        //    if (row.IsNew) {
-        //        $tr.append(`<td>${btnApplyNewJobFromDb}</td>`);
-        //    } else {
-        //        $tr.append(`<td></td>`);
-        //    }
-
-        //    $tr.append(`<td>${btnReloadJobFromDb} ${btnDeleteJobToDb}</td>`);
-        //    $tbody.append($tr);
-        //})
-
         $table.append($tbody);
 
+        return $table;
+    }
+
+    function RenderTable(data, groupName, $table) {
         $table.DataTable({
             dom: '<"wrapper-info-table"<"wrapper-info"lip>>t',
             paging: false,
-            pagingType: "simple",          
+            pagingType: "simple",
             language: {
                 lengthMenu: "Page size _MENU_",
                 paginate: {
@@ -300,10 +264,10 @@
                 infoEmpty: "",
                 zeroRecords: "There's no data"
             },
-            ordering: true,
-            searching: false,
+            searching: true,
             scrollX: true,
             scrollCollapse: true,
+            order: [[0, "asc"]],
             columnDefs: [
                 { targets: "_all", defaultContent: "-" },
                 { targets: [0, 1, 2, 3, 4, 5, 6], className: "text-left" },
@@ -315,7 +279,7 @@
                 { targets: [5], width: "9%" },
                 { targets: [6], width: "9%" }
             ],
-            data: data,
+            data: data,            
             columns: [
                 {
                     render: function (data, type, full, meta) { return meta.row + 1; },
@@ -400,8 +364,7 @@
         domElements.btnDeleteJob.on('click', function () { DeleteJob(); });
 
         domElements.btnDeleteAllJobs.on('click', function () { DeleteAllJob(); });
-
-        domElements.btnUpdateFlagJobUpdate.on('click', function () { UpdateFlagJobUpdate(); });
+     
     }
 
     $(document).ready(function () {
