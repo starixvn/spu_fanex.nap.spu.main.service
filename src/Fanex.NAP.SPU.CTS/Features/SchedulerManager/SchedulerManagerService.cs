@@ -10,9 +10,7 @@
 
         IEnumerable<GroupJob> GetGroupJobTriggers();
 
-        bool ClearedJobNew(string jobName, string groupName);
-
-        bool UpdateFlagJobUpdate(bool isUpdate);
+        bool ClearedJobNew(string jobName, string groupName);      
 
         bool DeleteJobToDb(string jobName, string groupName);
 
@@ -67,12 +65,7 @@
         public bool ClearedJobNew(string jobName, string groupName)
         {
             return _dataAccess.ClearedJobNew(jobName, groupName);
-        }
-
-        public bool UpdateFlagJobUpdate(bool isUpdate)
-        {
-            return _dataAccess.UpdateFlagJobUpdate(isUpdate);
-        }
+        }      
 
         public bool DeleteJobToDb(string jobName, string groupName) 
         {

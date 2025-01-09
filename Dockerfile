@@ -2,6 +2,8 @@ FROM hub.nexdev.net/base/dotnet/core/sdk:8.0-alpine AS builder
 
 WORKDIR /src
 
+COPY ["./src/Fanex.NAP.SPU.CTS", "Fanex.NAP.SPU.CTS/"]
+
 COPY ["./src/Fanex.NAP.SPU.Main/Fanex.NAP.SPU.Main.csproj", "Fanex.NAP.SPU.Main/"]
 
 WORKDIR "/src/Fanex.NAP.SPU.Main"

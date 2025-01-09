@@ -11,9 +11,7 @@
 
         JobInfoModel GetSingleJob(string jobName, string groupName);
 
-        bool ClearedJobNew(string jobName, string groupName);
-
-        bool UpdateFlagJobUpdate(bool isUpdate);
+        bool ClearedJobNew(string jobName, string groupName);     
 
         bool DeleteJobToDb(string jobName, string groupName);
 
@@ -77,24 +75,13 @@
             _repository.Execute(criteria);
 
             return true;
-        }
-
-        public bool UpdateFlagJobUpdate(bool isUpdate)
-        {
-            var criteria = new UpdateFlagJobUpdateCriteria { IsUpdate = isUpdate };
-
-            _repository.Execute(criteria);
-
-            return true;
-        }
+        }      
 
         public bool DeleteJobToDb(string jobName, string groupName)
         {
             var criteria = new DeleteJobCriteria { JobName = jobName, GroupName = groupName };
 
-            var errorCode = _repository.Execute(criteria);
-
-            return true;
+            return _repository.Execute(criteria) == 1;
         }
 
         public bool AddJob(string jobTriggerJson)

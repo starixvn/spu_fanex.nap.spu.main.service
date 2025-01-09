@@ -160,6 +160,7 @@
     display: inline-block;
     position: relative;
     cursor: pointer;
+    margin-right: 6px;
 }
 
 .icon-delete, .icon-approval, .icon-autorenew {
@@ -230,4 +231,9 @@
         transform: translate(-50%, 0);
         float: none;
     }
+}
+
+.margin-10 {
+    margin-bottom: 10px;
+    margin-right: 10px;
 }

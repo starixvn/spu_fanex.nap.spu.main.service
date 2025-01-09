@@ -38,9 +38,7 @@
 
         IEnumerable<GroupJob> GetGroupJobTriggers();
 
-        Task<HashSet<string>> GetJobsFromScheduler();
-
-        bool UpdateFlagJobUpdate(bool isUpdate);
+        Task<HashSet<string>> GetJobsFromScheduler();    
 
         bool ClearedJobNew(string jobName, string groupName);
     }
@@ -76,8 +74,8 @@
             var triggerBuilder = TriggerBuilder
                 .Create()
                 .WithIdentity(trigger.TriggerName, groupName)
-                .WithDescription(trigger.TriggerName)
-                .StartNow();
+                .WithDescription(trigger.TriggerName);
+                //.StartNow();
 
             if (trigger.TriggerType != "Cron")
             {
@@ -139,15 +137,15 @@
 
             var jobDetail = BuildJob(job, groupName);
 
-            job.Triggers.ToList().ForEach(async trigger =>
+            job.Triggers.ToList().ForEach(trigger =>
             {
                 var triggerDetail = BuildTrigger(trigger, groupName);
 
-                await _scheduler.ScheduleJob(jobDetail, triggerDetail);
+                _scheduler.ScheduleJob(jobDetail, triggerDetail);
 
                 if (!job.Active)
                 {
-                    await _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupName));
+                    _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupName));
                 }
             });
         }
@@ -210,11 +208,6 @@
         public bool ClearedJobNew(string jobName, string groupName)
         {
             return _schedulerManagerService.ClearedJobNew(jobName, groupName);
-        }
-
-        public bool UpdateFlagJobUpdate(bool isUpdate)
-        {
-            return _schedulerManagerService.UpdateFlagJobUpdate(isUpdate);
-        }
+        }       
     }
 }
