@@ -9,24 +9,37 @@
         txtController: $('#txtController'),
         rdTriggerType: $('#rdTriggerType'),
         txtCronExpression: $('#txtCronExpression'),
-        txtInterval: $('#txtInterval'),       
+        txtIntervalInSecond: $('#txtIntervalInSecond'),       
         txtTriggerName: $('#txtTriggerName'),
         btnAddJob: $('#btnAddJob'),
         btnSaveJob: $('#btnSaveJob'),
         btnCancelJob: $('#btnCancelJob'),
+        btnUpdateJob: $('#btnUpdateJob'),
+
+        chkUpdActiveJob: $('#chkUpdActiveJob'),
+        txtUpdJobName: $('#txtUpdJobName'),
+        selUpdGroupJob: $('#selUpdGroupJob'),
+        selUpdJobType: $('#selUpdJobType'),
+        txtUpdApiUrl: $('#txtUpdApiUrl'),
+        txtUpdMethodName: $('#txtUpdMethodName'),
+        txtUpdController: $('#txtUpdController'),
+        rdUpdTriggerType: $('#rdUpdTriggerType'),
+        txtUpdCronExpression: $('#txtUpdCronExpression'),
+        txtUpdIntervalInSecond: $('#txtUpdIntervalInSecond'),
+        txtUpdTriggerName: $('#txtUpdTriggerName'),
+        btnUpdSaveJob: $('#btnUpdSaveJob'),
+        btnUpdCancelJob: $('#btnUpdCancelJob'),
+
         tabsContainer: $('#tabsContainer'),
         tabsHeader: $('#tabsHeader'),
         tabsContent: $('#tabsContent'),
         btnRestartSchedulerFromDb: $('#btnRestartSchedulerFromDb'),
-        btnGetJobsFromDb: $('#btnGetJobsFromDb'),
-        btnUpdateJobsFromDb: $('#btnUpdateJobsFromDb'),
-        txtUpdateJobName: $('#txtUpdateJobName'),
-        txtUpdateGroupName: $('#txtUpdateGroupName'),
-        btnUpdateJob: $('#btnUpdateJob'),
-        txtDeleteJobName: $('#txtDeleteJobName'),
-        txtDeleteGroupName: $('#txtDeleteGroupName'),
-        btnDeleteJob: $('#btnDeleteJob'),        
-        btnDeleteAllJobs: $('#btnDeleteAllJobs')      
+        btnGetJobsFromDb: $('#btnGetJobsFromDb')    
+    }
+
+    const ConstTriggerType = {
+        Simple: 'Simple',
+        Cron: 'Cron'
     }
 
     function RestartSchedulerFromDb() {
@@ -56,17 +69,17 @@
         });
     }
 
-    function GetGroupJobs() {
+    function GetGroupJobs($element) {
         $.ajax({
             url: '/SchedulerManager/GetGroupJobs',
             type: 'POST',
             data: {},
             beforeSend: function () {
-                domElements.selGroupJob.empty();
+                $element.empty();
             },
             success: function (response) {
                 response.groups.forEach(row => {
-                    domElements.selGroupJob.append(
+                    $element.append(
                         $('<option>', {
                             value: row.GroupName,
                             text: row.GroupName
@@ -78,53 +91,44 @@
                 alert('Error: ' + error);
             }
         });
-    }
-
-    function UpdateJobsFromDb() {
-        $.ajax({
-            url: '/SchedulerManager/UpdateJobsFromDb',
-            type: 'POST',
-            data: { },
-            success: function (response) {                
-                alert(`Update Jobs from Db successful`);
-            },
-            error: function (xhr, status, error) {
-                alert('Error: ' + error);
-            }
-        });
-    }
+    }   
 
     function AddJob() {
         $(".popup-overlay").fadeIn();
 
-        GetGroupJobs();
+        domElements.txtJobName.val('');      
+        domElements.chkActiveJob.prop('checked', false);        
+        domElements.selJobType.val($('#selJobType option:first').val());
+        domElements.txtApiUrl.val('');
+        domElements.txtMethodName.val('');
+        domElements.txtController.val('');  
+        domElements.txtCronExpression.val('');
+        domElements.txtIntervalInSecond.val('');
+        domElements.txtTriggerName.val('');
 
-        domElements.btnCancelJob.on('click', function () { $(".popup-overlay").fadeOut(); });
-       
-        domElements.btnSaveJob.on('click', function () { SaveAddJob(); })
+        GetGroupJobs(domElements.selGroupJob);
+
+        domElements.btnCancelJob.off('click').on('click', function () { $(".popup-overlay").fadeOut(); });
+
+        domElements.btnSaveJob.off('click').on('click', function () { SaveAddJob(); })
     }  
     
     function SaveAddJob() {
+        var validateResult = ValidateDataJob(false);
+
+        if (validateResult.isError) {
+            alert('Input field * is required');
+
+            return;
+        }
+
         if (confirm('Are you sure you want to add this job?')) {
             $.ajax({
-                url: '/SchedulerManager/AddJob',
+                url: '/SchedulerManager/AddJobToDb',
                 type: 'POST',
-                data: {
-                    JobName: domElements.txtJobName.val(),
-                    GroupName: domElements.selGroupJob.val(),
-                    IsActvie: domElements.chkActiveJob.prop('checked'),
-                    IsNew: true,
-                    JobType: domElements.selJobType.val(),
-                    ApiUrl: domElements.txtApiUrl.val(),
-                    MethodName: domElements.txtMethodName.val(),
-                    Controller: domElements.txtController.val(),
-                    TriggerType: $("input[name='rdTriggerType']:checked").val(),
-                    CronExpression: domElements.txtCronExpression.val(),
-                    Interval: domElements.txtInterval.val(),                   
-                    TriggerName: domElements.txtTriggerName.val()
-                },
+                data: validateResult.data,               
                 success: function (response) {
-                    alert('Save Add Job successful');
+                    alert('Save Add Job to db successful');
 
                     $(".popup-overlay").fadeOut();
                 },
@@ -135,69 +139,244 @@
         }
     }
 
+    var objValidate = {
+        isError: false,
+        data: {
+            JobName: null,
+            GroupName: null,
+            IsActvie: false,
+            IsNew: true,
+            JobType: null,
+            ApiUrl: null,
+            MethodName: null,
+            Controller: null,
+            TriggerType: null,
+            CronExpression: null,
+            IntervalInSecond: null,
+            TriggerName: null
+        }        
+    }
+
+    function GetDataUpdateJob(isUpdate) {
+        var objResult = new Object();
+        if (isUpdate) {
+            objResult.data = {
+                JobName: domElements.txtUpdJobName.val().trim(),
+                GroupName: domElements.selUpdGroupJob.val(),
+                IsActive: domElements.chkUpdActiveJob.prop('checked'),
+               /* IsNew: true,*/
+                JobType: domElements.selUpdJobType.val(),
+                ApiUrl: domElements.txtUpdApiUrl.val().trim(),
+                MethodName: domElements.txtUpdMethodName.val().trim(),
+                Controller: domElements.txtUpdController.val().trim(),
+                TriggerType: $("input[name='rdUpdTriggerType']:checked").val(),
+                CronExpression: domElements.txtUpdCronExpression.val().trim(),
+                IntervalInSecond: domElements.txtUpdIntervalInSecond.val().trim(),
+                TriggerName: domElements.txtUpdTriggerName.val().trim()
+            };
+        } else {
+            objResult.data = {
+                JobName: domElements.txtJobName.val().trim(),
+                GroupName: domElements.selGroupJob.val(),
+                IsActive: domElements.chkActiveJob.prop('checked'),
+                IsNew: true,
+                JobType: domElements.selJobType.val(),
+                ApiUrl: domElements.txtApiUrl.val().trim(),
+                MethodName: domElements.txtMethodName.val().trim(),
+                Controller: domElements.txtController.val().trim(),
+                TriggerType: $("input[name='rdTriggerType']:checked").val(),
+                CronExpression: domElements.txtCronExpression.val().trim(),
+                IntervalInSecond: domElements.txtIntervalInSecond.val().trim(),
+                TriggerName: domElements.txtTriggerName.val().trim()
+            };
+        }
+        
+        return objResult;
+    }
+
+    function ValidateDataJob(isUpdate) {               
+        var objResult = GetDataUpdateJob(isUpdate);
+        objResult.isError = false;
+
+        if (objResult.data.JobName == '') {
+            objResult.isError = true;
+        }
+        if (objResult.data.GroupName == '') {
+            objResult.isError = true;
+        }
+        if (objResult.data.ApiUrl == '') {
+            objResult.isError = true;
+        }
+        if (objResult.data.MethodName == '') {
+            objResult.isError = true;
+        }
+        if (objResult.data.Controller == '') {
+            objResult.isError = true;
+        }
+        if (objResult.data.TriggerName == '') {
+            objResult.isError = true;
+        }
+        if (objResult.data.CronExpression == '' && objResult.data.IntervalInSecond == '') {
+            objResult.isError = true;
+        }
+      
+        return objResult;
+    }
+
+    function UpdateJob()
+    {
+        $(".upd-popup-overlay").fadeIn();
+
+        domElements.txtUpdJobName.val('');
+        domElements.chkUpdActiveJob.prop('checked', false);
+        domElements.selUpdJobType.val($('#selUpdJobType option:first').val());
+        domElements.txtUpdApiUrl.val('');
+        domElements.txtUpdMethodName.val('');
+        domElements.txtUpdController.val('');
+        domElements.txtUpdCronExpression.val('');
+        domElements.txtUpdIntervalInSecond.val('');
+        domElements.txtUpdTriggerName.val('');
+
+        GetGroupJobs(domElements.selUpdGroupJob);
+
+        domElements.btnUpdCancelJob.off('click').on('click', function () { $(".upd-popup-overlay").fadeOut(); });
+
+        domElements.btnUpdSaveJob.off('click').on('click', function () { SaveUpdateJob(); });
+
+        domElements.txtUpdJobName.off('keypress').on('keypress', function (e) {          
+            if (e && e.which == 13) { // enter            
+                GetJobUpdate();
+            }
+        });
+
+        domElements.selUpdGroupJob.off('change').on('change', function () { GetJobUpdate(); });
+    }
+
+    function GetJobUpdate() {
+        jobName = domElements.txtUpdJobName.val().trim();
+        groupName = domElements.selUpdGroupJob.val();
+        
+        $.ajax({
+            url: '/SchedulerManager/GetSingleJob',
+            type: 'POST',
+            data: {
+                jobName: jobName,
+                groupName: groupName
+            },
+            success: function (response) {
+                if (response != undefined && response.jobTrigger != undefined) {                  
+                    domElements.chkUpdActiveJob.prop('checked', response.jobTrigger.Active);
+                    domElements.txtUpdApiUrl.val(response.jobTrigger.APIUrl);
+                    domElements.txtUpdMethodName.val(response.jobTrigger.MethodName);
+                    domElements.txtUpdController.val(response.jobTrigger.Controller);
+                    domElements.txtUpdTriggerName.val(response.jobTrigger.Triggers[0].TriggerName);
+                    domElements.txtUpdCronExpression.val(response.jobTrigger.Triggers[0].CronExpression);
+                    domElements.txtUpdIntervalInSecond.val(response.jobTrigger.Triggers[0].IntervalInSecond);
+                    if (response.jobTrigger.Triggers[0].TriggerType == ConstTriggerType.Simple) {
+                        $(`input[name="rdUpdTriggerType"][value='${ConstTriggerType.Simple}']`).prop('checked', true);
+                    } else {
+                        $(`input[name="rdUpdTriggerType"][value='${ConstTriggerType.Cron}']`).prop('checked', true);   
+                    }
+                } else {                 
+                    domElements.chkUpdActiveJob.prop('checked', false);
+                    domElements.selUpdJobType.val($('#selUpdJobType option:first').val());
+                    domElements.txtUpdApiUrl.val('');
+                    domElements.txtUpdMethodName.val('');
+                    domElements.txtUpdController.val('');
+                    domElements.txtUpdCronExpression.val('');
+                    domElements.txtUpdIntervalInSecond.val('');
+                    domElements.txtUpdTriggerName.val('');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('Error: ' + error);
+            }
+        });
+    }
+
+    function SaveUpdateJob()
+    {
+        var validateResult = ValidateDataJob(true);
+
+        if (validateResult.isError) {
+            alert('Input field * is required');
+
+            return;
+        }
+
+        if (confirm('Are you sure you want to update this job?')) {
+            $.ajax({
+                url: '/SchedulerManager/UpdateJobToDb',
+                type: 'POST',
+                data: validateResult.data,
+                success: function (response) {
+                    alert('Save Update Job successful');
+
+                    $(".upd-popup-overlay").fadeOut();
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        }
+    }
+
     function ApplyNewJobFromDb(jobName, groupName) {
-        $.ajax({
-            url: '/SchedulerManager/ApplyNewJobFromDb',
-            type: 'POST',
-            data: {
-                jobName: jobName,
-                groupName: groupName
-            },
-            success: function (response) {
-                alert(`Apply New Job ${jobName} successful`);
-            },
-            error: function (xhr, status, error) {
-                alert('Error: ' + error);
-            }
-        });
+        if (confirm('Are you sure you want to apply this job?')) {
+            $.ajax({
+                url: '/SchedulerManager/ApplyNewJobFromDb',
+                type: 'POST',
+                data: {
+                    jobName: jobName,
+                    groupName: groupName
+                },
+                success: function (response) {
+                    alert(`Apply New Job ${jobName} successful`);
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        }        
     }
 
-    function ReloadJobFromDb(jobName, groupName) {       
-        $.ajax({
-            url: '/SchedulerManager/ReloadJobFromDb',
-            type: 'POST',
-            data: {
-                jobName: jobName,
-                groupName: groupName
-            },
-            success: function (response) {              
-                alert(`Update Job ${jobName} successful`);
-            },
-            error: function (xhr, status, error) {               
-                alert('Error: ' + error);
-            }
-        });
+    function ReloadJobFromDb(jobName, groupName) {     
+        if (confirm('Are you sure you want to update this job?')) {
+            $.ajax({
+                url: '/SchedulerManager/ReloadJobFromDb',
+                type: 'POST',
+                data: {
+                    jobName: jobName,
+                    groupName: groupName
+                },
+                success: function (response) {
+                    alert(`Update Job ${jobName} successful`);
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        }        
     }
 
-    function DeleteJobToDb(jobName, groupName) {       
-        $.ajax({
-            url: '/SchedulerManager/DeleteJobToDb',
-            type: 'POST',
-            data: {
-                jobName: jobName,
-                groupName: groupName
-            },
-            success: function (response) {               
-                alert(`Delete Job ${jobName} successful`);
-            },
-            error: function (xhr, status, error) {               
-                alert('Error: ' + error);
-            }
-        });
+    function DeleteJobToDb(jobName, groupName) {     
+        if (confirm('Are you sure you want to delete this job?')) {
+            $.ajax({
+                url: '/SchedulerManager/DeleteJobToDb',
+                type: 'POST',
+                data: {
+                    jobName: jobName,
+                    groupName: groupName
+                },
+                success: function (response) {
+                    alert(`Delete Job ${jobName} successful`);
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        }       
     }
-
-    function DeleteAllJob() {
-        $.ajax({
-            url: '/SchedulerManager/DeleteAllJobs',
-            type: 'POST',
-            success: function (response) {
-                alert("Delete All Jobs successful");
-            },
-            error: function (xhr, status, error) {
-                alert('Error: ' + error);
-            }
-        });
-    }  
   
     function GenerateTable(data) {
         domElements.tabsHeader.empty();
@@ -351,20 +530,14 @@
    
     function Initial() {        
       
-        domElements.btnAddJob.on('click', function () { AddJob(); })
+        domElements.btnAddJob.on('click', function () { AddJob(); });
+
+        domElements.btnUpdateJob.on('click', function () { UpdateJob(); });
        
         domElements.btnRestartSchedulerFromDb.on('click', function () { RestartSchedulerFromDb(); });
 
-        domElements.btnGetJobsFromDb.on('click', function () { GetJobsFromDb(); })
-
-        domElements.btnUpdateJobsFromDb.on('click', function () { UpdateJobsFromDb(); });        
-
-        domElements.btnUpdateJob.on('click', function () { UpdateJob(); });
-
-        domElements.btnDeleteJob.on('click', function () { DeleteJob(); });
-
-        domElements.btnDeleteAllJobs.on('click', function () { DeleteAllJob(); });
-     
+        domElements.btnGetJobsFromDb.on('click', function () { GetJobsFromDb(); })        
+       
     }
 
     $(document).ready(function () {

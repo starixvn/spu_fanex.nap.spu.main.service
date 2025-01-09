@@ -15,11 +15,13 @@
              
         <div class="group width-200">
             <span class="margin-10"><button id="btnAddJob" class="btn btn-primary">Add Job</button></span>
+            <span class="margin-10"><button id="btnUpdateJob" class="btn btn-primary">Update Job</button></span>
             <span class="margin-10"><button id="btnGetJobsFromDb" class="btn btn-primary">Load Jobs from Db</button></span>
             <span class="margin-10"><button id="btnRestartSchedulerFromDb" class="btn btn-primary">Restart Scheduler from Db</button></span>
         </div>
     </div>
     @Html.Partial("AddJob")
+    @Html.Partial("UpdateJob")
 
     <div id="tabsContainer" class="tabs-container">
         <div id="tabsHeader" class="tabs">
@@ -29,40 +31,6 @@
         </div>
 
     </div>
-</div>
-
-<div class="group-info">
-   @*  <br />
-    <div>
-        <button id="btnRestartSchedulerFromDb" class="btn btn-primary">Restart Scheduler from Db</button>
-    </div> *@ 
-
-  @*   <div class="group width-200">
-        <button id="btnUpdateJobsFromDb" class="btn btn-primary">Update Jobs from Database</button>
-    </div>
-
-    <br />
-    <div class="group width-200">
-        <button id="btnUpdateJob" class="btn btn-primary">Update Job from Scheduler</button>
-        <input type="text" id="txtUpdateJobName" placeholder="Job Name" />
-        <input type="text" id="txtUpdateGroupName" placeholder="Group Name" />
-    </div>
-
-    <br />
-    <div class="group width-200">
-        <button id="btnDeleteJob" class="btn btn-primary">Delete Job from Scheduler</button>
-        <input type="text" id="txtDeleteJobName" placeholder="Job Name" />   
-        <input type="text" id="txtDeleteGroupName" placeholder="Group Name" />
-    </div>
-
-    <br />
-    <div class="group width-200">
-        <button id="btnDeleteAllJobs" class="btn btn-primary">Delete All Jobs from Scheduler</button>
-    </div>
-
-    *@
-   
-   
 </div>
 
 @section Scripts {

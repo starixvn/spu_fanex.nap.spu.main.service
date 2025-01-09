@@ -6,15 +6,17 @@
 
     public interface ISchedulerManagerService
     {
+        bool AddJobToDb(string jobTriggerJson);
+
+        bool UpdateJobToDb(string jobTriggerJson);
+
         IEnumerable<GroupJobEntity> GetGroupJobs();
 
-        IEnumerable<GroupJob> GetGroupJobTriggers();
+        IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetNew);
 
         bool ClearedJobNew(string jobName, string groupName);      
 
-        bool DeleteJobToDb(string jobName, string groupName);
-
-        bool AddJob(string jobTriggerJson);
+        bool DeleteJobToDb(string jobName, string groupName);        
 
         Job? GetSingleJob(string jobName, string groupName);
     }
@@ -28,16 +30,26 @@
             _dataAccess = dataAccess;
         }
 
+        public bool AddJobToDb(string jobTriggerJson)
+        {
+            return _dataAccess.AddJobToDb(jobTriggerJson);
+        }
+
+        public bool UpdateJobToDb(string jobTriggerJson)
+        {
+            return _dataAccess.UpdateJobToDb(jobTriggerJson);
+        }
+
         public IEnumerable<GroupJobEntity> GetGroupJobs()
         {
             return _dataAccess.GetGroupJobs();
         }
 
-        public IEnumerable<GroupJob> GetGroupJobTriggers()
+        public IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetNew)
         {
             var groupJobs = new List<GroupJob>();
 
-            var jobInfoDb = _dataAccess.GetJobs();
+            var jobInfoDb = _dataAccess.GetJobs(isGetNew);
 
             if (jobInfoDb != null)
             {
@@ -70,12 +82,7 @@
         public bool DeleteJobToDb(string jobName, string groupName) 
         {
             return _dataAccess.DeleteJobToDb(jobName, groupName);
-        }
-
-        public bool AddJob(string jobTriggerJson)
-        {
-            return _dataAccess.AddJob(jobTriggerJson);
-        }
+        }       
 
         public Job? GetSingleJob(string jobName, string groupName)
         {            

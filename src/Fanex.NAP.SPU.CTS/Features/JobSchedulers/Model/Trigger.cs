@@ -26,27 +26,6 @@ namespace Fanex.NAP.SPU.CTS.Features.JobSchedulers.Model
         public int IntervalInSecond { get; set; }
 
         public string TimeZone { get; set; }
-
-
-        //public override bool Equals(object obj)
-        //{
-        //    var other = obj as Trigger;
-            
-        //    if (other == null) return false;
-
-        //    if (other.TriggerName != TriggerName ||
-        //        other.TriggerType != TriggerType ||               
-        //        other.CronExpression != CronExpression ||
-        //        other.IntervalInSecond != IntervalInSecond ||
-        //        other.TimeZone != TimeZone)
-        //    {               
-
-        //        return false;
-        //    }
-
-        //    return true;
-        //}
-
-        //public override int GetHashCode() => (TriggerType, TriggerName, CronExpression).GetHashCode();        
+      
     }
 }

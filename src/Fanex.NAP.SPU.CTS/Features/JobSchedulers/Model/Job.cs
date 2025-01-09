@@ -43,34 +43,6 @@
                 .Where(x => x.JobName == this.JobName)
                 .Select(x=>new Trigger(x));
         }
-
-        //public override bool Equals(object obj)
-        //{
-        //    var other = obj as Job;
-
-        //    if (other == null) return false;
-
-        //    if (other.JobName != JobName ||
-        //        other.JobType != JobType ||
-        //        other.APIUrl != APIUrl ||
-        //        other.MethodName != MethodName ||
-        //        other.Controller != Controller ||
-        //        other.Active != Active ||
-        //        !EqualTrigger(Triggers, other.Triggers)                )
-        //    {
-
-        //        return false;
-        //    }
-
-        //    return true;
-        //}
-
-        //private bool EqualTrigger(IEnumerable<Trigger> triggers1, IEnumerable<Trigger> triggers2)
-        //{            
-        //    return triggers1.Count() == triggers2.Count() &&  triggers1.All(triggers2.Contains);
-        //}
-
-        //public override int GetHashCode() => (JobName, JobType, APIUrl, MethodName, Controller, Active, Triggers).GetHashCode();
-
+       
     }
 }

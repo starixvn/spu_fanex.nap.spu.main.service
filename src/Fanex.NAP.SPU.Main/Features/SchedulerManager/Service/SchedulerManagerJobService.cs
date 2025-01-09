@@ -26,17 +26,17 @@
 
         Task ReplaceJob(Job job, string groupName);
 
-        Task AddJob(string jobTriggerJson);
+        Task AddJobToDb(string jobTriggerJson);
 
-        Task<bool> DeleteJobToDb(string jobName, string groupName);
+        Task UpdateJobToDb(string jobTriggerJson);
 
-        Task DeleteAllJobs();
+        Task<bool> DeleteJobToDb(string jobName, string groupName);     
 
         IEnumerable<GroupJobEntity> GetGroupJobs();
 
         Job GetSingleJob(string jobName, string groupName);
 
-        IEnumerable<GroupJob> GetGroupJobTriggers();
+        IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetNew);
 
         Task<HashSet<string>> GetJobsFromScheduler();    
 
@@ -74,8 +74,8 @@
             var triggerBuilder = TriggerBuilder
                 .Create()
                 .WithIdentity(trigger.TriggerName, groupName)
-                .WithDescription(trigger.TriggerName);
-                //.StartNow();
+                .WithDescription(trigger.TriggerName)
+                .StartNow();
 
             if (trigger.TriggerType != "Cron")
             {
@@ -103,34 +103,6 @@
 
         public async Task ReplaceJob(Job job, string groupName)
         {
-            await ReplaceJobAsync(job, groupName);
-        }
-
-        public async Task AddJob(string jobTriggerJson)
-        {
-            _schedulerManagerService.AddJob(jobTriggerJson);
-        }
-
-        public async Task UpdateJobDataAsync(IScheduler scheduler, string jobID, string newDataKey, string newDataValue)
-        {
-            var jobKey = new JobKey(jobID, "Group1");
-           
-            var jobDetail = await scheduler.GetJobDetail(jobKey);
-
-            if (jobDetail != null)
-            {               
-                jobDetail.JobDataMap[newDataKey] = newDataValue;
-               
-                await scheduler.AddJob(jobDetail, true);
-            }
-            else
-            {
-                Console.WriteLine($"Job {jobID} not found.");
-            }
-        }
-
-        public async Task ReplaceJobAsync(Job job, string groupName)
-        {
             var jobKey = new JobKey(job.JobName, groupName);
 
             await _scheduler.DeleteJob(jobKey);
@@ -150,19 +122,33 @@
             });
         }
 
-        public async Task DeleteAllJobs()
+        public async Task AddJobToDb(string jobTriggerJson)
         {
-            var jobKeys = await _scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
-
-            foreach (var jobKey in jobKeys)
-            {
-                await _scheduler.DeleteJob(jobKey);
-
-                Console.WriteLine($"Deleted job: {jobKey.Name} in group: {jobKey.Group}");
-            }
-
-            Console.WriteLine("All jobs have been deleted.");
+            _schedulerManagerService.AddJobToDb(jobTriggerJson);
         }
+
+        public async Task UpdateJobToDb(string jobTriggerJson)
+        {
+            _schedulerManagerService.UpdateJobToDb(jobTriggerJson);
+        }
+
+        public async Task UpdateJobDataAsync(IScheduler scheduler, string jobID, string newDataKey, string newDataValue)
+        {
+            var jobKey = new JobKey(jobID, "Group1");
+           
+            var jobDetail = await scheduler.GetJobDetail(jobKey);
+
+            if (jobDetail != null)
+            {               
+                jobDetail.JobDataMap[newDataKey] = newDataValue;
+               
+                await scheduler.AddJob(jobDetail, true);
+            }
+            else
+            {
+                Console.WriteLine($"Job {jobID} not found.");
+            }
+        }       
 
         public async Task<bool> DeleteJobToDb(string jobName, string groupName)
         {
@@ -184,9 +170,9 @@
             return _schedulerManagerService.GetSingleJob(jobName, groupName);
         }
 
-        public IEnumerable<GroupJob> GetGroupJobTriggers()
+        public IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetNew)
         {
-            return _schedulerManagerService.GetGroupJobTriggers();
+            return _schedulerManagerService.GetGroupJobTriggers(isGetNew);
         }      
 
         public async Task<HashSet<string>> GetJobsFromScheduler()

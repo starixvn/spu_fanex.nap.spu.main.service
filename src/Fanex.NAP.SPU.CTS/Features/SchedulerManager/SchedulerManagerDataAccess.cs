@@ -5,17 +5,19 @@
 
     public interface ISchedulerManagerDataAccess
     {
+        bool AddJobToDb(string jobTriggerJson);
+
+        bool UpdateJobToDb(string jobTriggerJson);
+
         IEnumerable<GroupJobEntity> GetGroupJobs();
 
-        JobInfoModel GetJobs();
+        JobInfoModel GetJobs(bool isGetNew);
 
         JobInfoModel GetSingleJob(string jobName, string groupName);
 
         bool ClearedJobNew(string jobName, string groupName);     
 
-        bool DeleteJobToDb(string jobName, string groupName);
-
-        bool AddJob(string jobTriggerJson);
+        bool DeleteJobToDb(string jobName, string groupName);        
     }
 
     public class SchedulerManagerDataAccess : ISchedulerManagerDataAccess   
@@ -27,6 +29,20 @@
             _repository = new DynamicRepository();
         }
 
+        public bool AddJobToDb(string jobTriggerJson)
+        {
+            var criteria = new AddJobCriteria() { JobTriggerJson = jobTriggerJson };
+
+            return _repository.Execute(criteria) == 1;
+        }
+
+        public bool UpdateJobToDb(string jobTriggerJson)
+        {
+            var criteria = new UpdateJobCriteria() { JobTriggerJson = jobTriggerJson };
+
+            return _repository.Execute(criteria) == 1;
+        }
+
         public IEnumerable<GroupJobEntity> GetGroupJobs()
         {
             var criteria = new GetGroupJobCriteria();
@@ -34,9 +50,9 @@
             return _repository.Fetch<GroupJobEntity>(criteria);
         }
 
-        public JobInfoModel GetJobs()
+        public JobInfoModel GetJobs(bool isGetNew)
         {
-            var criteria = new GetJobsCriteria();
+            var criteria = new GetJobsCriteria() { IsGetNew = isGetNew };
 
             (var jobData, var triggerData) = _repository.FetchMultiple<JobEntity, TriggerEntity>(criteria);
 
@@ -83,12 +99,6 @@
 
             return _repository.Execute(criteria) == 1;
         }
-
-        public bool AddJob(string jobTriggerJson)
-        {
-            var criteria = new AddJobCriteria() { JobTriggerJson = jobTriggerJson };
-
-            return _repository.Execute(criteria) == 1;
-        }
+       
     }
 }
