@@ -20,6 +20,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
 
         string EnvironmentString { get; }
 
+        int DbEnvironmentID { get; }
+
         string Proxy { get; }
     }
 
@@ -39,6 +41,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
             Schedulers = GetSection<Scheduler>(nameof(Schedulers));
 
             environment = GetValue<string>(nameof(Environment));
+
+            DbEnvironmentID = GetValue<int>(nameof(DbEnvironmentID));
 
             Redis = GetValue<string>(nameof(Redis));
 
@@ -69,7 +73,7 @@ namespace Fanex.NAP.SPU.Main.Middleware
                     case "KLDR":
                         return 5;
                     default:
-                        return 3;
+                        return 1;
                 }
             }
         }
@@ -79,6 +83,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
         public string Proxy { get; }
 
         public string EnvironmentString => environment;
+
+        public int DbEnvironmentID { get; }
 
         public T GetValue<T>(string key)
         {

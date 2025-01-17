@@ -5,8 +5,11 @@
 
     public class GetJobsCriteria : CriteriaBase
     {
-        [SpParam(SqlParamName = "ip_IsNew")]
-        public bool IsGetNew { get; set; }
+        [SpParam(SqlParamName = "ip_IsAdjust")]
+        public bool IsGetAdjust { get; set; }
+
+        [SpParam(SqlParamName = "ip_EnvironmentID")]
+        public int DbEnvironmentID { get; set; }
 
         public override string GetSettingKey()
         {

@@ -12,7 +12,7 @@
             JobName = jobModel.JobName;
             JobType = Type.GetType(jobModel.JobType);
             APIUrl = jobModel.APIUrl;            
-            IsActive = jobModel.Active;
+            IsActive = jobModel.IsStartByDefault;
             MethodName = jobModel.MethodName;
             Controller = jobModel.Controller;
             TriggerType = triggerModel.TriggerType;

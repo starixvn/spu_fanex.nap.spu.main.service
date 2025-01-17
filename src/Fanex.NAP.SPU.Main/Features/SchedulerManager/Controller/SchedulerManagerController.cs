@@ -37,11 +37,11 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddJobToDb(AddJobViewModel addJobModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddJobToDb(AddJobViewModel addJobModel, string environmentDbIDs, CancellationToken cancellationToken)
         {
             try
             {
-                await _quartzHostedService.AddJobToDb(addJobModel, cancellationToken);
+                await _quartzHostedService.AddJobToDb(addJobModel, environmentDbIDs, cancellationToken);
 
                 return Ok();
             }
@@ -53,11 +53,11 @@
             }
         }
 
-        public async Task<IActionResult> UpdateJobToDb(AddJobViewModel addJobModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateJobToDb(AddJobViewModel updateJobModel, string environmentDbIDs, CancellationToken cancellationToken)
         {
             try
             {
-                await _quartzHostedService.UpdateJobToDb(addJobModel, cancellationToken);
+                await _quartzHostedService.UpdateJobToDb(updateJobModel, environmentDbIDs, cancellationToken);
 
                 return Ok();
             }

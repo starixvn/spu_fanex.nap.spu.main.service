@@ -6,6 +6,8 @@
 
         public string GroupName { get; set; }
 
+        public int EnvironmentID { get; set; }
+
         public string JobType { get; set; }
 
         public string APIUrl { get; set; }
@@ -14,8 +16,8 @@
 
         public string Controller { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool IsStartByDefault { get; set; }
 
-        public bool IsNew { get; set; }
+        public bool IsAdjust { get; set; }
     }
 }

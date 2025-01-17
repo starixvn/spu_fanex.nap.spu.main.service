@@ -68,7 +68,7 @@
 
         private bool IsPauseTrigger(IEnumerable<Job> jobs)
         {
-            return !jobs.Any(x => x.Active);
+            return !jobs.Any(x => x.IsStartByDefault);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
@@ -180,16 +180,34 @@
             return _schedulerManagerJobService.GetSingleJob(jobName, groupName);        
         }
 
-        public async Task AddJobToDb(AddJobViewModel addJobModel, CancellationToken cancellationToken)
+        public async Task AddJobToDb(AddJobViewModel addJobModel, string environmentDbIDs, CancellationToken cancellationToken)
         {
-            var data = new List<AddJobViewModel>() { addJobModel };
+            var data = new List<AddJobViewModel>();
+
+            var environmentIDs = environmentDbIDs.Split(',');
+
+            foreach (var environmentDbID in environmentIDs)
+            {
+                addJobModel.EnvironmentID = int.Parse(environmentDbID);
+
+                data.Add(addJobModel);
+            }
 
             await _schedulerManagerJobService.AddJobToDb(JsonConvert.SerializeObject(data));
         }
 
-        public async Task UpdateJobToDb(AddJobViewModel addJobModel, CancellationToken cancellationToken)
+        public async Task UpdateJobToDb(AddJobViewModel updateJobModel, string environmentDbIDs, CancellationToken cancellationToken)
         {
-            var data = new List<AddJobViewModel>() { addJobModel };
+            var data = new List<AddJobViewModel>();
+
+            var environmentIDs = environmentDbIDs.Split(',');
+
+            foreach (var environmentDbID in environmentIDs)
+            {
+                updateJobModel.EnvironmentID = int.Parse(environmentDbID);
+
+                data.Add(updateJobModel);
+            }
 
             await _schedulerManagerJobService.UpdateJobToDb(JsonConvert.SerializeObject(data));
         }

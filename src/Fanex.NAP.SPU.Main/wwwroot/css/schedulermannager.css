@@ -150,17 +150,17 @@
   margin-right: 6px;
 }
 
-.icon-delete, .icon-approval, .icon-autorenew {
+.icon-delete, .icon-approval, .icon-autorenew, .icon-edit {
   font-size: 1.4rem;
   position: absolute;
   top: 0.5rem;
   left: 0.6rem;
 }
-.icon-delete:hover, .icon-approval:hover, .icon-autorenew:hover {
+.icon-delete:hover, .icon-approval:hover, .icon-autorenew:hover, .icon-edit:hover {
   border-radius: 70%;
   background: #E7EDFF;
 }
-.icon-delete .disabled, .icon-approval .disabled, .icon-autorenew .disabled {
+.icon-delete .disabled, .icon-approval .disabled, .icon-autorenew .disabled, .icon-edit .disabled {
   cursor: not-allowed;
 }
 

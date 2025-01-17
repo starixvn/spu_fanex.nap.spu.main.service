@@ -11,6 +11,9 @@
         [SpParam(SqlParamName = "ip_GroupName")]
         public string GroupName { get; set; }
 
+        [SpParam(SqlParamName = "ip_EnvironmentID")]
+        public int DbEnvironmentID { get; set; }
+
         public override string GetSettingKey()
         {
             return "CTS_AD_CTSJob_NewJobCleared";

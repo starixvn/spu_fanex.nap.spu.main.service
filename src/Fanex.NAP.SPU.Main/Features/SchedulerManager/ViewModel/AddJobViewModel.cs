@@ -6,9 +6,11 @@
 
         public string GroupName { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool IsStartByDefault { get; set; }
 
-        public bool IsNew { get; set; }
+        public int EnvironmentID { get; set; }     
+
+        public bool IsAdjust { get; set; }
 
         public string JobType { get; set; }
 

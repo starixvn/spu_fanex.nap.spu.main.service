@@ -11,13 +11,13 @@
 
         IEnumerable<GroupJobEntity> GetGroupJobs();
 
-        JobInfoModel GetJobs(bool isGetNew);
+        JobInfoModel GetJobs(bool isGetAdjust, int dbEnvironmentID);
 
-        JobInfoModel GetSingleJob(string jobName, string groupName);
+        JobInfoModel GetSingleJob(string jobName, string groupName, int dbEnvironmentID);
 
-        bool ClearedJobNew(string jobName, string groupName);     
+        bool ClearedJobNew(string jobName, string groupName, int dbEnvironmentID);     
 
-        bool DeleteJobToDb(string jobName, string groupName);        
+        bool DeleteJobToDb(string jobName, string groupName, int dbEnvironmentID);        
     }
 
     public class SchedulerManagerDataAccess : ISchedulerManagerDataAccess   
@@ -50,9 +50,9 @@
             return _repository.Fetch<GroupJobEntity>(criteria);
         }
 
-        public JobInfoModel GetJobs(bool isGetNew)
+        public JobInfoModel GetJobs(bool isGetAdjust, int dbEnvironmentID)
         {
-            var criteria = new GetJobsCriteria() { IsGetNew = isGetNew };
+            var criteria = new GetJobsCriteria() { IsGetAdjust = isGetAdjust, DbEnvironmentID = dbEnvironmentID };
 
             (var jobData, var triggerData) = _repository.FetchMultiple<JobEntity, TriggerEntity>(criteria);
 
@@ -63,12 +63,13 @@
             };
         }
 
-        public JobInfoModel GetSingleJob(string jobName, string groupName)
+        public JobInfoModel GetSingleJob(string jobName, string groupName, int dbEnvironmentID)
         {
             var criteria = new GetSingleJobCriteria()
             {
                 JobName = jobName,
-                GroupName = groupName
+                GroupName = groupName,
+                DbEnvironmentID = dbEnvironmentID
             };
 
             (var jobData, var triggerData) = _repository.FetchMultiple<JobEntity, TriggerEntity>(criteria);
@@ -80,12 +81,13 @@
             };
         }
 
-        public bool ClearedJobNew(string jobName, string groupName)
+        public bool ClearedJobNew(string jobName, string groupName, int dbEnvironmentID)
         {
             var criteria = new ClearedJobNewCriteria
             {
                 JobName = jobName,
-                GroupName = groupName
+                GroupName = groupName,
+                DbEnvironmentID = dbEnvironmentID
             };
 
             _repository.Execute(criteria);
@@ -93,9 +95,14 @@
             return true;
         }      
 
-        public bool DeleteJobToDb(string jobName, string groupName)
+        public bool DeleteJobToDb(string jobName, string groupName, int dbEnvironmentID)
         {
-            var criteria = new DeleteJobCriteria { JobName = jobName, GroupName = groupName };
+            var criteria = new DeleteJobCriteria 
+            { 
+                JobName = jobName, 
+                GroupName = groupName, 
+                DbEnvironmentID = dbEnvironmentID
+            };
 
             return _repository.Execute(criteria) == 1;
         }

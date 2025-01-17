@@ -5,6 +5,7 @@
     using Fanex.NAP.SPU.CTS.Features.SchedulerManager.Model;
     using Fanex.NAP.SPU.CTS.Shares;
     using Fanex.NAP.SPU.Main.Features.SchedulerManager.ViewModel;
+    using Fanex.NAP.SPU.Main.Middleware;
     using Microsoft.AspNetCore.Mvc;
     using Quartz;
     using Quartz.Impl.Matchers;
@@ -20,9 +21,7 @@
     {
         IJobDetail BuildJob(Job job, string groupName);
 
-        ITrigger BuildTrigger(Trigger trigger, string groupName);
-
-        Task UpdateJobData(string jobId, string key, string value);
+        ITrigger BuildTrigger(Trigger trigger, string groupName);    
 
         Task ReplaceJob(Job job, string groupName);
 
@@ -36,7 +35,7 @@
 
         Job GetSingleJob(string jobName, string groupName);
 
-        IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetNew);
+        IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetAdjust);
 
         Task<HashSet<string>> GetJobsFromScheduler();    
 
@@ -48,13 +47,17 @@
         private readonly ISchedulerFactory _schedulerFactory;
         private readonly IScheduler _scheduler;
         private readonly ISchedulerManagerService _schedulerManagerService;
+        private readonly IAppSettings _appSettings;
 
-        public SchedulerManagerJobService(ISchedulerFactory schedulerFactory,
-            ISchedulerManagerService schedulerManagerService)
+        public SchedulerManagerJobService(ISchedulerFactory schedulerFactory
+            , ISchedulerManagerService schedulerManagerService
+            , IAppSettings appSettings
+            )
         {
             _schedulerFactory = schedulerFactory;
             _schedulerManagerService = schedulerManagerService; 
             _scheduler = schedulerFactory.GetScheduler().Result;
+            _appSettings = appSettings;
         }
 
         public IJobDetail BuildJob(Job job, string groupName)
@@ -75,7 +78,7 @@
                 .Create()
                 .WithIdentity(trigger.TriggerName, groupName)
                 .WithDescription(trigger.TriggerName)
-                .StartNow();
+                .StartNow();            
 
             if (trigger.TriggerType != "Cron")
             {
@@ -94,12 +97,7 @@
             }
 
             return triggerBuilder.Build();
-        }
-
-        public async Task UpdateJobData(string jobId, string key, string value)
-        {
-            await UpdateJobDataAsync(_scheduler, jobId, key, value);
-        }
+        }    
 
         public async Task ReplaceJob(Job job, string groupName)
         {
@@ -107,19 +105,25 @@
 
             await _scheduler.DeleteJob(jobKey);
 
-            var jobDetail = BuildJob(job, groupName);
+            var newJobDetail = BuildJob(job, groupName);
 
-            job.Triggers.ToList().ForEach(trigger =>
+            foreach (var trigger in job.Triggers)
             {
-                var triggerDetail = BuildTrigger(trigger, groupName);
+                var newTriggerDetail = BuildTrigger(trigger, groupName);
 
-                _scheduler.ScheduleJob(jobDetail, triggerDetail);
+                var triggerKey = new TriggerKey(trigger.TriggerName, groupName);
 
-                if (!job.Active)
+                await _scheduler.ScheduleJob(newJobDetail, newTriggerDetail);
+
+                if (!job.IsStartByDefault)
                 {
-                    _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupName));
+                    await _scheduler.PauseTrigger(new TriggerKey(trigger.TriggerName, groupName));
                 }
-            });
+                else
+                {                    
+                    await _scheduler.ResumeJob(jobKey);
+                }
+            }           
         }
 
         public async Task AddJobToDb(string jobTriggerJson)
@@ -130,29 +134,11 @@
         public async Task UpdateJobToDb(string jobTriggerJson)
         {
             _schedulerManagerService.UpdateJobToDb(jobTriggerJson);
-        }
-
-        public async Task UpdateJobDataAsync(IScheduler scheduler, string jobID, string newDataKey, string newDataValue)
-        {
-            var jobKey = new JobKey(jobID, "Group1");
-           
-            var jobDetail = await scheduler.GetJobDetail(jobKey);
-
-            if (jobDetail != null)
-            {               
-                jobDetail.JobDataMap[newDataKey] = newDataValue;
-               
-                await scheduler.AddJob(jobDetail, true);
-            }
-            else
-            {
-                Console.WriteLine($"Job {jobID} not found.");
-            }
-        }       
+        }        
 
         public async Task<bool> DeleteJobToDb(string jobName, string groupName)
         {
-            var isSuccess = _schedulerManagerService.DeleteJobToDb(jobName, groupName);
+            var isSuccess = _schedulerManagerService.DeleteJobToDb(jobName, groupName, _appSettings.DbEnvironmentID);
 
             if (isSuccess) 
                 return await _scheduler.DeleteJob(new JobKey(jobName, groupName));
@@ -167,12 +153,12 @@
 
         public Job GetSingleJob(string jobName, string groupName)
         {          
-            return _schedulerManagerService.GetSingleJob(jobName, groupName);
+            return _schedulerManagerService.GetSingleJob(jobName, groupName, _appSettings.DbEnvironmentID);
         }
 
-        public IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetNew)
+        public IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetAdjust)
         {
-            return _schedulerManagerService.GetGroupJobTriggers(isGetNew);
+            return _schedulerManagerService.GetGroupJobTriggers(isGetAdjust, _appSettings.DbEnvironmentID);
         }      
 
         public async Task<HashSet<string>> GetJobsFromScheduler()
@@ -193,7 +179,7 @@
 
         public bool ClearedJobNew(string jobName, string groupName)
         {
-            return _schedulerManagerService.ClearedJobNew(jobName, groupName);
+            return _schedulerManagerService.ClearedJobNew(jobName, groupName, _appSettings.DbEnvironmentID);
         }       
     }
 }

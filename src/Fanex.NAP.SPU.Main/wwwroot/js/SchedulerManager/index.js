@@ -1,6 +1,7 @@
 ﻿function SchedulerManager() {
     let domElements = {
         chkActiveJob: $('#chkActiveJob'),
+        selEnvironmentDb: $('#selEnvironmentDb'),
         txtJobName: $('#txtJobName'),
         selGroupJob: $('#selGroupJob'),
         selJobType: $('#selJobType'),
@@ -17,6 +18,7 @@
         btnUpdateJob: $('#btnUpdateJob'),
 
         chkUpdActiveJob: $('#chkUpdActiveJob'),
+        selUpdEnvironmentDb: $('#selUpdEnvironmentDb'),
         txtUpdJobName: $('#txtUpdJobName'),
         selUpdGroupJob: $('#selUpdGroupJob'),
         selUpdJobType: $('#selUpdJobType'),
@@ -43,16 +45,18 @@
     }
 
     function RestartSchedulerFromDb() {
-        $.ajax({
-            url: '/SchedulerManager/RestartSchedulerFromDb',
-            type: 'POST',
-            success: function (response) {
-                alert("Restart Scheduler from Db successful");
-            },
-            error: function (xhr, status, error) {
-                alert('Error: ' + error);
-            }
-        });
+        if (confirm('Are you sure you want to Restart Scheduler from Db?')) {
+            $.ajax({
+                url: '/SchedulerManager/RestartSchedulerFromDb',
+                type: 'POST',
+                success: function (response) {
+                    alert("Restart Scheduler from Db successful");
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        }       
     }
 
     function GetJobsFromDb() {
@@ -69,7 +73,7 @@
         });
     }
 
-    function GetGroupJobs($element) {
+    function GetGroupJobs($element, selectedValue) {
         $.ajax({
             url: '/SchedulerManager/GetGroupJobs',
             type: 'POST',
@@ -86,6 +90,9 @@
                         })
                     )
                 })
+                if (selectedValue != null && selectedValue != undefined) {
+                    $element.val(selectedValue);
+                }
             },
             error: function (xhr, status, error) {
                 alert('Error: ' + error);
@@ -106,7 +113,16 @@
         domElements.txtIntervalInSecond.val('');
         domElements.txtTriggerName.val('');
 
-        GetGroupJobs(domElements.selGroupJob);
+        GetGroupJobs(domElements.selGroupJob, null);
+
+        domElements.selEnvironmentDb.chosen({
+            placeholder_text_multiple: "Select Environment",
+            no_results_text: "No options found!",  
+        });
+
+        $('option', domElements.selEnvironmentDb).prop('selected', true);
+
+        domElements.selEnvironmentDb.trigger("chosen:updated");
 
         domElements.btnCancelJob.off('click').on('click', function () { $(".popup-overlay").fadeOut(); });
 
@@ -144,8 +160,9 @@
         data: {
             JobName: null,
             GroupName: null,
-            IsActvie: false,
-            IsNew: true,
+            IsStartByDefault: false,
+            EnvironmentDbIDs: null,
+            IsAdjust: true,
             JobType: null,
             ApiUrl: null,
             MethodName: null,
@@ -163,8 +180,9 @@
             objResult.data = {
                 JobName: domElements.txtUpdJobName.val().trim(),
                 GroupName: domElements.selUpdGroupJob.val(),
-                IsActive: domElements.chkUpdActiveJob.prop('checked'),
-               /* IsNew: true,*/
+                IsStartByDefault: domElements.chkUpdActiveJob.prop('checked'),
+                EnvironmentDbIDs: domElements.selUpdEnvironmentDb.val().join(),
+                IsAdjust: true,
                 JobType: domElements.selUpdJobType.val(),
                 ApiUrl: domElements.txtUpdApiUrl.val().trim(),
                 MethodName: domElements.txtUpdMethodName.val().trim(),
@@ -178,8 +196,9 @@
             objResult.data = {
                 JobName: domElements.txtJobName.val().trim(),
                 GroupName: domElements.selGroupJob.val(),
-                IsActive: domElements.chkActiveJob.prop('checked'),
-                IsNew: true,
+                IsStartByDefault: domElements.chkActiveJob.prop('checked'),
+                EnvironmentDbIDs: domElements.selEnvironmentDb.val().join(),
+                IsAdjust: true,
                 JobType: domElements.selJobType.val(),
                 ApiUrl: domElements.txtApiUrl.val().trim(),
                 MethodName: domElements.txtMethodName.val().trim(),
@@ -223,7 +242,7 @@
         return objResult;
     }
 
-    function UpdateJob()
+    function UpdateJob(jobName, groupName)
     {
         $(".upd-popup-overlay").fadeIn();
 
@@ -237,7 +256,15 @@
         domElements.txtUpdIntervalInSecond.val('');
         domElements.txtUpdTriggerName.val('');
 
-        GetGroupJobs(domElements.selUpdGroupJob);
+        GetGroupJobs(domElements.selUpdGroupJob, groupName);
+
+        domElements.selUpdEnvironmentDb.chosen({
+            placeholder_text_multiple: "Select Environment",
+            no_results_text: "No options found!",
+        });
+      
+        domElements.selUpdEnvironmentDb.prop("disabled", true);
+        domElements.selUpdEnvironmentDb.trigger("chosen:updated");
 
         domElements.btnUpdCancelJob.off('click').on('click', function () { $(".upd-popup-overlay").fadeOut(); });
 
@@ -245,17 +272,25 @@
 
         domElements.txtUpdJobName.off('keypress').on('keypress', function (e) {          
             if (e && e.which == 13) { // enter            
-                GetJobUpdate();
+                GetJobUpdate(null, null);
             }
         });
 
-        domElements.selUpdGroupJob.off('change').on('change', function () { GetJobUpdate(); });
+        domElements.selUpdGroupJob.off('change').on('change', function () { GetJobUpdate(null, null); });
+
+        if (jobName != '' && groupName != '') {   
+            domElements.txtUpdJobName.val(jobName);            
+
+            GetJobUpdate(jobName, groupName);
+        }
     }
 
-    function GetJobUpdate() {
-        jobName = domElements.txtUpdJobName.val().trim();
-        groupName = domElements.selUpdGroupJob.val();
-        
+    function GetJobUpdate(jobName, groupName) {
+        if (jobName == null || groupName == null) {
+            jobName = domElements.txtUpdJobName.val().trim();
+            groupName = domElements.selUpdGroupJob.val();
+        }
+
         $.ajax({
             url: '/SchedulerManager/GetSingleJob',
             type: 'POST',
@@ -265,7 +300,9 @@
             },
             success: function (response) {
                 if (response != undefined && response.jobTrigger != undefined) {                  
-                    domElements.chkUpdActiveJob.prop('checked', response.jobTrigger.Active);
+                    domElements.chkUpdActiveJob.prop('checked', response.jobTrigger.IsStartByDefault);
+                    domElements.selUpdEnvironmentDb.val(response.jobTrigger.EnvironmentID);
+                    domElements.selUpdEnvironmentDb.trigger('chosen:updated');
                     domElements.txtUpdApiUrl.val(response.jobTrigger.APIUrl);
                     domElements.txtUpdMethodName.val(response.jobTrigger.MethodName);
                     domElements.txtUpdController.val(response.jobTrigger.Controller);
@@ -412,9 +449,8 @@
                             <th></th>
                             <th>JobName</th>                          
                             <th>APIUrl</th>
-                            <th>MethodName</th>
-                            <th>Controller</th>
-                            <th>New</th>
+                            <th>Method</th>                            
+                            <th>Has Adjust</th>
                             <th>Action</th>
                             </tr></thead>`);
         $table.append($thead);
@@ -449,14 +485,13 @@
             order: [[0, "asc"]],
             columnDefs: [
                 { targets: "_all", defaultContent: "-" },
-                { targets: [0, 1, 2, 3, 4, 5, 6], className: "text-left" },
-                { targets: [0], width: "2%" },
-                { targets: [1], width: "9%" },
-                { targets: [2], width: "9%" },
-                { targets: [3], width: "9%" },
-                { targets: [4], width: "9%" },
-                { targets: [5], width: "9%" },
-                { targets: [6], width: "9%" }
+                { targets: [0, 1, 2, 3, 4, 5], className: "text-left" },
+                { targets: [0], width: "5%" },
+                { targets: [1], width: "20%" },
+                { targets: [2], width: "20%" },
+                { targets: [3], width: "15%" },
+                { targets: [4], width: "15%" },
+                { targets: [5], width: "15%" }
             ],
             data: data,            
             columns: [
@@ -465,11 +500,10 @@
                 },
                 { data: obj => obj.JobName },
                 { data: obj => obj.APIUrl },
-                { data: obj => obj.MethodName },
-                { data: obj => obj.Controller },
+                { data: obj => () => { return obj.Controller + "/" + obj.MethodName } },             
                 {
                     data: obj => () => { 
-                        if (obj.IsNew) {
+                        if (obj.IsAdjust) {
                             return `<span class='btnApplyNewJobFromDb sub-icon' data-group='${groupName}' data-job='${obj.JobName}'
                                             title='Apply Scheduler from Db'><i class='icon-approval'></i></span>`;
                         } else {
@@ -488,18 +522,28 @@
                 {
                     data: obj => () => {
                         let btnReloadJobFromDb = `<span class='btnReloadJobFromDb sub-icon' data-group='${groupName}' data-job='${obj.JobName}'
-                                            title='Reload Scheduler from Db'><i class='icon-autorenew'></i></span>`;
+                                            title='Reload job from Db'><i class='icon-autorenew'></i></span>`;
+
+                        let btnEditJobFromDb = `<span class='btnEditJobFromDb sub-icon' data-group='${groupName}' data-job='${obj.JobName}'
+                                            title='Edit job from Db'><i class='icon-edit'></i></span>`;
 
                         let btnDeleteJobToDb = `<span class='btnDeleteJobToDb sub-icon' data-group='${groupName}' data-job='${obj.JobName}'
-                                            title='Remove Scheduler to Db'><i class='icon-delete'></i></span>`;
-                        return html = btnReloadJobFromDb + btnDeleteJobToDb;
-                    }, createdCell: (cell, _, row) => {                       
+                                            title='Remove job to Db'><i class='icon-delete'></i></span>`;
+                        return html = btnReloadJobFromDb + btnEditJobFromDb + btnDeleteJobToDb;
+                    }, createdCell: (cell, _, row) => {
                         $('.btnReloadJobFromDb', cell).on('click', function () {
                             let group = $(this).attr('data-group');
                             let job = $(this).attr('data-job');
 
                             ReloadJobFromDb(job, group);
-                        })                       
+                        })
+
+                        $('.btnEditJobFromDb', cell).on('click', function () {
+                            let group = $(this).attr('data-group');
+                            let job = $(this).attr('data-job');
+
+                            UpdateJob(job, group);
+                        })
 
                         $('.btnDeleteJobToDb', cell).on('click', function () {
                             let group = $(this).attr('data-group');
@@ -536,8 +580,8 @@
        
         domElements.btnRestartSchedulerFromDb.on('click', function () { RestartSchedulerFromDb(); });
 
-        domElements.btnGetJobsFromDb.on('click', function () { GetJobsFromDb(); })        
-       
+        domElements.btnGetJobsFromDb.on('click', function () { GetJobsFromDb(); });
+               
     }
 
     $(document).ready(function () {

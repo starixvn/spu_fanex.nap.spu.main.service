@@ -12,13 +12,13 @@
 
         IEnumerable<GroupJobEntity> GetGroupJobs();
 
-        IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetNew);
+        IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetAdjust, int dbEnvironmentID);
 
-        bool ClearedJobNew(string jobName, string groupName);      
+        bool ClearedJobNew(string jobName, string groupName, int dbEnvironmentID);      
 
-        bool DeleteJobToDb(string jobName, string groupName);        
+        bool DeleteJobToDb(string jobName, string groupName, int dbEnvironmentID);        
 
-        Job? GetSingleJob(string jobName, string groupName);
+        Job? GetSingleJob(string jobName, string groupName, int dbEnvironmentID);
     }
 
     public class SchedulerManagerService : ISchedulerManagerService 
@@ -45,11 +45,11 @@
             return _dataAccess.GetGroupJobs();
         }
 
-        public IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetNew)
+        public IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetAdjust, int dbEnvironmentID)
         {
             var groupJobs = new List<GroupJob>();
 
-            var jobInfoDb = _dataAccess.GetJobs(isGetNew);
+            var jobInfoDb = _dataAccess.GetJobs(isGetAdjust, dbEnvironmentID);
 
             if (jobInfoDb != null)
             {
@@ -74,19 +74,19 @@
             return groupJobs;
         }
      
-        public bool ClearedJobNew(string jobName, string groupName)
+        public bool ClearedJobNew(string jobName, string groupName, int dbEnvironmentID)
         {
-            return _dataAccess.ClearedJobNew(jobName, groupName);
+            return _dataAccess.ClearedJobNew(jobName, groupName, dbEnvironmentID);
         }      
 
-        public bool DeleteJobToDb(string jobName, string groupName) 
+        public bool DeleteJobToDb(string jobName, string groupName, int dbEnvironmentID) 
         {
-            return _dataAccess.DeleteJobToDb(jobName, groupName);
+            return _dataAccess.DeleteJobToDb(jobName, groupName, dbEnvironmentID);
         }       
 
-        public Job? GetSingleJob(string jobName, string groupName)
+        public Job? GetSingleJob(string jobName, string groupName, int dbEnvironmentID)
         {            
-            var jobData = _dataAccess.GetSingleJob(jobName, groupName);
+            var jobData = _dataAccess.GetSingleJob(jobName, groupName, dbEnvironmentID);
 
             if (jobData.Jobs.Any())
             {

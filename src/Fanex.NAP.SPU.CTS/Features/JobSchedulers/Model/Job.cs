@@ -12,11 +12,12 @@
         {
             JobName = data.JobName; 
             JobType = data.JobType; 
+            EnvironmentID = data.EnvironmentID;
             APIUrl= data.APIUrl;    
             MethodName = data.MethodName;   
             Controller = data.Controller;
-            Active = data.IsActive;
-            IsNew = data.IsNew;
+            IsStartByDefault = data.IsStartByDefault;
+            IsAdjust = data.IsAdjust;
         }
 
         //public int JobId { get; set; }
@@ -25,15 +26,17 @@
 
         public string JobType { get; set; }
 
+        public int EnvironmentID { get; set; }
+
         public string APIUrl { get; set; }
 
         public string MethodName { get; set; }
 
         public string Controller { get; set; }
 
-        public bool Active { get; set; }
+        public bool IsStartByDefault { get; set; }
 
-        public bool IsNew { get; set; }
+        public bool IsAdjust { get; set; }
 
         public IEnumerable<Trigger> Triggers { get; set; }               
 
