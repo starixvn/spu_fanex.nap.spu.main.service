@@ -188,9 +188,10 @@
 
             foreach (var environmentDbID in environmentIDs)
             {
-                addJobModel.EnvironmentID = int.Parse(environmentDbID);
+                var obj = addJobModel.Clone();
+                obj.EnvironmentID = int.Parse(environmentDbID);    
 
-                data.Add(addJobModel);
+                data.Add(obj);
             }
 
             await _schedulerManagerJobService.AddJobToDb(JsonConvert.SerializeObject(data));
@@ -203,10 +204,11 @@
             var environmentIDs = environmentDbIDs.Split(',');
 
             foreach (var environmentDbID in environmentIDs)
-            {
-                updateJobModel.EnvironmentID = int.Parse(environmentDbID);
+            {               
+                var obj = updateJobModel.Clone();
+                obj.EnvironmentID = int.Parse(environmentDbID);
 
-                data.Add(updateJobModel);
+                data.Add(obj);             
             }
 
             await _schedulerManagerJobService.UpdateJobToDb(JsonConvert.SerializeObject(data));

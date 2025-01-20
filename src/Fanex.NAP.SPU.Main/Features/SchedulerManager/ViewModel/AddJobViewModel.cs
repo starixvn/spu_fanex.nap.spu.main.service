@@ -26,7 +26,27 @@
 
         public string CronExpression { get; set; }
 
-        public string IntervalInSecond { get; set; }           
+        public string IntervalInSecond { get; set; } 
+        
+        public AddJobViewModel Clone()
+        {
+            return new AddJobViewModel
+            {
+                JobName = this.JobName,
+                GroupName= this.GroupName,
+                IsStartByDefault = this.IsStartByDefault,
+                EnvironmentID = this.EnvironmentID,
+                IsAdjust = this.IsAdjust,
+                JobType = this.JobType,
+                ApiUrl = this.ApiUrl,
+                MethodName = this.MethodName,
+                Controller = this.Controller,
+                TriggerName = this.TriggerName,
+                TriggerType = this.TriggerType,
+                CronExpression = this.CronExpression,
+                IntervalInSecond = this.IntervalInSecond
+            };
+        }
        
     }
 }
