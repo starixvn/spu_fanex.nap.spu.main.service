@@ -40,7 +40,7 @@
     }
 
     .form-group label {
-        width: 180px;      
+        width: 180px;
     }
 
     .form-group input, .form-group textarea, .form-group select {
@@ -96,6 +96,17 @@
     .buttons .primary {
         background-color: #007bff;
         color: white;
+    }
+
+    .primary:not(:disabled):hover {
+        background-color: #0056b3;
+    }
+
+    .primary:disabled {
+        background-color: #c0c0c0;
+        color: #6c757d;
+        cursor: not-allowed;
+        opacity: 0.7;
     }
 
     .buttons .second {

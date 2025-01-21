@@ -111,7 +111,7 @@
         domElements.txtController.val('');  
         domElements.txtCronExpression.val('');
         domElements.txtIntervalInSecond.val('');
-        domElements.txtTriggerName.val('');
+        domElements.txtTriggerName.val('');        
 
         GetGroupJobs(domElements.selGroupJob, null);
 
@@ -255,6 +255,7 @@
         domElements.txtUpdCronExpression.val('');
         domElements.txtUpdIntervalInSecond.val('');
         domElements.txtUpdTriggerName.val('');
+        domElements.btnUpdSaveJob.prop('disabled', true);
 
         GetGroupJobs(domElements.selUpdGroupJob, groupName);
 
@@ -278,10 +279,18 @@
 
         domElements.selUpdGroupJob.off('change').on('change', function () { GetJobUpdate(null, null); });
 
-        if (jobName != '' && groupName != '') {   
-            domElements.txtUpdJobName.val(jobName);            
+        if (jobName != '' && groupName != ''
+            && jobName != undefined && groupName != undefined) {   
+            domElements.txtUpdJobName.val(jobName);
+            domElements.txtUpdJobName.prop("readonly", true);
+            domElements.selUpdGroupJob.prop("disabled", true);
+            domElements.txtUpdTriggerName.prop("readonly", true);
 
             GetJobUpdate(jobName, groupName);
+        } else {
+            domElements.txtUpdJobName.prop("readonly", false);
+            domElements.selUpdGroupJob.prop("disabled", false);
+            domElements.txtUpdTriggerName.prop("readonly", false);
         }
     }
 
@@ -314,6 +323,7 @@
                     } else {
                         $(`input[name="rdUpdTriggerType"][value='${ConstTriggerType.Cron}']`).prop('checked', true);   
                     }
+                    domElements.btnUpdSaveJob.prop('disabled', false);
                 } else {                 
                     domElements.chkUpdActiveJob.prop('checked', false);
                     domElements.selUpdJobType.val($('#selUpdJobType option:first').val());
@@ -323,6 +333,7 @@
                     domElements.txtUpdCronExpression.val('');
                     domElements.txtUpdIntervalInSecond.val('');
                     domElements.txtUpdTriggerName.val('');
+                    domElements.btnUpdSaveJob.prop('disabled', true);
                 }
             },
             error: function (xhr, status, error) {

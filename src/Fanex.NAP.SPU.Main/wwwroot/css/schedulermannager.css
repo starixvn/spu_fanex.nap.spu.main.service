@@ -85,6 +85,15 @@
   background-color: #007bff;
   color: white;
 }
+.popup-content .primary:not(:disabled):hover {
+  background-color: #0056b3;
+}
+.popup-content .primary:disabled {
+  background-color: #c0c0c0;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
 .popup-content .buttons .second {
   background-color: #ccc;
 }
