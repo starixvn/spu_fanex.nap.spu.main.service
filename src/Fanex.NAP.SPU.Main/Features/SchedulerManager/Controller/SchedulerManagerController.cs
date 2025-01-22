@@ -90,6 +90,23 @@
         }
 
         [HttpPost]
+        public IActionResult CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs)
+        {
+            try
+            {
+                var jobs = _quartzHostedService.CheckExistJob(jobName, groupName, dbEnvironmentIDs);
+
+                return Json(new { jobs });
+            }
+            catch (Exception ex)
+            {
+                _sentryClient.CaptureException(ex);
+
+                return StatusCode(500, "Internal Server Error: " + ex.Message);
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> GetGroupJobs()
         {
             try

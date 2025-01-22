@@ -139,12 +139,7 @@
 
         $('option', domElements.selEnvironmentDb).prop('selected', true);
 
-        domElements.selEnvironmentDb.trigger("chosen:updated");
-
-        domElements.selEnvironmentDb.off('change').on('change', function () {
-            const selectedValue = $(this).val();
-            console.log('Selected Value:', selectedValue);
-        });
+        domElements.selEnvironmentDb.trigger("chosen:updated");       
 
         domElements.btnCancelJob.off('click').on('click', function () { $(".popup-overlay").fadeOut(); });
 
@@ -161,21 +156,33 @@
         }
 
         if (confirm('Are you sure you want to add this job?')) {
-            $.ajax({
-                url: '/SchedulerManager/AddJobToDb',
-                type: 'POST',
-                data: validateResult.data,               
-                success: function (response) {
-                    alert('Save Add Job to db successful');
+            $.post("/SchedulerManager/CheckExistJob", {
+                jobName: domElements.txtJobName.val().trim(),
+                groupName: domElements.selGroupJob.val(),
+                dbEnvironmentIDs: domElements.selEnvironmentDb.val().join()
+            }, function (response) {
+                if (response != undefined && response.jobs != undefined && response.jobs.length > 0) {
+                    alert('This job Name and Group already exists');
 
-                    $(".popup-overlay").fadeOut();
+                    console.log(response.jobs);
+                } else {
+                    $.ajax({
+                        url: '/SchedulerManager/AddJobToDb',
+                        type: 'POST',
+                        data: validateResult.data,
+                        success: function (response) {
+                            alert('Save Add Job to db successful');
 
-                    GetJobsFromDb();
-                },
-                error: function (xhr, status, error) {
-                    alert('Error: ' + error);
+                            $(".popup-overlay").fadeOut();
+
+                            GetJobsFromDb();
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Error: ' + error);
+                        }
+                    });         
                 }
-            });           
+            });             
         }
     }    
 
@@ -257,7 +264,7 @@
         }
         let valEnvironmentDb = isUpdate ? domElements.selUpdEnvironmentDb.val() : domElements.selEnvironmentDb.val();
         $.each(valEnvironmentDb, function (idx, value) {
-            if (objResult.data.EnvironmentApiUrls[idx] == '') {
+            if (objResult.data.EnvironmentApiUrls[parseInt(value) - 1] == '') {
                 objResult.isError = true;
             }
         })

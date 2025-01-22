@@ -1,6 +1,7 @@
 ﻿namespace Fanex.NAP.SPU.CTS.Features.SchedulerManager
 {
     using Fanex.Data.Repository;
+    using Fanex.NAP.SPU.CTS.Features.SchedulerManager.Criteria;
     using Fanex.NAP.SPU.CTS.Features.SchedulerManager.Model;
 
     public interface ISchedulerManagerDataAccess
@@ -14,6 +15,8 @@
         JobInfoModel GetJobs(bool isGetAdjust, int dbEnvironmentID);
 
         JobInfoModel GetSingleJob(string jobName, string groupName, int dbEnvironmentID);
+
+        IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs);
 
         bool ClearedJobNew(string jobName, string groupName, int dbEnvironmentID);     
 
@@ -79,6 +82,18 @@
                 Jobs = jobData,
                 Triggers = triggerData
             };
+        }
+
+        public IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs)
+        {
+            var criteria = new CheckExistJobCriteria()
+            {
+                JobName = jobName,
+                GroupName = groupName,
+                EnvironmentIDs = dbEnvironmentIDs
+            };
+
+            return _repository.Fetch<JobEntity>(criteria);
         }
 
         public bool ClearedJobNew(string jobName, string groupName, int dbEnvironmentID)

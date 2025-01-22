@@ -19,6 +19,8 @@
         bool DeleteJobToDb(string jobName, string groupName, int dbEnvironmentID);        
 
         Job? GetSingleJob(string jobName, string groupName, int dbEnvironmentID);
+
+        IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs);
     }
 
     public class SchedulerManagerService : ISchedulerManagerService 
@@ -98,6 +100,11 @@
             }
 
             return null;
+        }
+
+        public IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs)
+        {
+            return _dataAccess.CheckExistJob(jobName, groupName, dbEnvironmentIDs);
         }
     }
 }
