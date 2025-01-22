@@ -5,7 +5,11 @@
         txtJobName: $('#txtJobName'),
         selGroupJob: $('#selGroupJob'),
         selJobType: $('#selJobType'),
-        txtApiUrl: $('#txtApiUrl'),
+        txtApiUrl1: $('#txtApiUrl1'),
+        txtApiUrl2: $('#txtApiUrl2'),
+        txtApiUrl3: $('#txtApiUrl3'),
+        txtApiUrl4: $('#txtApiUrl4'),
+        txtApiUrl5: $('#txtApiUrl5'),
         txtMethodName: $('#txtMethodName'),
         txtController: $('#txtController'),
         rdTriggerType: $('#rdTriggerType'),
@@ -42,6 +46,15 @@
     const ConstTriggerType = {
         Simple: 'Simple',
         Cron: 'Cron'
+    }
+
+    var objValidate = {
+        isError: false,
+        data: {
+            EnvironmentDbIDs: null,
+            EnvironmentApiUrls: null,
+            AddJob: null          
+        }
     }
 
     function RestartSchedulerFromDb() {
@@ -106,7 +119,11 @@
         domElements.txtJobName.val('');      
         domElements.chkActiveJob.prop('checked', false);        
         domElements.selJobType.val($('#selJobType option:first').val());
-        domElements.txtApiUrl.val('');
+        domElements.txtApiUrl1.val('');
+        domElements.txtApiUrl2.val('');
+        domElements.txtApiUrl3.val('');
+        domElements.txtApiUrl4.val('');
+        domElements.txtApiUrl5.val('');
         domElements.txtMethodName.val('');
         domElements.txtController.val('');  
         domElements.txtCronExpression.val('');
@@ -123,6 +140,11 @@
         $('option', domElements.selEnvironmentDb).prop('selected', true);
 
         domElements.selEnvironmentDb.trigger("chosen:updated");
+
+        domElements.selEnvironmentDb.off('change').on('change', function () {
+            const selectedValue = $(this).val();
+            console.log('Selected Value:', selectedValue);
+        });
 
         domElements.btnCancelJob.off('click').on('click', function () { $(".popup-overlay").fadeOut(); });
 
@@ -147,66 +169,63 @@
                     alert('Save Add Job to db successful');
 
                     $(".popup-overlay").fadeOut();
+
+                    GetJobsFromDb();
                 },
                 error: function (xhr, status, error) {
                     alert('Error: ' + error);
                 }
             });           
         }
-    }
-
-    var objValidate = {
-        isError: false,
-        data: {
-            JobName: null,
-            GroupName: null,
-            IsStartByDefault: false,
-            EnvironmentDbIDs: null,
-            IsAdjust: true,
-            JobType: null,
-            ApiUrl: null,
-            MethodName: null,
-            Controller: null,
-            TriggerType: null,
-            CronExpression: null,
-            IntervalInSecond: null,
-            TriggerName: null
-        }        
-    }
+    }    
 
     function GetDataUpdateJob(isUpdate) {
         var objResult = new Object();
+        let environmentApiUrls = [];
+
         if (isUpdate) {
+            environmentApiUrls.push(domElements.txtUpdApiUrl.val());           
+
             objResult.data = {
-                JobName: domElements.txtUpdJobName.val().trim(),
-                GroupName: domElements.selUpdGroupJob.val(),
-                IsStartByDefault: domElements.chkUpdActiveJob.prop('checked'),
-                EnvironmentDbIDs: domElements.selUpdEnvironmentDb.val().join(),
-                IsAdjust: true,
-                JobType: domElements.selUpdJobType.val(),
-                ApiUrl: domElements.txtUpdApiUrl.val().trim(),
-                MethodName: domElements.txtUpdMethodName.val().trim(),
-                Controller: domElements.txtUpdController.val().trim(),
-                TriggerType: $("input[name='rdUpdTriggerType']:checked").val(),
-                CronExpression: domElements.txtUpdCronExpression.val().trim(),
-                IntervalInSecond: domElements.txtUpdIntervalInSecond.val().trim(),
-                TriggerName: domElements.txtUpdTriggerName.val().trim()
+                EnvironmentDbIDs: domElements.selUpdEnvironmentDb.val(),
+                EnvironmentApiUrls: environmentApiUrls,
+                AddJob: {
+                    JobName: domElements.txtUpdJobName.val().trim(),
+                    GroupName: domElements.selUpdGroupJob.val(),
+                    IsStartByDefault: domElements.chkUpdActiveJob.prop('checked'),
+                    IsAdjust: true,
+                    JobType: domElements.selUpdJobType.val(),                  
+                    MethodName: domElements.txtUpdMethodName.val().trim(),
+                    Controller: domElements.txtUpdController.val().trim(),
+                    TriggerType: $("input[name='rdUpdTriggerType']:checked").val(),
+                    CronExpression: domElements.txtUpdCronExpression.val().trim(),
+                    IntervalInSecond: domElements.txtUpdIntervalInSecond.val().trim(),
+                    TriggerName: domElements.txtUpdTriggerName.val().trim()
+                }                
             };
         } else {
-            objResult.data = {
-                JobName: domElements.txtJobName.val().trim(),
-                GroupName: domElements.selGroupJob.val(),
-                IsStartByDefault: domElements.chkActiveJob.prop('checked'),
+            environmentApiUrls.push(domElements.txtApiUrl1.val());
+            environmentApiUrls.push(domElements.txtApiUrl2.val());
+            environmentApiUrls.push(domElements.txtApiUrl3.val());
+            environmentApiUrls.push(domElements.txtApiUrl4.val());
+            environmentApiUrls.push(domElements.txtApiUrl5.val());
+
+            objResult.data = {                
                 EnvironmentDbIDs: domElements.selEnvironmentDb.val().join(),
-                IsAdjust: true,
-                JobType: domElements.selJobType.val(),
-                ApiUrl: domElements.txtApiUrl.val().trim(),
-                MethodName: domElements.txtMethodName.val().trim(),
-                Controller: domElements.txtController.val().trim(),
-                TriggerType: $("input[name='rdTriggerType']:checked").val(),
-                CronExpression: domElements.txtCronExpression.val().trim(),
-                IntervalInSecond: domElements.txtIntervalInSecond.val().trim(),
-                TriggerName: domElements.txtTriggerName.val().trim()
+                EnvironmentApiUrls: environmentApiUrls,
+                AddJob: {
+                    JobName: domElements.txtJobName.val().trim(),
+                    GroupName: domElements.selGroupJob.val(),
+                    IsStartByDefault: domElements.chkActiveJob.prop('checked'),
+                    IsAdjust: true,
+                    JobType: domElements.selJobType.val(),                  
+                    MethodName: domElements.txtMethodName.val().trim(),
+                    Controller: domElements.txtController.val().trim(),
+                    TriggerType: $("input[name='rdTriggerType']:checked").val(),
+                    CronExpression: domElements.txtCronExpression.val().trim(),
+                    IntervalInSecond: domElements.txtIntervalInSecond.val().trim(),
+                    TriggerName: domElements.txtTriggerName.val().trim()
+                }                
             };
         }
         
@@ -223,9 +242,7 @@
         if (objResult.data.GroupName == '') {
             objResult.isError = true;
         }
-        if (objResult.data.ApiUrl == '') {
-            objResult.isError = true;
-        }
+        
         if (objResult.data.MethodName == '') {
             objResult.isError = true;
         }
@@ -238,7 +255,13 @@
         if (objResult.data.CronExpression == '' && objResult.data.IntervalInSecond == '') {
             objResult.isError = true;
         }
-      
+        let valEnvironmentDb = isUpdate ? domElements.selUpdEnvironmentDb.val() : domElements.selEnvironmentDb.val();
+        $.each(valEnvironmentDb, function (idx, value) {
+            if (objResult.data.EnvironmentApiUrls[idx] == '') {
+                objResult.isError = true;
+            }
+        })
+
         return objResult;
     }
 
@@ -308,10 +331,11 @@
                 groupName: groupName
             },
             success: function (response) {
-                if (response != undefined && response.jobTrigger != undefined) {                  
-                    domElements.chkUpdActiveJob.prop('checked', response.jobTrigger.IsStartByDefault);
+                if (response != undefined && response.jobTrigger != undefined) {
+                    domElements.chkUpdActiveJob.prop('checked', response.jobTrigger.IsStartByDefault); 
                     domElements.selUpdEnvironmentDb.val(response.jobTrigger.EnvironmentID);
                     domElements.selUpdEnvironmentDb.trigger('chosen:updated');
+                    domElements.selUpdJobType.val(response.jobTrigger.JobType);
                     domElements.txtUpdApiUrl.val(response.jobTrigger.APIUrl);
                     domElements.txtUpdMethodName.val(response.jobTrigger.MethodName);
                     domElements.txtUpdController.val(response.jobTrigger.Controller);
@@ -361,6 +385,8 @@
                     alert('Save Update Job successful');
 
                     $(".upd-popup-overlay").fadeOut();
+
+                    GetJobsFromDb();
                 },
                 error: function (xhr, status, error) {
                     alert('Error: ' + error);
@@ -369,17 +395,19 @@
         }
     }
 
-    function ApplyNewJobFromDb(jobName, groupName) {
+    function ApplyAdjustJobFromDb(jobName, groupName) {
         if (confirm('Are you sure you want to apply this job?')) {
             $.ajax({
-                url: '/SchedulerManager/ApplyNewJobFromDb',
+                url: '/SchedulerManager/ApplyAdjustJobFromDb',
                 type: 'POST',
                 data: {
                     jobName: jobName,
                     groupName: groupName
                 },
                 success: function (response) {
-                    alert(`Apply New Job ${jobName} successful`);
+                    alert(`Apply Ajust Job ${jobName} successful`);
+
+                    GetJobsFromDb();
                 },
                 error: function (xhr, status, error) {
                     alert('Error: ' + error);
@@ -418,6 +446,8 @@
                 },
                 success: function (response) {
                     alert(`Delete Job ${jobName} successful`);
+
+                    GetJobsFromDb();
                 },
                 error: function (xhr, status, error) {
                     alert('Error: ' + error);
@@ -515,18 +545,18 @@
                 {
                     data: obj => () => { 
                         if (obj.IsAdjust) {
-                            return `<span class='btnApplyNewJobFromDb sub-icon' data-group='${groupName}' data-job='${obj.JobName}'
+                            return `<span class='btnApplyAdjustJobFromDb sub-icon' data-group='${groupName}' data-job='${obj.JobName}'
                                             title='Apply Scheduler from Db'><i class='icon-approval'></i></span>`;
                         } else {
                             return '';
                         }
                         
                     }, createdCell: (cell, _, row) => {
-                        $('.btnApplyNewJobFromDb', cell).on('click', function () {
+                        $('.btnApplyAdjustJobFromDb', cell).on('click', function () {
                             let group = $(this).attr('data-group');
                             let job = $(this).attr('data-job');
 
-                            ApplyNewJobFromDb(job, group);
+                            ApplyAdjustJobFromDb(job, group);
                         })
                     }
                 },

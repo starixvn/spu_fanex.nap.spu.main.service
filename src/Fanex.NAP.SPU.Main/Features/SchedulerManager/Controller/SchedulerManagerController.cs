@@ -1,5 +1,6 @@
 ﻿namespace Fanex.NAP.SPU.Main.Features.SchedulerManager.Controller
 {
+    using Fanex.NAP.SPU.Main.Features.JobSchedulers.ViewModels.Job;
     using Fanex.NAP.SPU.Main.Features.SchedulerManager.ViewModel;
     using Fanex.NAP.SPU.Main.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.Middleware;
@@ -9,6 +10,8 @@
     using Newtonsoft.Json;
     using Sentry;
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -37,11 +40,11 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddJobToDb(AddJobViewModel addJobModel, string environmentDbIDs, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddJobToDb(JobViewModel jobViewModel, CancellationToken cancellationToken)
         {
             try
-            {
-                await _quartzHostedService.AddJobToDb(addJobModel, environmentDbIDs, cancellationToken);
+            {               
+                await _quartzHostedService.AddJobToDb(jobViewModel, false, cancellationToken);
 
                 return Ok();
             }
@@ -53,11 +56,11 @@
             }
         }
 
-        public async Task<IActionResult> UpdateJobToDb(AddJobViewModel updateJobModel, string environmentDbIDs, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateJobToDb(JobViewModel jobViewModel, CancellationToken cancellationToken)
         {
             try
             {
-                await _quartzHostedService.UpdateJobToDb(updateJobModel, environmentDbIDs, cancellationToken);
+                await _quartzHostedService.AddJobToDb(jobViewModel, true, cancellationToken);
 
                 return Ok();
             }
@@ -140,11 +143,11 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> ApplyNewJobFromDb(string jobName, string groupName, CancellationToken cancellationToken)
+        public async Task<IActionResult> ApplyAdjustJobFromDb(string jobName, string groupName, CancellationToken cancellationToken)
         {
             try
             {
-                await _quartzHostedService.ApplyNewJobFromDb(jobName, groupName, cancellationToken);
+                await _quartzHostedService.ApplyAdjustJobFromDb(jobName, groupName, cancellationToken);
 
                 return Ok();
             }

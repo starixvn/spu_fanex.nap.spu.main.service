@@ -149,7 +149,7 @@
             }            
         }
 
-        public async Task ApplyNewJobFromDb(string jobName, string groupName, CancellationToken cancellationToken)
+        public async Task ApplyAdjustJobFromDb(string jobName, string groupName, CancellationToken cancellationToken)
         {
             var newJob = _schedulerManagerJobService.GetSingleJob(jobName, groupName);
 
@@ -180,39 +180,33 @@
             return _schedulerManagerJobService.GetSingleJob(jobName, groupName);        
         }
 
-        public async Task AddJobToDb(AddJobViewModel addJobModel, string environmentDbIDs, CancellationToken cancellationToken)
+        public async Task AddJobToDb(JobViewModel jobViewModel, bool isEdit, CancellationToken cancellationToken)
         {
             var data = new List<AddJobViewModel>();
 
-            var environmentIDs = environmentDbIDs.Split(',');
+            var environmentIDs = jobViewModel.EnvironmentDbIDs.Split(',');
 
             foreach (var environmentDbID in environmentIDs)
-            {
-                var obj = addJobModel.Clone();
-                obj.EnvironmentID = int.Parse(environmentDbID);    
+            {               
+                var obj = jobViewModel.AddJob.Clone();
+
+                obj.EnvironmentID = int.Parse(environmentDbID);  
+
+                obj.ApiUrl = isEdit ? jobViewModel.EnvironmentApiUrls[0] : jobViewModel.EnvironmentApiUrls[obj.EnvironmentID - 1];
 
                 data.Add(obj);
             }
 
-            await _schedulerManagerJobService.AddJobToDb(JsonConvert.SerializeObject(data));
-        }
-
-        public async Task UpdateJobToDb(AddJobViewModel updateJobModel, string environmentDbIDs, CancellationToken cancellationToken)
-        {
-            var data = new List<AddJobViewModel>();
-
-            var environmentIDs = environmentDbIDs.Split(',');
-
-            foreach (var environmentDbID in environmentIDs)
-            {               
-                var obj = updateJobModel.Clone();
-                obj.EnvironmentID = int.Parse(environmentDbID);
-
-                data.Add(obj);             
+            if (isEdit)
+            {
+                await _schedulerManagerJobService.UpdateJobToDb(JsonConvert.SerializeObject(data));
             }
-
-            await _schedulerManagerJobService.UpdateJobToDb(JsonConvert.SerializeObject(data));
-        }
+            else
+            {
+                await _schedulerManagerJobService.AddJobToDb(JsonConvert.SerializeObject(data));
+            }
+            
+        }      
 
         public async Task DeleteJobToDb(string jobName, string groupName, CancellationToken cancellationToken)
         {
