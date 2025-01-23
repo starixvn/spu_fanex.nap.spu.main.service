@@ -16,7 +16,7 @@
 
         JobInfoModel GetSingleJob(string jobName, string groupName, int dbEnvironmentID);
 
-        IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs);
+        IEnumerable<JobEntity> CheckExistJob(string jobName, string dbEnvironmentIDs);
 
         bool ClearedJobNew(string jobName, string groupName, int dbEnvironmentID);     
 
@@ -84,12 +84,11 @@
             };
         }
 
-        public IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs)
+        public IEnumerable<JobEntity> CheckExistJob(string jobName, string dbEnvironmentIDs)
         {
             var criteria = new CheckExistJobCriteria()
             {
-                JobName = jobName,
-                GroupName = groupName,
+                JobName = jobName,           
                 EnvironmentIDs = dbEnvironmentIDs
             };
 

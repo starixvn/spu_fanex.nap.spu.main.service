@@ -180,9 +180,9 @@
             return _schedulerManagerJobService.GetSingleJob(jobName, groupName);        
         }
 
-        public IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs)
+        public IEnumerable<JobEntity> CheckExistJob(string jobName, string dbEnvironmentIDs)
         {
-            return _schedulerManagerJobService.CheckExistJob(jobName, groupName, dbEnvironmentIDs);
+            return _schedulerManagerJobService.CheckExistJob(jobName, dbEnvironmentIDs);
         }
 
         public async Task AddJobToDb(JobViewModel jobViewModel, bool isEdit, CancellationToken cancellationToken)

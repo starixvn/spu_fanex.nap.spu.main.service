@@ -20,7 +20,7 @@
 
         Job? GetSingleJob(string jobName, string groupName, int dbEnvironmentID);
 
-        IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs);
+        IEnumerable<JobEntity> CheckExistJob(string jobName, string dbEnvironmentIDs);
     }
 
     public class SchedulerManagerService : ISchedulerManagerService 
@@ -102,9 +102,9 @@
             return null;
         }
 
-        public IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs)
+        public IEnumerable<JobEntity> CheckExistJob(string jobName, string dbEnvironmentIDs)
         {
-            return _dataAccess.CheckExistJob(jobName, groupName, dbEnvironmentIDs);
+            return _dataAccess.CheckExistJob(jobName, dbEnvironmentIDs);
         }
     }
 }

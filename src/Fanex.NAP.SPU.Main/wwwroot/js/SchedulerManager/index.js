@@ -10,6 +10,10 @@
         txtApiUrl3: $('#txtApiUrl3'),
         txtApiUrl4: $('#txtApiUrl4'),
         txtApiUrl5: $('#txtApiUrl5'),
+        divEnvironmentApiUrl2: $('#divEnvironmentApiUrl2'),
+        divEnvironmentApiUrl3: $('#divEnvironmentApiUrl3'),
+        divEnvironmentApiUrl4: $('#divEnvironmentApiUrl4'),
+        divEnvironmentApiUrl5: $('#divEnvironmentApiUrl5'),
         txtMethodName: $('#txtMethodName'),
         txtController: $('#txtController'),
         rdTriggerType: $('#rdTriggerType'),
@@ -46,6 +50,10 @@
     const ConstTriggerType = {
         Simple: 'Simple',
         Cron: 'Cron'
+    }
+
+    const ConstDbEnvironment = {
+        Local: 1
     }
 
     var objValidate = {
@@ -137,6 +145,8 @@
             no_results_text: "No options found!",  
         });
 
+        CreateDOMDependOnEnvironment();
+       
         $('option', domElements.selEnvironmentDb).prop('selected', true);
 
         domElements.selEnvironmentDb.trigger("chosen:updated");       
@@ -145,6 +155,25 @@
 
         domElements.btnSaveJob.off('click').on('click', function () { SaveAddJob(); })
     }  
+
+    function CreateDOMDependOnEnvironment() {
+        if (dbEnvironment == ConstDbEnvironment.Local) {
+            domElements.selEnvironmentDb.append(`
+                <option value="1">Environment 1</option>
+                <option value="2">Environment 2</option>
+                <option value="3">Environment 3</option>
+                <option value="4">Environment 4</option>
+                <option value="5">Environment 5</option>
+            `);
+        } else {
+            domElements.selEnvironmentDb.append(`<option value="1">Environment 1</option>`);
+        }                
+
+        domElements.divEnvironmentApiUrl2.prop('hidden', true);
+        domElements.divEnvironmentApiUrl3.prop('hidden', true);
+        domElements.divEnvironmentApiUrl4.prop('hidden', true);
+        domElements.divEnvironmentApiUrl5.prop('hidden', true);
+    }
     
     function SaveAddJob() {
         var validateResult = ValidateDataJob(false);
@@ -157,8 +186,7 @@
 
         if (confirm('Are you sure you want to add this job?')) {
             $.post("/SchedulerManager/CheckExistJob", {
-                jobName: domElements.txtJobName.val().trim(),
-                groupName: domElements.selGroupJob.val(),
+                jobName: domElements.txtJobName.val().trim(),              
                 dbEnvironmentIDs: domElements.selEnvironmentDb.val().join()
             }, function (response) {
                 if (response != undefined && response.jobs != undefined && response.jobs.length > 0) {

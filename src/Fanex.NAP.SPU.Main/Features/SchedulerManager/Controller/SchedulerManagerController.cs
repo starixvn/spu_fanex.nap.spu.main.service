@@ -36,6 +36,8 @@
 
         public IActionResult Index()
         {
+            ViewBag.DbEnvironmentID = _appSettings.DbEnvironmentID;
+            
             return View();
         }
 
@@ -90,11 +92,11 @@
         }
 
         [HttpPost]
-        public IActionResult CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs)
+        public IActionResult CheckExistJob(string jobName, string dbEnvironmentIDs)
         {
             try
             {
-                var jobs = _quartzHostedService.CheckExistJob(jobName, groupName, dbEnvironmentIDs);
+                var jobs = _quartzHostedService.CheckExistJob(jobName, dbEnvironmentIDs);
 
                 return Json(new { jobs });
             }

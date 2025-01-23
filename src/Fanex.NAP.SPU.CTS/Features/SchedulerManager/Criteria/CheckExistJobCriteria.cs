@@ -6,10 +6,7 @@
     public class CheckExistJobCriteria : CriteriaBase
     {
         [SpParam(SqlParamName = "ip_JobName")]
-        public string JobName { get; set; }
-
-        [SpParam(SqlParamName = "ip_GroupName")]
-        public string GroupName { get; set; }
+        public string JobName { get; set; }      
 
         [SpParam(SqlParamName = "ip_EnvironmentIDs")]
         public string EnvironmentIDs { get; set; }

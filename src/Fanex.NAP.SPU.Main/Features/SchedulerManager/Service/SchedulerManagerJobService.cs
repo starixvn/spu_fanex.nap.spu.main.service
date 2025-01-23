@@ -35,7 +35,7 @@
 
         Job GetSingleJob(string jobName, string groupName);
 
-        IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs);
+        IEnumerable<JobEntity> CheckExistJob(string jobName, string dbEnvironmentIDs);
 
         IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetAdjust);
 
@@ -158,9 +158,9 @@
             return _schedulerManagerService.GetSingleJob(jobName, groupName, _appSettings.DbEnvironmentID);
         }
 
-        public IEnumerable<JobEntity> CheckExistJob(string jobName, string groupName, string dbEnvironmentIDs)
+        public IEnumerable<JobEntity> CheckExistJob(string jobName, string dbEnvironmentIDs)
         {
-            return _schedulerManagerService.CheckExistJob(jobName, groupName, dbEnvironmentIDs);   
+            return _schedulerManagerService.CheckExistJob(jobName, dbEnvironmentIDs);   
         }
 
         public IEnumerable<GroupJob> GetGroupJobTriggers(bool isGetAdjust)
