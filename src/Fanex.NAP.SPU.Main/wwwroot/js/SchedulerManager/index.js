@@ -143,9 +143,7 @@
         domElements.selEnvironmentDb.chosen({
             placeholder_text_multiple: "Select Environment",
             no_results_text: "No options found!",  
-        });
-
-        CreateDOMDependOnEnvironment();
+        });     
        
         $('option', domElements.selEnvironmentDb).prop('selected', true);
 
@@ -155,26 +153,7 @@
 
         domElements.btnSaveJob.off('click').on('click', function () { SaveAddJob(); })
     }  
-
-    function CreateDOMDependOnEnvironment() {
-        if (dbEnvironment == ConstDbEnvironment.Local) {
-            domElements.selEnvironmentDb.append(`
-                <option value="1">Environment 1</option>
-                <option value="2">Environment 2</option>
-                <option value="3">Environment 3</option>
-                <option value="4">Environment 4</option>
-                <option value="5">Environment 5</option>
-            `);
-        } else {
-            domElements.selEnvironmentDb.append(`<option value="1">Environment 1</option>`);
-        }                
-
-        domElements.divEnvironmentApiUrl2.prop('hidden', true);
-        domElements.divEnvironmentApiUrl3.prop('hidden', true);
-        domElements.divEnvironmentApiUrl4.prop('hidden', true);
-        domElements.divEnvironmentApiUrl5.prop('hidden', true);
-    }
-    
+  
     function SaveAddJob() {
         var validateResult = ValidateDataJob(false);
 
@@ -190,7 +169,7 @@
                 dbEnvironmentIDs: domElements.selEnvironmentDb.val().join()
             }, function (response) {
                 if (response != undefined && response.jobs != undefined && response.jobs.length > 0) {
-                    alert('This job Name and Group already exists');
+                    alert('This Job Name already exists');
 
                     console.log(response.jobs);
                 } else {
