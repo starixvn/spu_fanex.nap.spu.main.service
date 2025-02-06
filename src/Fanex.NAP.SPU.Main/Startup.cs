@@ -147,8 +147,7 @@ namespace Fanex.NAP.SPU.Main
                     DayOfWeekStartIndexZero = false
                 },
                 AccountName = "admin",
-                //AccountPassword = "admin!Q@W#E",
-                AccountPassword = "admin",
+                AccountPassword = "admin!Q@W#E",                
                 IsAuthenticationPersist = false
             };                       
 
