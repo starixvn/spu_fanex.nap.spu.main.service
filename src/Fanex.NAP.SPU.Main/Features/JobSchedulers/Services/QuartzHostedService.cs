@@ -81,6 +81,8 @@
         {
             if (!_scheduler.IsShutdown)
             {
+                _scheduler.JobFactory = _jobFactory;
+
                 await _scheduler.Start(cancellationToken);
             }
         }
@@ -112,9 +114,9 @@
         {
             foreach (var groupJob in groupJobs)
             {
-                groupJob.Jobs.ToList().ForEach(job =>
+                groupJob.Jobs.ToList().ForEach(async job =>
                 {
-                    _schedulerManagerJobService.ReplaceJob(job, groupJob.Name);
+                    await _schedulerManagerJobService.ReplaceJob(job, groupJob.Name);
                 });
 
                 if (IsPauseTrigger(groupJob.Jobs))
