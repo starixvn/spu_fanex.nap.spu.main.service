@@ -46,9 +46,7 @@
             _configuration = configuration;
             _appSettings = appSettings;
             _schedulerManagerJobService = schedulerManagerJobService;
-            _scheduler = _schedulerFactory.GetScheduler().Result;
-           
-            JobSchedulers = appSettings.Schedulers;           
+            _scheduler = _schedulerFactory.GetScheduler().Result;           
         }
 
         public Scheduler JobSchedulers { get; set; }      
@@ -124,30 +122,7 @@
                     await _scheduler.PauseTriggers(GroupMatcher<TriggerKey>.GroupEquals(groupJob.Name));
                 }
             }           
-        }
-
-        public async Task ReplaceJob(CancellationToken cancellationToken)
-        {
-            if (JobSchedulers.GroupJobs != null && JobSchedulers.GroupJobs.Any())
-            {               
-                var groupJobs = JobSchedulers.GroupJobs;
-
-                foreach (var groupJob in groupJobs)
-                {
-                    groupJob.Jobs.ToList().ForEach(job =>
-                    {
-                        _schedulerManagerJobService.ReplaceJob(job, groupJob.Name);                      
-                    });
-
-                    if (IsPauseTrigger(groupJob.Jobs))
-                    {
-                        await _scheduler.PauseTriggers(GroupMatcher<TriggerKey>.GroupEquals(groupJob.Name));
-                    }
-                }
-
-                await _scheduler.Start(cancellationToken);
-            }            
-        }
+        }       
 
         public async Task ApplyAdjustJobFromDb(string jobName, string groupName, CancellationToken cancellationToken)
         {

@@ -1,5 +1,4 @@
 ﻿
-using Fanex.NAP.SPU.CTS.Features.JobSchedulers.Model;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.ComponentModel;
@@ -12,9 +11,7 @@ namespace Fanex.NAP.SPU.Main.Middleware
 
         string Redis { get; }
 
-        int HostingPort { get; }
-
-        Scheduler Schedulers { get; }
+        int HostingPort { get; }       
 
         int Environment { get; }
 
@@ -36,9 +33,7 @@ namespace Fanex.NAP.SPU.Main.Middleware
 
             HealthCheckStorage = GetValue<string>(nameof(HealthCheckStorage));
 
-            HostingPort = GetValue<int>(nameof(HostingPort));
-
-            Schedulers = GetSection<Scheduler>(nameof(Schedulers));
+            HostingPort = GetValue<int>(nameof(HostingPort));           
 
             environment = GetValue<string>(nameof(Environment));
 
@@ -46,15 +41,12 @@ namespace Fanex.NAP.SPU.Main.Middleware
 
             Redis = GetValue<string>(nameof(Redis));
 
-
             Proxy = GetValue<string>(nameof(Proxy));
         }
 
         public string HealthCheckStorage { get; }
 
-        public int HostingPort { get; }
-
-        public Scheduler Schedulers { get; }
+        public int HostingPort { get; }        
 
         public int Environment
         {
