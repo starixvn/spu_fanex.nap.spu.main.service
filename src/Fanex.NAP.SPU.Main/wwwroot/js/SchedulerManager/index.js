@@ -250,23 +250,23 @@
         var objResult = GetDataUpdateJob(isUpdate);
         objResult.isError = false;
 
-        if (objResult.data.JobName == '') {
+        if (objResult.data.AddJob.JobName == '') {
             objResult.isError = true;
         }
-        if (objResult.data.GroupName == '') {
+        if (objResult.data.AddJob.GroupName == '') {
             objResult.isError = true;
         }
         
-        if (objResult.data.MethodName == '') {
+        if (objResult.data.AddJob.MethodName == '') {
             objResult.isError = true;
         }
-        if (objResult.data.Controller == '') {
+        if (objResult.data.AddJob.Controller == '') {
             objResult.isError = true;
         }
-        if (objResult.data.TriggerName == '') {
+        if (objResult.data.AddJob.TriggerName == '') {
             objResult.isError = true;
         }
-        if (objResult.data.CronExpression == '' && objResult.data.IntervalInSecond == '') {
+        if (objResult.data.AddJob.CronExpression == '' && objResult.data.AddJob.IntervalInSecond == '') {
             objResult.isError = true;
         }
         let valEnvironmentDb = isUpdate ? domElements.selUpdEnvironmentDb.val() : domElements.selEnvironmentDb.val();
@@ -321,13 +321,11 @@
             domElements.txtUpdJobName.val(jobName);
             domElements.txtUpdJobName.prop("readonly", true);
             domElements.selUpdGroupJob.prop("disabled", true);
-            domElements.txtUpdTriggerName.prop("readonly", true);
 
             GetJobUpdate(jobName, groupName);
         } else {
             domElements.txtUpdJobName.prop("readonly", false);
             domElements.selUpdGroupJob.prop("disabled", false);
-            domElements.txtUpdTriggerName.prop("readonly", false);
         }
     }
 
