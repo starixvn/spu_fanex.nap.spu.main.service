@@ -1,0 +1,43 @@
+﻿@using Fanex.NAP.SPU.Main.Features.JobSchedulers.ViewModels;
+@model IEnumerable<GroupJob>
+
+@{
+    ViewData["Title"] = "Updated Jobs";
+}
+
+<div class="page-container">
+    <div class="group-info">
+        <div class="margin-10">
+            <span>
+                <a class="text-dark" href="/Authenticates/Logout"><i class="icon-logout"></i> Logout</a>
+            </span>
+        </div>
+             
+        <div class="group width-200">
+            <span class="margin-10"><button id="btnAddJob" class="btn btn-primary">Add Job</button></span>
+            <span class="margin-10"><button id="btnUpdateJob" class="btn btn-primary">Update Job</button></span>
+            <span class="margin-10"><button id="btnGetJobsFromDb" class="btn btn-primary">Load Jobs from Db</button></span>
+            <span class="margin-10"><button id="btnRestartSchedulerFromDb" class="btn btn-primary">Restart Scheduler from Db</button></span>
+        </div>
+    </div>
+    @Html.Partial("AddJob")
+    @Html.Partial("UpdateJob")
+
+    <div id="tabsContainer" class="tabs-container">
+        <div id="tabsHeader" class="tabs">
+        </div>
+
+        <div id="tabsContent">
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/datatables/dt-2.2.0/datatables.min.js"></script>    
+    <script src="~/lib/chosen/chosen.jquery.min.js"></script>
+    <script src="~/js/SchedulerManager/index.js"></script>
+    <script>
+        var dbEnvironment = @ViewBag.DbEnvironmentID
+    </script>
+}

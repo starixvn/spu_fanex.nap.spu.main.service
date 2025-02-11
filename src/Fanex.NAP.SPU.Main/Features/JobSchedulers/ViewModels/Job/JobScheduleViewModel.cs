@@ -1,6 +1,6 @@
 ﻿namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.ViewModels.Job
 {
-    using Fanex.NAP.SPU.Main.Features.JobSchedulers.Models;
+    using Fanex.NAP.SPU.CTS.Features.JobSchedulers.Model;
     using System;
 
     public class JobScheduleViewModel
@@ -12,7 +12,7 @@
             JobName = jobModel.JobName;
             JobType = Type.GetType(jobModel.JobType);
             APIUrl = jobModel.APIUrl;            
-            IsActive = jobModel.Active;
+            IsActive = jobModel.IsStartByDefault;
             MethodName = jobModel.MethodName;
             Controller = jobModel.Controller;
             TriggerType = triggerModel.TriggerType;

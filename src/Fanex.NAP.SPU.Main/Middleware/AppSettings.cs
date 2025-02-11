@@ -1,4 +1,4 @@
-﻿using Fanex.NAP.SPU.Main.Features.JobSchedulers.Models;
+﻿
 using Microsoft.Extensions.Configuration;
 using System;
 using System.ComponentModel;
@@ -11,13 +11,13 @@ namespace Fanex.NAP.SPU.Main.Middleware
 
         string Redis { get; }
 
-        int HostingPort { get; }
-
-        Scheduler Schedulers { get; }
+        int HostingPort { get; }       
 
         int Environment { get; }
 
         string EnvironmentString { get; }
+
+        int DbEnvironmentID { get; }
 
         string Proxy { get; }
     }
@@ -33,23 +33,20 @@ namespace Fanex.NAP.SPU.Main.Middleware
 
             HealthCheckStorage = GetValue<string>(nameof(HealthCheckStorage));
 
-            HostingPort = GetValue<int>(nameof(HostingPort));
-
-            Schedulers = GetSection<Scheduler>(nameof(Schedulers));
+            HostingPort = GetValue<int>(nameof(HostingPort));           
 
             environment = GetValue<string>(nameof(Environment));
 
-            Redis = GetValue<string>(nameof(Redis));
+            DbEnvironmentID = GetValue<int>(nameof(DbEnvironmentID));
 
+            Redis = GetValue<string>(nameof(Redis));
 
             Proxy = GetValue<string>(nameof(Proxy));
         }
 
         public string HealthCheckStorage { get; }
 
-        public int HostingPort { get; }
-
-        public Scheduler Schedulers { get; }
+        public int HostingPort { get; }        
 
         public int Environment
         {
@@ -60,9 +57,15 @@ namespace Fanex.NAP.SPU.Main.Middleware
                     case "LOCAL":
                         return 1;
                     case "UAT":
-                        return 2;
-                    default:
+                        return 2;                    
+                    case "PROD":
                         return 3;
+                    case "SIT":
+                        return 4;
+                    case "KLDR":
+                        return 5;
+                    default:
+                        return 1;
                 }
             }
         }
@@ -72,6 +75,8 @@ namespace Fanex.NAP.SPU.Main.Middleware
         public string Proxy { get; }
 
         public string EnvironmentString => environment;
+
+        public int DbEnvironmentID { get; }
 
         public T GetValue<T>(string key)
         {

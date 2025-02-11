@@ -1,4 +1,20 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+﻿@import "../abstracts/variables";
+@import "../abstracts/mixins";
+@import "../base/scaffolding";
+@import "../components/buttons";
+@import "../components/textbox";
+@import "../components/checkbox";
+@import "../components/customize-select2";
+@import "../components/customize-datepicker";
+@import "../components/customize-toast";
+@import "../components/forms";
+@import "../components/dropdown";
+@import "../components/tables";
+@import "../components/popup";
+@import "../components/loading";
+@import "../components/notification";
+
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 :root {
     --primaryColor: #5ec297;

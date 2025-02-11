@@ -1,0 +1,74 @@
+﻿<div class="upd-popup-overlay">  
+    <div class="popup-content">
+        <div class="form-group">
+            <h1>Update Job</h1>
+            <label class="active-job"><input type="checkbox" id="chkUpdActiveJob" value="false"> Start By Default</label>
+            <select id="selUpdEnvironmentDb" multiple>
+                <option value="1">Environment 1</option>
+                <option value="2">Environment 2</option>
+                <option value="3">Environment 3</option>
+                <option value="4">Environment 4</option>
+                <option value="5">Environment 5</option>
+            </select>
+       </div>
+        
+        <div class="form-group">
+            <label for="name">Name *</label>
+            <input type="text" id="txtUpdJobName" placeholder="Name">
+        </div>
+        <div class="form-group">
+            <label for="group">Group *</label>
+            <select id="selUpdGroupJob">
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Job Type *</label>
+            <select id="selUpdJobType">
+                <option>Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute</option>
+                <option>Fanex.NAP.SPU.Main.Features.JobSchedulers.Services.JobMonitoring</option>
+            </select>
+        </div>    
+        <div class="job-data-map">         
+            <div class="form-group">
+                <label>API url *</label>
+                <input type="text" id="txtUpdApiUrl" placeholder="String">
+            </div>
+            <div class="form-group">
+                <label>Method Name *</label>
+                <input type="text" id="txtUpdMethodName" placeholder="String">
+            </div>
+            <div class="form-group">
+                <label>Controller *</label>
+                <input type="text" id="txtUpdController" placeholder="String">
+            </div>         
+        </div>
+        
+        <h1>Update Trigger</h1>
+
+        <div class="form-group">
+            <label>Trigger Name *</label>
+            <input type="text" id="txtUpdTriggerName" placeholder="Trigger Name" readonly>
+        </div>
+
+        <div class="radio-group">
+            <label><input type="radio" name="rdUpdTriggerType" value="Cron" checked> Cron</label>
+            <label><input type="radio" name="rdUpdTriggerType" value="Simple"> Simple</label>
+        </div>
+
+        <div class="cron-trigger-properties">            
+            <div class="form-group">
+                <label>Cron Expression</label>
+                <input type="text" id="txtUpdCronExpression" placeholder="Cron Expression">
+            </div>
+            <div class="form-group">
+                <label>Interval In Second</label>
+                <input type="text" id="txtUpdIntervalInSecond" placeholder="Interval In Second">
+            </div>          
+        </div>      
+      
+        <div class="buttons">         
+            <button id="btnUpdSaveJob" class="primary">Save</button>
+            <button id="btnUpdCancelJob" class="second">Cancel</button>
+        </div>
+    </div>
+</div>

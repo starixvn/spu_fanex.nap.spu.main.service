@@ -1,0 +1,241 @@
+select {
+    @include border-radius(2px);
+    outline: none;
+    height: 28px;
+    line-height: 28px;
+    padding-left: 6px;
+    padding-right: 10px;
+    background-color: #fff;
+    border: 1px solid $input-border;
+    font-size: inherit;
+    color: $input-color;
+    transition: $transition-input;
+
+    option {
+        padding: 2px 6px;
+    }
+
+    &:focus {
+        border-color: #2197ff;
+        box-shadow: 0 0 1px 2px rgba(33,151,255, .35);
+    }
+
+    &.invalid {
+        border-color: #ff0000;
+
+        &:focus {
+            border-color: #2197ff;
+            box-shadow: none;
+        }
+    }
+}
+
+select[disabled] {
+    background-color: #ededed !important;
+    border-color: #d9d9d9;
+    color: #777 !important;
+}
+
+// Dropdown list
+
+.ui-multiselect-header {
+    padding: 0 !important;
+    background: transparent;
+    border: 0;
+
+    .ui-multiselect-filter {
+        margin-bottom: 3px;
+
+        input {
+            width: 98% !important;
+            margin-left: 0 !important;
+            background: #FFFFFF;
+            border: 1px solid #E5E5E5 !important;
+            border-radius: 2px;
+            height: 16px !important;
+
+            &:focus {
+                box-shadow: 0px 0px 6px rgba(57, 110, 248, 0.5);
+                border-color: #396EF8 !important;
+            }
+        }
+    }
+
+    .ui-helper-reset {
+        span {
+            text-transform: capitalize;
+            font-size: 13px;
+        }
+
+        .ui-multiselect-all {
+            margin-right: 32px;
+        }
+    }
+}
+
+.ui-multiselect-checkboxes {
+    padding-top: 1px;
+
+    li {
+        font-size: 13px;
+        line-height: 17px;
+        margin-top: 2px;
+
+        label > span {
+            color: #333333;
+            font-size: 13px;
+            padding-left: 20px;
+
+            &:before {
+                height: 14px;
+                width: 14px;
+            }
+
+            &:after {
+                top: 3px !important;
+                left: 3px !important;
+            }
+        }
+    }
+}
+
+.ui-multiselect-menu {
+    display: none;
+    padding: 12px !important;
+    padding-bottom: 15px !important;
+    background: #FFFFFF;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5) !important;
+    border-radius: 3px;
+}
+
+.ui-selectmenu-button.ui-button {
+    border: none;
+    background-color: transparent;
+
+    .ui-icon {
+        background: none;
+    }
+
+    .ui-icon:before {
+        content: "\e92d";
+        font-size: 20px;
+        color: #737373;
+    }
+
+    &.ui-selectmenu-button-open,
+    &:hover {
+        .ui-icon:before {
+            color: #2197ff;
+        }
+    }
+
+    .ui-selectmenu-text {
+        display: none;
+    }
+}
+
+.ui-selectmenu-menu {
+    .ui-widget-content {
+        margin-top: 6px;
+        border: 1px solid #d0d0d0;
+        box-shadow: 0 0 4px rgba(0,0,0, .3);
+        background-color: #fff;
+    }
+
+    .ui-menu-item-wrapper {
+        padding: 10px 20px;
+    }
+
+    .ui-state-active {
+        border: none;
+        background: #1e2e4f;
+        color: #fff;
+    }
+}
+
+//--------------------------- //
+.ui-multiselect {
+    width: 100% !important;
+    height: 30px !important;
+    background-color: #fff;
+    border: 1px solid #E5E5E5;
+    border-radius: 2px;
+    text-align: left;
+    padding-left: 12px !important;
+    color: #474747;
+
+    .ui-icon {
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAB/SURBVHgBbY3NDYUgEITZB4XwjtwsQTsgUIBSmR69QLQCy6AZQpw9kBDiJpv9mW9nyXu/CiHmGGMQQ1hrtVJqL6WEH+aFiDYc7CMkpXzYBHWSOefLGPNnGFVjvhuEna61hpTSSc0BjgeEFXlBnDroYJ36dw3mvoc+g2Hn3DbuX6+RNKJozoYAAAAAAElFTkSuQmCC');
+        background-position: center;
+        margin-right: 6px;
+    }
+}
+
+/*.report-cont .ui-multiselect {
+    border: 1px solid #d6d6d6;
+    padding: 0 4px;
+}
+
+.ui-multiselect-header .ui-helper-reset li {
+    display: inline-block;
+}
+
+.ui-multiselect-checkboxes {
+    height: 170px !important;
+}
+
+.ui-multiselect-menu {
+    .ui-widget-header {
+        border-radius: 0;
+        padding: 5px;
+    }
+}*/
+
+/*customize arrow dropdown*/
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAB/SURBVHgBbY3NDYUgEITZB4XwjtwsQTsgUIBSmR69QLQCy6AZQpw9kBDiJpv9mW9nyXu/CiHmGGMQQ1hrtVJqL6WEH+aFiDYc7CMkpXzYBHWSOefLGPNnGFVjvhuEna61hpTSSc0BjgeEFXlBnDroYJ36dw3mvoc+g2Hn3DbuX6+RNKJozoYAAAAAAElFTkSuQmCC') white no-repeat 98.5% !important; /* !important used for overriding all other customisations */
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAB/SURBVHgBbY3NDYUgEITZB4XwjtwsQTsgUIBSmR69QLQCy6AZQpw9kBDiJpv9mW9nyXu/CiHmGGMQQ1hrtVJqL6WEH+aFiDYc7CMkpXzYBHWSOefLGPNnGFVjvhuEna61hpTSSc0BjgeEFXlBnDroYJ36dw3mvoc+g2Hn3DbuX6+RNKJozoYAAAAAAElFTkSuQmCC') white no-repeat calc(100% - 6px) !important;
+}
+
+.select2-container .select2-selection--single {
+    height: 30px!important;
+}
+
+// select 2 customize arrow
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    right: 3px !important;
+
+    b {
+        border: none !important;
+        margin-left: -10px !important;
+        margin-top: -9px !important;
+        font-family: 'Fraud-Sensor' !important;
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b:before {
+    content: "\e90c";
+    font-size: 20px;
+}
+
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    border: none !important;
+    transform: rotate(180deg);
+    margin-left: 9px !important;
+    margin-top: 11px !important;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+    padding-left: 13px !important;
+}

@@ -1,0 +1,101 @@
+﻿<div class="popup-overlay">  
+    <div class="popup-content">
+        <div class="form-group">
+            <h1>Add Job</h1>
+            <label class="active-job"><input type="checkbox" id="chkActiveJob" value="false"> Start By Default</label>
+            <select id="selEnvironmentDb" multiple>
+                <option value="1">Environment 1</option>
+                <option value="2">Environment 2</option>
+                <option value="3">Environment 3</option>
+                <option value="4">Environment 4</option>
+                <option value="5">Environment 5</option>
+            </select>
+       </div>
+        
+        <div class="form-group">
+            <label for="name">Name *</label>
+            <input type="text" id="txtJobName" placeholder="Name">
+        </div>
+        <div class="form-group">
+            <label for="group">Group *</label>
+            <select id="selGroupJob">              
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Job Type *</label>
+            <select id="selJobType">
+                <option>Fanex.NAP.SPU.Main.JobSchedulers.Services.JobExecute</option>
+                <option>Fanex.NAP.SPU.Main.Features.JobSchedulers.Services.JobMonitoring</option>
+            </select>
+        </div>    
+        <div class="job-data-map">               
+            <div class="form-group">
+                <label>API url *</label>
+                <input type="text" id="txtEnvironmentApiURL1" class="flex-half" placeholder="Environment 1" readonly>
+                <input type="text" id="txtApiUrl1" placeholder="String">
+            </div>  
+            
+            <div id="divEnvironmentApiUrl2" class="form-group">
+                <label></label>
+                <input type="text" id="txtEnvironmentApiURL2" class="flex-half" placeholder="Environment 2" readonly>
+                <input type="text" id="txtApiUrl2" placeholder="String">
+            </div>
+
+            <div id="divEnvironmentApiUrl3" class="form-group">
+                <label></label>
+                <input type="text" id="txtEnvironmentApiURL3" class="flex-half" placeholder="Environment 3" readonly>
+                <input type="text" id="txtApiUrl3" placeholder="String">
+            </div>
+
+            <div id="divEnvironmentApiUrl4" class="form-group">
+                <label></label>
+                <input type="text" id="txtEnvironmentApiURL4" class="flex-half" placeholder="Environment 4" readonly>
+                <input type="text" id="txtApiUrl4" placeholder="String">
+            </div>
+
+            <div id="divEnvironmentApiUrl5" class="form-group">
+                <label></label>
+                <input type="text" id="txtEnvironmentApiURL5" class="flex-half" placeholder="Environment 5" readonly>
+                <input type="text" id="txtApiUrl5" placeholder="String">
+            </div>
+
+            <div class="form-group">
+                <label>Method Name *</label>
+                <input type="text" id="txtMethodName" placeholder="String">
+            </div>
+
+            <div class="form-group">
+                <label>Controller *</label>
+                <input type="text" id="txtController" placeholder="String">
+            </div>         
+        </div>
+        
+        <h1>Add Trigger</h1>
+
+        <div class="form-group">
+            <label>Trigger Name *</label>
+            <input type="text" id="txtTriggerName" placeholder="Trigger Name">
+        </div>
+
+        <div class="radio-group">
+            <label><input type="radio" name="rdTriggerType" value="Cron" checked> Cron</label>
+            <label><input type="radio" name="rdTriggerType" value="Simple"> Simple</label>
+        </div>
+
+        <div class="cron-trigger-properties">            
+            <div class="form-group">
+                <label>Cron Expression</label>
+                <input type="text" id="txtCronExpression" placeholder="Cron Expression">
+            </div>
+            <div class="form-group">
+                <label>Interval In Second</label>
+                <input type="text" id="txtIntervalInSecond" placeholder="Interval In Second">
+            </div>          
+        </div>      
+      
+        <div class="buttons">         
+            <button id="btnSaveJob" class="primary">Save</button>
+            <button id="btnCancelJob" class="second">Cancel</button>
+        </div>
+    </div>
+</div>
