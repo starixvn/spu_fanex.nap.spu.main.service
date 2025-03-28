@@ -53,7 +53,7 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
                     {
                         var jobName = string.Join("", result.Select(x => x + "\r\n"));
 
-                        NotifyTelegramMessage("Jobs Monitoring", $"The <b>{result.Count}</b> jobs are PAUSED.", $"The List of jobs: \n\r {jobName}", _appSettings.EnvironmentString, _appSettings.Proxy);
+                        NotifyTelegramMessage("MainService Monitoring", $"The <b>{result.Count}</b> jobs are PAUSED.", $"The List of jobs: \n\r {jobName}", _appSettings.EnvironmentString, _appSettings.Proxy);
                     }
                 }
             }
@@ -70,7 +70,7 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
                 var notificationService = new NotificationService();
 
                 notificationService
-                   .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "19:c816d008fc134c1b8253609ebcbe128f@thread.tacv2", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken", proxy)
+                   .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "B08GPPK88MS:T08ACMHMMFS:C08KMQMPVK5", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken", proxy)
                    .Message(new MessageModel(systemName, DateTime.Now, environment, message, moreInfo))
                    .SendWithoutDelay();
             }
