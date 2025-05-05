@@ -89,9 +89,9 @@
 
         public async Task RestartSchedulerFromDb(CancellationToken cancellationToken)
         {
-            var groupJobs = _schedulerManagerJobService.GetGroupJobTriggers(false);
+            //var groupJobs = _schedulerManagerJobService.GetGroupJobTriggers(false);
 
-            await UpdateJobs(cancellationToken, groupJobs);
+            //await UpdateJobs(cancellationToken, groupJobs);
 
             await RestartAsync(cancellationToken);
         }
