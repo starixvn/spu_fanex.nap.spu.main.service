@@ -16,7 +16,10 @@
             APIUrl= data.APIUrl;    
             MethodName = data.MethodName;   
             Controller = data.Controller;
-            IsStartByDefault = data.IsStartByDefault;
+            // TODO: hardcode for test -> will rollback            
+            //IsStartByDefault = data.IsStartByDefault;
+            IsStartByDefault = false; 
+            // TODO: hardcode for test -> will rollback end
             IsAdjust = data.IsAdjust;
         }
 
