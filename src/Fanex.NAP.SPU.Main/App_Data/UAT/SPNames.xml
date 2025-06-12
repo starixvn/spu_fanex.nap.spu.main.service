@@ -2,14 +2,14 @@
 
 <Functions>
   <Function Name="Job">
-    <Setting Key="CTS_AD_CTSGroupJob_Get" SpName="CTS_AD_CTSGroupJob_Get_xtest" DbName="MySQL.CTS_Admin.Reporter" />
-    <Setting Key="CTS_AD_CTSJob_Get" SpName="CTS_AD_CTSJob_Get_xtest" DbName="MySQL.CTS_Admin.Reporter" />
-    <Setting Key="CTS_AD_CTSJob_GetSingle" SpName="CTS_AD_CTSJob_GetSingle_xtest" DbName="MySQL.CTS_Admin.Reporter" />
-    <Setting Key="CTS_AD_CTSJob_CheckExist" SpName="CTS_AD_CTSJob_CheckExist_xtest" DbName="MySQL.CTS_Admin.Reporter" />
-    <Setting Key="CTS_AD_CTSJob_NewJobCleared" SpName="CTS_AD_CTSJob_NewJobCleared_xtest" DbName="MySQL.CTS_Admin.Admin" />   
-    <Setting Key="CTS_AD_CTSJob_Delete" SpName="CTS_AD_CTSJob_Delete_xtest" DbName="MySQL.CTS_Admin.Admin" />
-    <Setting Key="CTS_AD_CTSJob_Add" SpName="CTS_AD_CTSJob_Add_xtest" DbName="MySQL.CTS_Admin.Admin" />
-    <Setting Key="CTS_AD_CTSJob_Update" SpName="CTS_AD_CTSJob_Update_xtest" DbName="MySQL.CTS_Admin.Admin" />
+    <Setting Key="CTS_AD_CTSGroupJob_Get" SpName="CTS_AD_CTSGroupJob_Get_xtest" DbName="CTSMain.CTS_Admin.ctsService" />
+    <Setting Key="CTS_AD_CTSJob_Get" SpName="CTS_AD_CTSJob_Get_xtest" DbName="CTSMain.CTS_Admin.ctsService" />
+    <Setting Key="CTS_AD_CTSJob_GetSingle" SpName="CTS_AD_CTSJob_GetSingle_xtest" DbName="CTSMain.CTS_Admin.ctsService" />
+    <Setting Key="CTS_AD_CTSJob_CheckExist" SpName="CTS_AD_CTSJob_CheckExist_xtest" DbName="CTSMain.CTS_Admin.ctsService" />
+    <Setting Key="CTS_AD_CTSJob_NewJobCleared" SpName="CTS_AD_CTSJob_NewJobCleared_xtest" DbName="CTSMain.CTS_Admin.ctsServiceAdmin" />   
+    <Setting Key="CTS_AD_CTSJob_Delete" SpName="CTS_AD_CTSJob_Delete_xtest" DbName="CTSMain.CTS_Admin.ctsServiceAdmin" />
+    <Setting Key="CTS_AD_CTSJob_Add" SpName="CTS_AD_CTSJob_Add_xtest" DbName="CTSMain.CTS_Admin.ctsServiceAdmin" />
+    <Setting Key="CTS_AD_CTSJob_Update" SpName="CTS_AD_CTSJob_Update_xtest" DbName="CTSMain.CTS_Admin.ctsServiceAdmin" />
   </Function>
 
 </Functions>

@@ -168,18 +168,9 @@ namespace Fanex.NAP.SPU.Main
 
         private void FanexDataConfig(IAppSettings appSettings)
         {
-            var connections = Configuration
-                                  .GetSection("Connections")
-                                  .GetChildren()
-                                  .AsEnumerable()
-                                  .ToDictionary(
-                                           x => x.GetValue<string>("Name"),
-                                           y => new ConnectionConfiguration(y.GetValue<string>("Name"), y.GetValue<string>("ConnectionString"), y.GetValue<string>("ProviderName"))
-                                   );
-            
-            DbSettingProviderManager.StartNewSession()
-                .Use(connections)
-                .WithMySql()
+            DbSettingProviderManager
+                .StartNewSession()
+                .WithMySql(Configuration)
                 .UseDefaultDbSettingProvider(resourcePath: "~/App_Data/" + appSettings.EnvironmentString)
                 .Run();           
         }
