@@ -70,7 +70,7 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
                 var notificationService = new NotificationService();
 
                 notificationService
-                   .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "B08GPPK88MS:T08ACMHMMFS:C08KMQMPVK5", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken", proxy)
+                   .Config("0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9", "B08GPPK88MS:T08ACMHMMFS:C091AGH3G04", "https://bot.nexdev.net/skynex/api/messages/forwardwithtoken", proxy)
                    .Message(new MessageModel(systemName, DateTime.Now, environment, message, moreInfo))
                    .SendWithoutDelay();
             }
