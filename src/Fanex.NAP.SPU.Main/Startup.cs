@@ -3,7 +3,7 @@ namespace Fanex.NAP.SPU.Main
     using Fanex.Data;
     using Fanex.Data.MySql;
     using Fanex.Logging.Extensions;
-    using Fanex.Logging.Extensions.AspNetCore;
+    using Fanex.Logging.Sentry.RavenClient;
     using Fanex.NAP.SPU.CTS.Features.SchedulerManager;
     using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.Features.SchedulerManager.Service;
@@ -18,7 +18,6 @@ namespace Fanex.NAP.SPU.Main
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Newtonsoft.Json.Serialization;
     using ONEbook.UM.AspNetCore;
     using ONEbook.UM.Configurations;
     using ONEbook.UM.Helpers;
@@ -44,7 +43,9 @@ namespace Fanex.NAP.SPU.Main
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettings = new AppSettings(this.Configuration);
-                                    
+                                 
+            services.AddFanexLogSentry(Configuration);
+
             var redis = ConnectionMultiplexer.Connect(appSettings.Redis);
 
             services
@@ -100,9 +101,6 @@ namespace Fanex.NAP.SPU.Main
             });
 
             FanexDataConfig(appSettings);
-
-            ExceptionHandler
-                .UseConfig(new LoggingConfiguration());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

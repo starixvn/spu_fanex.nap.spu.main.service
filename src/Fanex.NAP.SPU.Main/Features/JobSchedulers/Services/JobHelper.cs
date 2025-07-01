@@ -1,6 +1,5 @@
-﻿using Quartz;
-using Sentry;
-using Sentry.Protocol;
+﻿using Fanex.NAP.SPU.CTS.Shares;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -85,11 +84,11 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
             return apiUrl;
         }
 
-        public static JobExecutionException JobExecuteFailed(string errorMessage, ISentryClient sentryClient)
+        public static JobExecutionException JobExecuteFailed(string errorMessage)
         {
             var jobExecutionException = new JobExecutionException(errorMessage);
 
-            sentryClient.CaptureMessage(errorMessage, SentryLevel.Error);
+            errorMessage.LogError();
 
             Thread.Sleep(120000);
 

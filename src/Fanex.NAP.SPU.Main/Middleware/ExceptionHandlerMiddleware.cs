@@ -1,6 +1,6 @@
-﻿using Fanex.NAP.SPU.Main.Middleware.Models;
+﻿using Fanex.NAP.SPU.CTS.Shares;
+using Fanex.NAP.SPU.Main.Middleware.Models;
 using Microsoft.AspNetCore.Http;
-using Sentry;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,7 +24,7 @@ namespace Fanex.NAP.SPU.Main.Middleware
             }
             catch (Exception ex)
             {
-                SentrySdk.CaptureException(ex);
+                ex.LogError();
 
                 await HandleExceptionAsync(httpContext);
             }

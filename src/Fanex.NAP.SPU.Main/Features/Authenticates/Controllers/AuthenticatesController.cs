@@ -4,19 +4,16 @@
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Sentry;
     using System.Collections.Generic;
     using System.Security.Claims;
     using System.Threading.Tasks;
 
     public class AuthenticatesController : Controller
     {
-        private readonly ISentryClient _sentryClient;
         private readonly IAppSettings _appSettings;        
 
-        public AuthenticatesController(ISentryClient sentryClient, IAppSettings appSettings)
+        public AuthenticatesController(IAppSettings appSettings)
         {
-            _sentryClient = sentryClient;
             _appSettings = appSettings;
         }
 

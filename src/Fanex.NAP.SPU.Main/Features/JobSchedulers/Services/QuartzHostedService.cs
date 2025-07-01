@@ -2,23 +2,17 @@
 {
     using Fanex.NAP.SPU.CTS.Features.JobSchedulers.Model;
     using Fanex.NAP.SPU.CTS.Features.SchedulerManager;
-    using Fanex.NAP.SPU.CTS.Shares;
     using Fanex.NAP.SPU.Main.Features.SchedulerManager.Service;
     using Fanex.NAP.SPU.Main.Features.SchedulerManager.ViewModel;
     using Fanex.NAP.SPU.Main.Middleware;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Newtonsoft.Json;
     using Quartz;
-    using Quartz.Impl;
     using Quartz.Impl.Matchers;
     using Quartz.Spi;
-    using Sentry;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -29,7 +23,6 @@
         private readonly IConfiguration _configuration;
         private readonly IAppSettings _appSettings;
         private readonly IScheduler _scheduler;
-        private readonly ISentryClient _sentryClient;
         private readonly ISchedulerManagerJobService _schedulerManagerJobService;
 
         public QuartzHostedService(
@@ -37,10 +30,8 @@
             IJobFactory jobFactory,
             IConfiguration configuration,
             IAppSettings appSettings,
-            ISentryClient sentryClient,
             ISchedulerManagerJobService schedulerManagerJobService)
         {
-            _sentryClient = sentryClient;
             _schedulerFactory = schedulerFactory;
             _jobFactory = jobFactory;
             _configuration = configuration;
