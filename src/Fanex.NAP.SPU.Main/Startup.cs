@@ -2,7 +2,6 @@ namespace Fanex.NAP.SPU.Main
 {
     using Fanex.Data;
     using Fanex.Data.MySql;
-    using Fanex.Logging.Extensions;
     using Fanex.Logging.Sentry.RavenClient;
     using Fanex.NAP.SPU.CTS.Features.SchedulerManager;
     using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
@@ -11,7 +10,6 @@ namespace Fanex.NAP.SPU.Main
     using Fanex.NAP.SPU.Main.Middleware;
     using HealthChecks.UI.Client;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -26,9 +24,7 @@ namespace Fanex.NAP.SPU.Main
     using Quartz;
     using Refit;
     using SilkierQuartz;
-    using StackExchange.Redis;
     using System;
-    using System.Linq;
 
     public class Startup
     {

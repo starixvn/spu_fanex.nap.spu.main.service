@@ -15,6 +15,7 @@ namespace Fanex.NAP.SPU.Main
             {
                 var host = CreateHostBuilder(args).Build();
                 LogExtension.LogInfo(string.Format("{0} has been started at {1}", typeof(Program).FullName, DateTime.Now));
+                LogExtension.LogError("TEST MainService");
                 host.Run();
             }
             catch (Exception ex)

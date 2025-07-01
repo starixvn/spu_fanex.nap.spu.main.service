@@ -22,8 +22,6 @@
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Fanex.Data" Version="4.3.4" />
     <PackageReference Include="Fanex.Data.MySql" Version="4.3.4" />
-    <PackageReference Include="Fanex.Data.Repository" Version="4.3.4" />
-    <PackageReference Include="Fanex.Logging" Version="2.0.2" />
     <PackageReference Include="Fanex.Logging.Extensions.Database" Version="2.0.2.1" />
     <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="2.0.2" />
     <PackageReference Include="Fanex.NAP.SPU.AspNetCore.Notification" Version="1.0.10" />
