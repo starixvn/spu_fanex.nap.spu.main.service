@@ -48,18 +48,18 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 var flagError = false;
                 var messageError = string.Empty;
 
-                if (count >= 5)
-                {
-                    var e = new JobExecutionException("Retries exceeded");
+                //if (count >= 5)
+                //{
+                //    var e = new JobExecutionException("Retries exceeded");
 
-                    await scheduler.PauseTrigger(context.Trigger.Key);
+                //    await scheduler.PauseTrigger(context.Trigger.Key);
 
-                    dataMap.PutAsString("count", 0);
+                //    dataMap.PutAsString("count", 0);
 
-                    sentryClient.CaptureMessage($"{_appSettings.EnvironmentString} - {jobName} is STOPPED. Cause of RETRIED EXECEEDED.", SentryLevel.Error);
+                //    sentryClient.CaptureMessage($"{_appSettings.EnvironmentString} - {jobName} is STOPPED. Cause of RETRIED EXECEEDED.", SentryLevel.Error);
 
-                    throw e;
-                }
+                //    throw e;
+                //}
 
                 try
                 {
@@ -71,8 +71,9 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
                     if (!result)
                     {
-                        flagError = true;
-                        messageError = $"{_appSettings.EnvironmentString} - {jobName} is failed at {DateTime.Now}.";
+                        var e = new JobExecutionException("Retries exceeded");
+
+                        throw e;
                     }
                     else
                     {
@@ -81,8 +82,11 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 }
                 catch (Exception ex)
                 {
-                    flagError = true;
-                    messageError = $"{_appSettings.EnvironmentString} - " + ex.Message;
+                    await scheduler.PauseTrigger(context.Trigger.Key);
+
+                    dataMap.PutAsString("count", 0);
+
+                    sentryClient.CaptureMessage($"{_appSettings.EnvironmentString} - {jobName} is STOPPED. Cause of RETRIED EXECEEDED.", SentryLevel.Error);
                 }
 
                 if (flagError)
