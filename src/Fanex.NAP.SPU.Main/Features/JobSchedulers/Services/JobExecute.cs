@@ -40,6 +40,14 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 var methodName = dataMap.GetString("methodName");
                 var controller = dataMap.GetString("controller");
 
+                if (context.CancellationToken.IsCancellationRequested)
+                {
+                    var e = new JobExecutionException("Retries cancel");
+
+                    LogExtension.LogError($"{_appSettings.EnvironmentString} - {jobName} is STOPPED. Cause of CANCELLATION REQUESTED from UI.");
+                    
+                    throw e;
+                }
 
                 var flagError = false;
                 var messageError = string.Empty;
