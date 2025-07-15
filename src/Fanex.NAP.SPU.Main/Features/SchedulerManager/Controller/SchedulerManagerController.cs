@@ -1,5 +1,6 @@
 ﻿namespace Fanex.NAP.SPU.Main.Features.SchedulerManager.Controller
 {
+    using Fanex.NAP.SPU.CTS.Shares;
     using Fanex.NAP.SPU.Main.Features.JobSchedulers.ViewModels.Job;
     using Fanex.NAP.SPU.Main.Features.SchedulerManager.ViewModel;
     using Fanex.NAP.SPU.Main.JobSchedulers.Services;
@@ -8,7 +9,6 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
-    using Sentry;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -18,17 +18,15 @@
     [Authorize(AuthenticationSchemes = "AdminScheme")]
     public class SchedulerManagerController : Controller
     {
-        private readonly ISentryClient _sentryClient;
         private readonly QuartzHostedService _quartzHostedService;
         private readonly IAppSettings _appSettings;
         private readonly IConfiguration _configuration;
 
-        public SchedulerManagerController(ISentryClient sentryClient
-            , QuartzHostedService quartzHostedService           
+        public SchedulerManagerController(
+            QuartzHostedService quartzHostedService           
             , IAppSettings appSettings
             , IConfiguration configuration)
         {
-            _sentryClient = sentryClient;
             _quartzHostedService = quartzHostedService;
             _appSettings = appSettings;
             _configuration = configuration;           
@@ -52,7 +50,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }
@@ -68,7 +66,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }
@@ -85,7 +83,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }
@@ -102,7 +100,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }
@@ -119,7 +117,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }
@@ -136,7 +134,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }
@@ -154,7 +152,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }
@@ -172,7 +170,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }
@@ -189,7 +187,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }
@@ -207,7 +205,7 @@
             }
             catch (Exception ex)
             {
-                _sentryClient.CaptureException(ex);
+                ex.LogError();
 
                 return StatusCode(500, "Internal Server Error: " + ex.Message);
             }

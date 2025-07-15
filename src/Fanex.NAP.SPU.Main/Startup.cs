@@ -2,8 +2,7 @@ namespace Fanex.NAP.SPU.Main
 {
     using Fanex.Data;
     using Fanex.Data.MySql;
-    using Fanex.Logging.Extensions;
-    using Fanex.Logging.Extensions.AspNetCore;
+    using Fanex.Logging.Sentry.RavenClient;
     using Fanex.NAP.SPU.CTS.Features.SchedulerManager;
     using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
     using Fanex.NAP.SPU.Main.Features.SchedulerManager.Service;
@@ -11,14 +10,12 @@ namespace Fanex.NAP.SPU.Main
     using Fanex.NAP.SPU.Main.Middleware;
     using HealthChecks.UI.Client;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Newtonsoft.Json.Serialization;
     using ONEbook.UM.AspNetCore;
     using ONEbook.UM.Configurations;
     using ONEbook.UM.Helpers;
@@ -27,9 +24,7 @@ namespace Fanex.NAP.SPU.Main
     using Quartz;
     using Refit;
     using SilkierQuartz;
-    using StackExchange.Redis;
     using System;
-    using System.Linq;
 
     public class Startup
     {
@@ -44,12 +39,14 @@ namespace Fanex.NAP.SPU.Main
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettings = new AppSettings(this.Configuration);
-                                    
-            var redis = ConnectionMultiplexer.Connect(appSettings.Redis);
+                                 
+            services.AddFanexLogSentry(Configuration);
 
-            services
-                .AddDataProtection()
-                .PersistKeysToStackExchangeRedis(redis, "SPU.Main.Service.ProtectionKeys");
+            //var redis = ConnectionMultiplexer.Connect(appSettings.Redis);
+
+            //services
+            //    .AddDataProtection()
+            //    .PersistKeysToStackExchangeRedis(redis, "SPU.Main.Service.ProtectionKeys");
 
             services.AddControllersWithViews();
 
@@ -100,9 +97,6 @@ namespace Fanex.NAP.SPU.Main
             });
 
             FanexDataConfig(appSettings);
-
-            ExceptionHandler
-                .UseConfig(new LoggingConfiguration());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -168,18 +162,9 @@ namespace Fanex.NAP.SPU.Main
 
         private void FanexDataConfig(IAppSettings appSettings)
         {
-            var connections = Configuration
-                                  .GetSection("Connections")
-                                  .GetChildren()
-                                  .AsEnumerable()
-                                  .ToDictionary(
-                                           x => x.GetValue<string>("Name"),
-                                           y => new ConnectionConfiguration(y.GetValue<string>("Name"), y.GetValue<string>("ConnectionString"), y.GetValue<string>("ProviderName"))
-                                   );
-            
-            DbSettingProviderManager.StartNewSession()
-                .Use(connections)
-                .WithMySql()
+            DbSettingProviderManager
+                .StartNewSession()
+                .WithMySql(Configuration)
                 .UseDefaultDbSettingProvider(resourcePath: "~/App_Data/" + appSettings.EnvironmentString)
                 .Run();           
         }

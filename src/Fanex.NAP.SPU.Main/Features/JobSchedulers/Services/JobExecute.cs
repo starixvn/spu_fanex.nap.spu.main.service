@@ -1,9 +1,8 @@
-﻿using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
+﻿using Fanex.NAP.SPU.CTS.Shares;
+using Fanex.NAP.SPU.Main.Features.JobSchedulers.Services;
 using Fanex.NAP.SPU.Main.Middleware;
 using ONEbook.UM.Services;
 using Quartz;
-using Sentry;
-using Sentry.Protocol;
 using System;
 using System.Threading.Tasks;
 
@@ -12,19 +11,16 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
     [DisallowConcurrentExecution, PersistJobDataAfterExecution]
     public class JobExecute : IJob
     {
-        private readonly ISentryClient sentryClient;
         private readonly IJobService jobService;
         private readonly IScheduler scheduler;
         private readonly IMaintenanceService _maintenanceService;
         private readonly IAppSettings _appSettings;
 
-        public JobExecute(ISentryClient sentryClient
-            , IJobService jobService
+        public JobExecute(IJobService jobService
             , ISchedulerFactory schedulerFactory
             , IMaintenanceService maintenanceService
             , IAppSettings appSettings)
         {
-            this.sentryClient = sentryClient;
             this.jobService = jobService;
             scheduler = schedulerFactory.GetScheduler().Result;
             _maintenanceService = maintenanceService;
@@ -44,6 +40,14 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 var methodName = dataMap.GetString("methodName");
                 var controller = dataMap.GetString("controller");
 
+                if (context.CancellationToken.IsCancellationRequested)
+                {
+                    var e = new JobExecutionException("Retries cancel");
+
+                    LogExtension.LogError($"{_appSettings.EnvironmentString} - {jobName} is STOPPED. Cause of CANCELLATION REQUESTED from UI.");
+                    
+                    throw e;
+                }
 
                 var flagError = false;
                 var messageError = string.Empty;
@@ -56,7 +60,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
 
                     dataMap.PutAsString("count", 0);
 
-                    sentryClient.CaptureMessage($"{_appSettings.EnvironmentString} - {jobName} is STOPPED. Cause of RETRIED EXECEEDED.", SentryLevel.Error);
+                    LogExtension.LogError($"{_appSettings.EnvironmentString} - {jobName} is STOPPED. Cause of RETRIED EXECEEDED.");
 
                     throw e;
                 }
@@ -89,7 +93,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
                 {
                     count++;
                     dataMap.PutAsString("count", count);
-                    throw JobHelper.JobExecuteFailed(messageError, sentryClient);
+                    throw JobHelper.JobExecuteFailed(messageError);
                 }
             }
         }
