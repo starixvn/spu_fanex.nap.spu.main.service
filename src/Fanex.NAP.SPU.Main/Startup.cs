@@ -44,7 +44,7 @@ namespace Fanex.NAP.SPU.Main
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettings = new AppSettings(this.Configuration);
-                                    
+
             var redis = ConnectionMultiplexer.Connect(appSettings.Redis);
 
             services
@@ -53,7 +53,8 @@ namespace Fanex.NAP.SPU.Main
 
             services.AddControllersWithViews();
 
-            services.AddControllers().AddJsonOptions(options => {
+            services.AddControllers().AddJsonOptions(options =>
+            {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null; // Use PascalCase
             });
 
@@ -82,7 +83,7 @@ namespace Fanex.NAP.SPU.Main
 
             services.AddSingleton<ISchedulerManagerJobService, SchedulerManagerJobService>();
             services.AddSingleton<QuartzHostedService>();
-            
+
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<JobExecute>();
             services.AddSingleton<JobMonitoring>();
@@ -134,25 +135,26 @@ namespace Fanex.NAP.SPU.Main
 
             var schedulerProvider = (ISchedulerFactory)app.ApplicationServices.GetService(typeof(ISchedulerFactory));
 
-            var option = new SilkierQuartzOptions()
-            {
-                ProductName = "Job Management",
-                VirtualPathRoot = "/quartz",
-                Scheduler = schedulerProvider.GetScheduler().Result,
-                UseLocalTime = true,
-                DefaultDateFormat = "MM/dd/yyyy",
-                DefaultTimeFormat = "HH:mm:ss",
-                CronExpressionOptions = new CronExpressionDescriptor.Options()
-                {
-                    DayOfWeekStartIndexZero = false
-                },
-                AccountName = "admin",
-                AccountPassword = "admin!Q@W#E",                
-                IsAuthenticationPersist = false
-            };                       
+            var option =
+               new SilkierQuartzOptions()
+               {
+                   ProductName = "Job Management",
+                   VirtualPathRoot = "/quartz",
+                   Scheduler = schedulerProvider.GetScheduler().Result,
+                   UseLocalTime = true,
+                   DefaultDateFormat = "MM/dd/yyyy",
+                   DefaultTimeFormat = "HH:mm:ss",
+                   CronExpressionOptions = new CronExpressionDescriptor.Options()
+                   {
+                       DayOfWeekStartIndexZero = false
+                   },
+                   AccountName = "admin",
+                   AccountPassword = "admin!Q@W#E",
+                   IsAuthenticationPersist = false
+               };
 
             app.UseSilkierQuartz(option);
-           
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -176,12 +178,12 @@ namespace Fanex.NAP.SPU.Main
                                            x => x.GetValue<string>("Name"),
                                            y => new ConnectionConfiguration(y.GetValue<string>("Name"), y.GetValue<string>("ConnectionString"), y.GetValue<string>("ProviderName"))
                                    );
-            
+
             DbSettingProviderManager.StartNewSession()
                 .Use(connections)
                 .WithMySql()
                 .UseDefaultDbSettingProvider(resourcePath: "~/App_Data/" + appSettings.EnvironmentString)
-                .Run();           
+                .Run();
         }
     }
 }
