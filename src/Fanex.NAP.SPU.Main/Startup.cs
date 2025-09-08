@@ -42,12 +42,6 @@ namespace Fanex.NAP.SPU.Main
                                  
             services.AddFanexLogSentry(Configuration);
 
-            //var redis = ConnectionMultiplexer.Connect(appSettings.Redis);
-
-            //services
-            //    .AddDataProtection()
-            //    .PersistKeysToStackExchangeRedis(redis, "SPU.Main.Service.ProtectionKeys");
-
             services.AddControllersWithViews();
 
             services.AddControllers().AddJsonOptions(options => {
