@@ -105,7 +105,7 @@ namespace Fanex.NAP.SPU.Main
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseHealthChecks("/healthz", new HealthCheckOptions()
+            app.UseHealthChecks("/healthz", new HealthCheckOptions
             {
                 Predicate = _ => true,
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
@@ -122,7 +122,7 @@ namespace Fanex.NAP.SPU.Main
 
             var schedulerProvider = (ISchedulerFactory)app.ApplicationServices.GetService(typeof(ISchedulerFactory));
 
-            var option = new SilkierQuartzOptions()
+            var option = new SilkierQuartzOptions
             {
                 ProductName = "Job Management",
                 VirtualPathRoot = "/quartz",

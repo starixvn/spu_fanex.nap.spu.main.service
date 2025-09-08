@@ -34,14 +34,14 @@
 
         public bool AddJobToDb(string jobTriggerJson)
         {
-            var criteria = new AddJobCriteria() { JobTriggerJson = jobTriggerJson };
+            var criteria = new AddJobCriteria { JobTriggerJson = jobTriggerJson };
 
             return _repository.Execute(criteria) == 1;
         }
 
         public bool UpdateJobToDb(string jobTriggerJson)
         {
-            var criteria = new UpdateJobCriteria() { JobTriggerJson = jobTriggerJson };
+            var criteria = new UpdateJobCriteria { JobTriggerJson = jobTriggerJson };
 
             return _repository.Execute(criteria) == 1;
         }
@@ -55,7 +55,7 @@
 
         public JobInfoModel GetJobs(bool isGetAdjust, int dbEnvironmentID)
         {
-            var criteria = new GetJobsCriteria() { IsGetAdjust = isGetAdjust, DbEnvironmentID = dbEnvironmentID };
+            var criteria = new GetJobsCriteria { IsGetAdjust = isGetAdjust, DbEnvironmentID = dbEnvironmentID };
 
             (var jobData, var triggerData) = _repository.FetchMultiple<JobEntity, TriggerEntity>(criteria);
 
@@ -68,7 +68,7 @@
 
         public JobInfoModel GetSingleJob(string jobName, string groupName, int dbEnvironmentID)
         {
-            var criteria = new GetSingleJobCriteria()
+            var criteria = new GetSingleJobCriteria
             {
                 JobName = jobName,
                 GroupName = groupName,
@@ -86,7 +86,7 @@
 
         public IEnumerable<JobEntity> CheckExistJob(string jobName, string dbEnvironmentIDs)
         {
-            var criteria = new CheckExistJobCriteria()
+            var criteria = new CheckExistJobCriteria
             {
                 JobName = jobName,           
                 EnvironmentIDs = dbEnvironmentIDs
