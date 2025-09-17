@@ -61,6 +61,7 @@ namespace Fanex.NAP.SPU.Main.Features.JobSchedulers.Services
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S6566:Use DateTimeOffset instead of DateTime", Justification = "Legacy code or specific reason")]
         private static void NotifyTelegramMessage(string systemName, string message, string moreInfo, string environment, string proxy)
         {
             if (environment == "PROD" || environment == "KLDR")

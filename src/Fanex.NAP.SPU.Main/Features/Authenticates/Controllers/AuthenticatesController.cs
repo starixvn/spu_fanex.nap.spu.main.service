@@ -43,7 +43,7 @@
 
                 var identity = new ClaimsIdentity(claims, "AdminScheme");
                 var principal = new ClaimsPrincipal(identity);
-                var authProperties = new AuthenticationProperties()
+                var authProperties = new AuthenticationProperties
                 {
                     IsPersistent = false
                 };

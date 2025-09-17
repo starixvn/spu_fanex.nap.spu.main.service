@@ -15,8 +15,6 @@ namespace Fanex.NAP.SPU.CTS.Features.JobSchedulers.Model
             TimeZone = triggerEntity.TimeZone; 
         }
 
-        //public int TriggerId { get; set; }        
-
         public string TriggerName { get; set; }
 
         public string TriggerType { get; set; }

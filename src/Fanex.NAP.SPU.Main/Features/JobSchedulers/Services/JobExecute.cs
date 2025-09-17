@@ -27,6 +27,7 @@ namespace Fanex.NAP.SPU.Main.JobSchedulers.Services
             _appSettings = appSettings;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S6566:Use DateTimeOffset instead of DateTime", Justification = "Legacy code or specific reason")]
         public async Task Execute(IJobExecutionContext context)
         {
             var isUM = _maintenanceService.GetUnderMaintenanceTime().IsUnderMaintenanceTime;

@@ -9,6 +9,7 @@ namespace Fanex.NAP.SPU.Main
 
     public static class Program
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S6566:Use DateTimeOffset instead of DateTime", Justification = "Legacy code or specific reason")]
         public static void Main(string[] args)
         {
             try
