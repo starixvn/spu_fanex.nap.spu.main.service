@@ -40,9 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.KLSIMPLE.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="appsettings.KLPROD.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -67,7 +64,6 @@
   <ItemGroup>
     <Folder Include="App_Data\KLDR\" />
     <Folder Include="App_Data\SIT\" />
-    <Folder Include="App_Data\PROD\" />
     <Folder Include="App_Data\UAT\" />
     <Folder Include="Features\JobSchedulers\Controllers\" />
     <Folder Include="Features\SchedulerManager\Model\" />
@@ -86,9 +82,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="App_Data\LOCAL\SPNames.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="App_Data\PROD\SPNames.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="App_Data\SIT\SPNames.xml">
